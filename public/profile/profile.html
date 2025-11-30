@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIA | Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-Mm4N2zg4s46HoPazTA/gkGEXLMaLLq5yRvCNrI6VsgGAaHo9dZYkTfGZNVVRhk1FdYyqS/fWznuaCG2l9VmO3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./profile.css">
+    <link rel="stylesheet" href="../template.css">
+</head>
+<body>
+    <!-- Navbar Start -->
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary navigation">
+            <input type="checkbox" id="navToggle" class="nav-toggle" aria-label="Toggle navigation menu">
+
+            <!-- Logo Section -->
+            <a href="../index.html" class="brand" aria-label="SIA homepage">
+                <span class="brand__mark">
+                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA golden logo">
+                </span>
+            </a>
+
+            <!-- Center Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../About/About.html">About</a></li>
+                <li><a href="../Test/Test.html">Test</a></li>
+                <li><a href="./profile.html" aria-current="page">Profile</a></li>
+                <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+            </ul>
+
+            <!-- Right Buttons Section -->
+            <div class="nav-auth" id="navAuth">
+                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
+                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+            </div>
+
+            <!-- Responsive Menu (Hamburger control + label for accessibility) -->
+            <label for="navToggle" class="hamburger" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <!-- Responsive Menu -->
+            <div class="nav-drawer" aria-hidden="true">
+                <!-- Center Navigation Links duplicated for the mobile drawer -->
+                <ul class="drawer-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../About/About.html">About</a></li>
+                    <li><a href="../Test/Test.html">Test</a></li>
+                    <li><a href="./profile.html" aria-current="page">Profile</a></li>
+                    <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+                </ul>
+                <!-- Right Buttons Section duplicated for stacked layout -->
+                <div class="drawer-auth">
+                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
+                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="profile-page">
+        <div class="container">
+            <!-- SECTION 1: Profile Header -->
+            <section class="profile-section" id="profile-header">
+                <div class="card bg-dark border-gold shadow-sm">
+                    <div class="card-body d-flex flex-column flex-md-row align-items-center gap-4">
+                        <div class="position-relative text-center">
+                            <img src="../Images/Team/Mohamed Osman.JPG" alt="User avatar" class="profile-photo rounded-circle" id="profilePhoto">
+                            <button class="btn btn-outline-light btn-sm mt-3" type="button" id="uploadPhotoBtn">
+                                <i class="fa-solid fa-upload me-2"></i>Upload
+                            </button>
+                        </div>
+                        <div class="flex-grow-1 w-100">
+                            <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3 justify-content-between mb-3">
+                                <div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <h2 class="mb-0" id="userNameDisplay">Mohamed Osman</h2>
+                                        <input type="text" class="form-control form-control-sm d-none" id="userNameInput">
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <p class="mb-0 text-muted" id="userEmailDisplay">mohamed.osman@sia.careers</p>
+                                        <input type="email" class="form-control form-control-sm d-none" id="userEmailInput">
+                                    </div>
+                                </div>
+                                <div class="btn-group flex-wrap">
+                                    <button class="btn btn-outline-light" type="button" id="editProfileBtn">
+                                        <i class="fa-solid fa-pen-to-square me-2"></i>Edit Profile
+                                    </button>
+                                    <button class="btn btn-gold d-none" type="button" id="saveProfileBtn">
+                                        <i class="fa-solid fa-floppy-disk me-2"></i>Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="mb-0 text-muted small">Stay aligned with your personalized roadmap. Update your profile to keep recommendations accurate.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Personal Information -->
+            <section class="profile-section" id="personal-info">
+                <div class="card bg-dark border-gold shadow-sm">
+                    <div class="card-header border-gold">
+                        <h5 class="mb-0 text-gold">Personal Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form class="row g-4" id="personalInfoForm">
+                            <div class="col-md-6">
+                                <label for="fullNameInput" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="fullNameInput" name="fullName" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="emailInput" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="emailInput" name="email" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="dobInput" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="dobInput" name="dob" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="educationSelect" class="form-label">Education</label>
+                                <select class="form-select" id="educationSelect" name="education" disabled>
+                                    <option value="">Select level</option>
+                                    <option value="High School">High School</option>
+                                    <option value="Bachelor">Bachelor</option>
+                                    <option value="Master">Master</option>
+                                    <option value="PhD">PhD</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <input type="text" class="form-control mt-2 d-none" id="educationOtherInput" name="educationOther" placeholder="Please specify" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-block">Student Status</label>
+                                <div class="d-flex align-items-center gap-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="studentStatus" id="statusStudent" value="Student" disabled>
+                                        <label class="form-check-label" for="statusStudent">Student</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="studentStatus" id="statusGraduate" value="Graduate" disabled>
+                                        <label class="form-check-label" for="statusGraduate">Graduate</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- BACK-END DEVELOPER WILL HANDLE THIS PART -->
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Personality Results -->
+            <section class="profile-section" id="personality-results">
+                <div class="section-heading d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                    <h5 class="text-gold mb-3 mb-md-0">Personality Results (Future AI Integration)</h5>
+                    <p class="text-muted mb-0 small">Big Five and Holland Codes insights will appear here once available.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card bg-dark border-gold h-100">
+                            <div class="card-body">
+                                <h6 class="card-title text-gold">Big Five Overview</h6>
+                                <p class="text-muted mb-0">Results will load here.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark border-gold h-100">
+                            <div class="card-body">
+                                <h6 class="card-title text-gold">Holland Codes Overview</h6>
+                                <p class="text-muted mb-0">Results will load here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Career Recommendations -->
+            <section class="profile-section" id="career-recommendations">
+                <div class="section-heading">
+                    <h5 class="text-gold">Career Recommendations (Future AI Output)</h5>
+                    <p class="text-muted mb-4">We will surface AI-aligned matches based on your strengths.</p>
+                </div>
+                <div class="row g-4" id="recommendationsGrid">
+                    <!-- Job cards injected via JS -->
+                </div>
+            </section>
+
+            <!-- SECTION 5: Saved Careers -->
+            <section class="profile-section" id="saved-careers">
+                <div class="section-heading d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                    <h5 class="text-gold">Saved Careers</h5>
+                    <p class="text-muted mb-0 small">Your favorite paths stay pinned here.</p>
+                </div>
+                <div class="row g-4" id="savedJobsGrid">
+                    <!-- Saved jobs injected via JS -->
+                </div>
+            </section>
+
+            <!-- SECTION 6: Activity Log -->
+            <section class="profile-section" id="activity-log">
+                <div class="card bg-dark border-gold">
+                    <div class="card-header border-gold d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-gold">Activity Log</h5>
+                        <small class="text-muted">Recent updates</small>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush" id="activityList">
+                            <!-- Activity items injected via JS -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: Account / Settings -->
+            <section class="profile-section" id="account-settings">
+                <div class="card bg-dark border-gold">
+                    <div class="card-body d-flex flex-column flex-md-row gap-3 align-items-stretch align-items-md-center justify-content-between">
+                        <div>
+                            <h5 class="text-gold">Account &amp; Settings</h5>
+                            <p class="text-muted mb-0">Manage security or close your account securely.</p>
+                        </div>
+                        <div class="btn-group flex-column flex-sm-row">
+                            <button class="btn btn-outline-light" type="button" id="changePasswordBtn" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
+                            <button class="btn btn-outline-warning" type="button" id="logoutBtn">
+                                <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
+                            </button>
+                            <button class="btn btn-danger" type="button" id="deleteAccountBtn">Delete Account</button>
+                            <!-- BACK-END DEVELOPER WILL HANDLE THIS PART -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark border-gold">
+                <div class="modal-header border-gold">
+                    <h5 class="modal-title text-gold" id="changePasswordModalLabel">Change Password</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="changePasswordForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="currentPasswordInput" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPasswordInput" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPasswordInput" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPasswordInput" required minlength="8">
+                            <small class="text-muted">Password must be at least 8 characters long.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmNewPasswordInput" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmNewPasswordInput" required minlength="8">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-gold">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-gold">Change Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for avatar upload -->
+    <input type="file" id="avatarUploadInput" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer__brand">
+            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
+            <div>
+                <p class="footer__title">SIA</p>
+                <p class="footer__mission">We connect ancient wisdom with modern career paths.</p>
+            </div>
+        </div>
+        <div class="footer__nav" aria-label="Footer navigation">
+            <a href="../index.html">Home</a>
+            <a href="../About/About.html">About</a>
+            <a href="../Test/Test.html">Test</a>
+            <a href="./profile.html">Profile</a>
+            <a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a>
+        </div>
+        <p class="footer__copy">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <!-- Firebase SDK v9 compat -->
+    <!-- Firebase App -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Storage -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="../firebase-config.js"></script>
+    
+    <!-- Profile Script -->
+    <script src="./profile.js"></script>
+
+
+</body>
+</html>

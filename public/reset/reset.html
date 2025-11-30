@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - SIA – Ancient Wisdom for Modern Careers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../sign in/signin.css">
+    <link rel="stylesheet" href="../template.css">
+</head>
+<body>
+    <!-- Navbar Start -->
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary navigation">
+            <input type="checkbox" id="navToggle" class="nav-toggle" aria-label="Toggle navigation menu">
+
+            <!-- Logo Section -->
+            <a href="../index.html" class="brand" aria-label="SIA homepage">
+                <span class="brand__mark">
+                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA golden logo">
+                </span>
+            </a>
+
+            <!-- Center Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../About/About.html">About</a></li>
+                <li><a href="../Test/Test.html">Test</a></li>
+                <li><a href="../profile/profile.html">Profile</a></li>
+                <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+            </ul>
+
+            <!-- Right Buttons Section -->
+            <div class="nav-auth" id="navAuth">
+                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
+                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+            </div>
+
+            <!-- Responsive Menu (Hamburger control + label for accessibility) -->
+            <label for="navToggle" class="hamburger" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <!-- Responsive Menu -->
+            <div class="nav-drawer" aria-hidden="true">
+                <!-- Center Navigation Links duplicated for the mobile drawer -->
+                <ul class="drawer-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../About/About.html">About</a></li>
+                    <li><a href="../Test/Test.html">Test</a></li>
+                    <li><a href="../profile/profile.html">Profile</a></li>
+                    <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+                </ul>
+                <!-- Right Buttons Section duplicated for stacked layout -->
+                <div class="drawer-auth">
+                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
+                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main style="padding-top: 80px;">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="hero-content fade-in">
+                    <h1 class="hero-title">Reset Password</h1>
+                    <p class="hero-subtitle">Enter your email address and we'll send you a link to reset your password.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reset Password Form Section -->
+        <section class="form-section">
+            <div class="container">
+                <div class="form-wrapper fade-in" id="resetForm">
+                    <div class="form-header">
+                        <h2 class="form-title">
+                            <i class="fas fa-key"></i> Reset Password
+                        </h2>
+                    </div>
+
+                    <form id="resetFormElement" class="auth-form">
+                        <div class="form-group">
+                            <label for="resetEmail" class="form-label">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input 
+                                type="email" 
+                                id="resetEmail" 
+                                name="email" 
+                                class="form-input" 
+                                placeholder="Enter your email address"
+                                required
+                            >
+                            <span class="error-message" id="resetEmailError"></span>
+                        </div>
+
+                        <div class="form-error" id="resetFormError"></div>
+                        <div class="form-success" id="resetFormSuccess"></div>
+
+                        <button type="submit" class="form-btn">
+                            <i class="fas fa-paper-plane"></i> Send Reset Link
+                        </button>
+                    </form>
+
+                    <div class="form-footer">
+                        <p>Remember your password? <a href="../sign in/signin.html" class="toggle-link">Sign In</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer__brand">
+            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
+            <div>
+                <p class="footer__title">SIA</p>
+                <p class="footer__mission">We connect ancient wisdom with modern career paths.</p>
+            </div>
+        </div>
+        <div class="footer__nav" aria-label="Footer navigation">
+            <a href="../index.html">Home</a>
+            <a href="../About/About.html">About</a>
+            <a href="../Test/Test.html">Test</a>
+            <a href="../profile/profile.html">Profile</a>
+            <a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a>
+        </div>
+        <p class="footer__copy">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+    </footer>
+
+    <canvas id="particles"></canvas>
+    
+    <!-- Firebase SDK v9 compat -->
+    <!-- Firebase App -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Storage -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="../firebase-config.js"></script>
+    
+    <!-- Reset Password Script -->
+    <script src="reset.js"></script>
+</body>
+</html>
+

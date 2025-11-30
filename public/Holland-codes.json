@@ -1,0 +1,333 @@
+[
+    {
+        "id": "H1",
+        "question": "I enjoy fixing things when they break.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H2",
+        "question": "I prefer working with my hands rather than sitting at a desk.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H3",
+        "question": "I enjoy activities that require physical effort.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H4",
+        "question": "I like using tools or mechanical equipment.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H5",
+        "question": "I feel comfortable working outdoors.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H6",
+        "question": "I like analyzing complex problems to find the cause.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H7",
+        "question": "I enjoy conducting experiments or searching for new information.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H8",
+        "question": "I think logically before making decisions.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H9",
+        "question": "I enjoy reading or watching scientific content.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H10",
+        "question": "I prefer work that requires thinking rather than physical labor.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H11",
+        "question": "I enjoy creating new or original ideas.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H12",
+        "question": "I like drawing, designing, or artistic activities.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H13",
+        "question": "I prefer work that allows me to express myself freely.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H14",
+        "question": "I have a vivid imagination and enjoy fantasizing.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H15",
+        "question": "I dislike strict rules when doing tasks.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H16",
+        "question": "I like helping people solve their problems.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H17",
+        "question": "I feel happy when I teach others something new.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H18",
+        "question": "I enjoy working in groups.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H19",
+        "question": "I can listen to others and understand their feelings.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H20",
+        "question": "I prefer work that involves a lot of human interaction.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H21",
+        "question": "I like leading a team or project.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H22",
+        "question": "I enjoy persuading and negotiating with others.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H23",
+        "question": "I want to start my own business or independent project.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H24",
+        "question": "I like making decisions and taking responsibility.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H25",
+        "question": "I prefer activities that involve challenge or risk.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H26",
+        "question": "I like organizing files and information accurately.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H27",
+        "question": "I prefer following clear and structured steps.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H28",
+        "question": "I enjoy working with data or spreadsheets.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H29",
+        "question": "I feel comfortable working in a well-organized system.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    },
+    {
+        "id": "H30",
+        "question": "I prefer tasks that require attention to small details.",
+            "options": [
+            "Dislike",
+            "Slightly dislike",
+            "Neutral",
+            "Slightly enjoy", 
+            "Enjoy"
+            ]
+    }
+]
+

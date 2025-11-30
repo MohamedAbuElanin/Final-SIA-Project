@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIA | About</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-Mm4N2zg4s46HoPazTA/gkGEXLMaLLq5yRvCNrI6VsgGAaHo9dZYkTfGZNVVRhk1FdYyqS/fWznuaCG2l9VmO3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./About.css">
+    <link rel="stylesheet" href="../template.css">
+    <link rel="icon" type="../Images/ICO/favicon.ico" href="../Images/ICO/favicon.ico">
+</head>
+<body>
+    <canvas id="particles" aria-hidden="true"></canvas>
+    <div class="eye-parallax" aria-hidden="true">
+        <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="eye-parallax__image">
+    </div>
+
+    <!-- Navbar Start -->
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary navigation">
+            <input type="checkbox" id="navToggle" class="nav-toggle" aria-label="Toggle navigation menu">
+
+            <!-- Logo Section -->
+            <a href="../index.html" class="brand" aria-label="SIA homepage">
+                <span class="brand__mark">
+                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA golden logo">
+                </span>
+            </a>
+
+            <!-- Center Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="./About.html" aria-current="page">About</a></li>
+                <li><a href="../Test/Test.html">Test</a></li>
+                <li><a href="../profile/profile.html">Profile</a></li>
+                <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+            </ul>
+
+            <!-- Right Buttons Section -->
+            <div class="nav-auth" id="navAuth">
+                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
+                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+            </div>
+
+            <!-- Responsive Menu (Hamburger control + label for accessibility) -->
+            <label for="navToggle" class="hamburger" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <!-- Responsive Menu -->
+            <div class="nav-drawer" aria-hidden="true">
+                <!-- Center Navigation Links duplicated for the mobile drawer -->
+                <ul class="drawer-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="./About.html" aria-current="page">About</a></li>
+                    <li><a href="../Test/Test.html">Test</a></li>
+                    <li><a href="../profile/profile.html">Profile</a></li>
+                    <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+                </ul>
+                <!-- Right Buttons Section duplicated for stacked layout -->
+                <div class="drawer-auth">
+                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
+                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="hero">
+            <div class="hero__content">
+                <p class="eyebrow"><i class="fa-solid fa-eye"></i> Ancient guidance | Modern data</p>
+                <h1>SIA — Ancient Wisdom for Modern Careers</h1>
+                <p class="hero__lead">
+                    In a fast-changing world, choosing a career path can be hard. SIA blends ancient wisdom with modern analytics to help you discover your strengths and choose the right path.
+                </p>
+                <div class="hero__cta">
+                    <a href="#test-anchor" class="btn btn--gold" data-scroll>Take the Test</a>
+                    <a href="#roadmap-anchor" class="btn btn--outline" data-scroll>Explore Roadmap</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="overview" aria-labelledby="overview-title">
+            <div class="section-heading">
+                <p class="eyebrow">Project Snapshot</p>
+                <h2 id="overview-title">Why SIA Matters</h2>
+            </div>
+            <p class="overview__text">
+                SIA uses Big Five + Holland Codes, links results to job market data, and gives personalized learning recommendations.
+            </p>
+            <div class="overview__grid">
+                <article class="info-card">
+                    <h3><i class="fa-solid fa-chart-line"></i> What We Do</h3>
+                    <ul>
+                        <li>Psychometric analysis models tuned for emerging talent.</li>
+                        <li>Research-driven knowledge base aligned to Egypt & MENA trends.</li>
+                        <li>Guidance platform that connects insights to action.</li>
+                    </ul>
+                </article>
+                <article class="info-card">
+                    <h3 id="test-anchor"><i class="fa-solid fa-compass"></i> How SIA Works</h3>
+                    <ol>
+                        <li>Assessments: Big Five + Holland Codes with contextual prompts.</li>
+                        <li>Insight Engine: Maps scores to live job data and talent needs.</li>
+                        <li>Action Plan: Personalized learning paths and roadmap guidance.</li>
+                    </ol>
+                </article>
+                <article class="info-card">
+                    <h3><i class="fa-solid fa-bullseye"></i> Vision & Mission</h3>
+                    <p><strong>Vision:</strong> Make career clarity accessible through timeless wisdom plus modern intelligence.</p>
+                    <p><strong>Mission:</strong> Equip every learner with culturally-aware guidance, actionable data, and inspiring storytelling.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="roadmap" id="roadmap-anchor" aria-labelledby="roadmap-title">
+            <div class="section-heading">
+                <p class="eyebrow">From Insight to Action</p>
+                <h2 id="roadmap-title">SIA Roadmap</h2>
+            </div>
+            <div class="roadmap__content">
+                <p>
+                    Each recommendation connects inner strengths with opportunities. Take the assessment, review the roadmap that highlights matching sectors, and follow curated learning resources.
+                </p>
+                <div class="roadmap__cta">
+                    <a href="../Test/Test.html" class="link-pill">
+                        <i class="fa-solid fa-arrow-right"></i> Launch the Assessment
+                    </a>
+                    <a href="../Privacy & Terms/Privacy-Terms.html" class="link-pill">
+                        <i class="fa-solid fa-file-shield"></i> Review Data Ethics
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="team" id="team" aria-labelledby="team-title">
+            <div class="section-heading">
+                <p class="eyebrow">Meet the Team</p>
+                <h2 id="team-title">Human intelligence behind SIA</h2>
+                <p class="section-heading__lead">Our mosaic layout mirrors the collaboration between research, design, engineering, and storytelling.</p>
+            </div>
+            <div class="mosaic-toolbar">
+                <button type="button" class="mosaic-toggle" aria-pressed="false">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>Switch to stacked view</span>
+                </button>
+            </div>
+            <div class="mosaic" role="list">
+                <!-- Center Card -->
+                <article class="team-card team-card--leader reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Mohamed Osman.JPG" alt="Photo of Mohamed Osman" data-initials="MO" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Project Leader &amp; Full-Stack Developer</p>
+                        <h3>Mohamed Osman</h3>
+                        <ul>
+                            <li>Created ERD &amp; flowchart.</li>
+                            <li>Project idea and core vision.</li>
+                            <li>Designed brand identity and Eye of Ra logo.</li>
+                            <li>Integrates AI model with the platform.</li>
+                            <li>Supervises the team and distributes tasks.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <!-- Surrounding Cards -->
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Wafaa Mostafa.jpg" alt="Photo of Wafaa Mostafa" data-initials="WM" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Front-End</p>
+                        <h3>Wafaa Mostafa</h3>
+                        <ul>
+                            <li>Designs Arabic web pages.</li>
+                            <li>Ensures platform responsiveness.</li>
+                            <li>Improves user experience.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Mahmoud Saif.jpg" alt="Photo of Mahmoud Saif" data-initials="MS" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Back-End</p>
+                        <h3>Mahmoud Saif</h3>
+                        <ul>
+                            <li>Builds APIs and prepares databases.</li>
+                            <li>Connects frontend with backend.</li>
+                            <li>Secures endpoints.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Riham Mohamed.jpg" alt="Photo of Riham Mohamed" data-initials="RM" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Research &amp; Data</p>
+                        <h3>Riham Mohamed</h3>
+                        <ul>
+                            <li>Documented Holland Codes and job mapping.</li>
+                            <li>Researched in-demand jobs in Egypt &amp; MENA.</li>
+                            <li>Analyzed CareerExplorer and wrote scientific explanations.</li>
+                            <li>Suggested marketing channels and organized the project book.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Hesham Khaled.jpg" alt="Photo of Hesham Khaled" data-initials="HK" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Research &amp; Data</p>
+                        <h3>Hesham Khaled</h3>
+                        <ul>
+                            <li>Documented Big Five model and analysis.</li>
+                            <li>Studied skill requirements and average salaries.</li>
+                            <li>Reviewed 16Personalities and wrote scientific explanations.</li>
+                            <li>Identified target audiences and contributed to scientific chapters.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Abdul Rahman Tariq.jpg" alt="Photo of Abdul Rahman Tariq" data-initials="AT" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Research &amp; Data</p>
+                        <h3>Abdul Rahman Tariq</h3>
+                        <ul>
+                            <li>Collected and formatted academic references.</li>
+                            <li>Analyzed global tech job demand.</li>
+                            <li>Produced final assessment of platform strengths &amp; weaknesses.</li>
+                            <li>Designed marketing assets and helped compile scientific chapters.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Doaa Bahaa.jpg" alt="Photo of Doaa Bahaa" data-initials="DB" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Research &amp; Data</p>
+                        <h3>Doaa Bahaa</h3>
+                        <ul>
+                            <li>Analyzed Big Five vs Holland results for each member.</li>
+                            <li>Compared local vs global job markets.</li>
+                            <li>Reviewed Truity platform and linked psychological interpretations.</li>
+                            <li>Wrote marketing copy and formatted the project book.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Ahmed Elzeer .jpg" alt="Photo of Ahmed Elzeer" data-initials="AE" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Research &amp; Documentation</p>
+                        <h3>Ahmed Elzeer</h3>
+                        <ul>
+                            <li>Prepared phase-one final report and polished summaries.</li>
+                            <li>Consolidated job market findings and comparison tables.</li>
+                            <li>Created final interpretation file and publishing plan.</li>
+                            <li>Organized documentation folders and helped compile scientific content.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Karim Ragab.jpeg" alt="Photo of Karim Ragab" data-initials="KR" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Data Systems</p>
+                        <h3>Karim Ragab</h3>
+                        <ul>
+                            <li>Built the database for jobs, skills, and courses.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Esraa.jpg" alt="Photo of Esraa" data-initials="E" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Knowledge Systems</p>
+                        <h3>Esraa</h3>
+                        <ul>
+                            <li>Built the database for YouTube channels, books, and articles.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Mohamed Adel.jpg" alt="Photo of Mohamed Adel" data-initials="MA" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Content</p>
+                        <h3>Mohamed Adel</h3>
+                        <ul>
+                            <li>Wrote general website copy.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="team-card reveal" role="listitem">
+                    <div class="team-photo">
+                        <img src="../Images/Team/Youssef Mohammed.jpg" alt="Photo of Youssef Mohammed" data-initials="YM" />
+                    </div>
+                    <div class="team-info">
+                        <p class="team-role">Presentation &amp; Documentation</p>
+                        <h3>Youssef Mohammed</h3>
+                        <ul>
+                            <li>Documented tools and sources.</li>
+                            <li>Prepared the presentation.</li>
+                        </ul>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="contact" id="contact" aria-labelledby="contact-title">
+            <div class="section-heading">
+                <p class="eyebrow">Stay Connected</p>
+                <h2 id="contact-title">Contact the SIA Team</h2>
+            </div>
+            <div class="contact__card">
+                <p>
+                    Have a partnership idea or want early access to the roadmap? Email us and we will respond within two business days.
+                </p>
+                <a href="mailto:hello@sia.careers" class="contact__email">
+                    <i class="fa-solid fa-envelope"></i> hello@sia.careers
+                </a>
+                <!-- README Note: Replace the email above with the official SIA contact address. Update image paths in the team section if the folder structure changes. -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer__brand">
+            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
+            <div>
+                <p class="footer__title">SIA</p>
+                <p class="footer__mission">We connect ancient wisdom with modern career paths.</p>
+            </div>
+        </div>
+        <div class="footer__nav" aria-label="Footer navigation">
+            <a href="../index.html">Home</a>
+            <a href="./About.html">About</a>
+            <a href="../Test/Test.html">Test</a>
+            <a href="../profile/profile.html">Profile</a>
+            <a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a>
+        </div>
+        <p class="footer__copy">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+    </footer>
+
+    <script src="./About.js" defer></script>
+</body>
+</html>

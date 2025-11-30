@@ -1,0 +1,1322 @@
+    [
+        {
+        "id": "B1",
+        "question": "Worry about things",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B2",
+        "question": "Get angry easily",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B3",
+        "question": "Often feel blue",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B4",
+        "question": "Panic easily",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B5",
+        "question": "Fear for the worst",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B6",
+        "question": "Become overwhelmed by events",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B7",
+        "question": "Am afraid of many things", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B8",
+        "question": "Get stressed out easily",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B9",
+        "question": "Lose my temper",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B10",
+        "question": "Am often down in the dumps",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B11",
+        "question": "Remain calm under pressure",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B12",
+        "question": "Remain calm in tense situations",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B13",
+        "question": "Rarely notice my emotional reactions",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B14",
+        "question": "Do not understand people who get emotional",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B15",
+        "question": "Don't understand people who get emotional",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B16",
+        "question": "Feel that I'm unable to deal with things", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B17",
+        "question": "Get irritated easily",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B18",
+        "question": "Yell at people",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B19",
+        "question": "Love a good fight",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B20",
+        "question": "Jump into things without thinking",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B21",
+        "question": "Make rash decisions",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B22",
+        "question": "Act without thinking",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B23",
+        "question": "Enjoy being reckless",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B24",
+        "question": "Rush into things",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B25",
+        "question": "Make friends easily", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B26",
+        "question": "Love large parties",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B27",
+        "question": "Take charge",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B28",
+        "question": "Feel comfortable around people",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B29",
+        "question": "Talk to a lot of different people at parties",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B30",
+        "question": "Radiate joy",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B31",
+        "question": "Am always busy",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B32",
+        "question": "Am always on the go",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B33",
+        "question": "Have a lot of fun",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B34",
+        "question": "Seek adventure", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B35",
+        "question": "Love excitement",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B36",
+        "question": "Enjoy wild flights of fantasy",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B37",
+        "question": "Only feel comfortable with friends",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B38",
+        "question": "Prefer to be alone",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B39",
+        "question": "Avoid crowds",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B40",
+        "question": "Keep others at a distance",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B41",
+        "question": "Am not bothered by difficult social situations",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B42",
+        "question": "Like to take it easy",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B43",
+        "question": "Act wild and crazy", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B44",
+        "question": "Am full of ideas",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B45",
+        "question": "Enjoy being reckless",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B46",
+        "question": "Go on binges",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B47",
+        "question": "Talk to a lot of people at parties",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B48",
+        "question": "Love a good fight",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B49",
+        "question": "Have a vivid imagination",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B50",
+        "question": "Believe in the importance of art",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B51",
+        "question": "Love to read challenging material",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B51",
+        "question": "Prefer variety to routine", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B52",
+        "question": "Enjoy wild flights of fantasy",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B53",
+        "question": "See beauty in things that others might not notice",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B54",
+        "question": "Love to daydream",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B55",
+        "question": "Avoid philosophical discussions",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B56",
+        "question": "Do not like poetry",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B57",
+        "question": "Have difficulty understanding abstract ideas",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B58",
+        "question": "Am not interested in theoretical discussions",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B59",
+        "question": "Am full of ideas",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B60",
+        "question": "Believe that there is no absolute right and wrong", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B61",
+        "question": "Think highly of myself",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B62",
+        "question": "Boast about my virtues",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B63",
+        "question": "Love life",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B64",
+        "question": "Believe in liberal political ideas",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B65",
+        "question": "Prefer to stick with things that I know",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B66",
+        "question": "Dislike changes",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B67",
+        "question": "Am attached to conventional ways",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B68",
+        "question": "Seek adventure",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B69",
+        "question": "Enjoy excitement", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B70",
+        "question": "Look at the bright side of life",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B71",
+        "question": "Act without thinking",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B72",
+        "question": "Trust others",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B73",
+        "question": "Sympathize with the homeless",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B74",
+        "question": "Believe that others have good intentions",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B75",
+        "question": "Feel others' emotions",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B76",
+        "question": "Am concerned about others",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B77",
+        "question": "Tell the truth",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B78",
+        "question": "Feel sympathy for those who are worse off than myself", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B79",
+        "question": "Trust what people say",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B80",
+        "question": "Am indifferent to the feelings of others",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B81",
+        "question": "Am not interested in other people's problems",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B82",
+        "question": "Don't understand people who get emotional",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B83",
+        "question": "Take no time for others",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B84",
+        "question": "Do not take advantage of others",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B85",
+        "question": "Cheat to get ahead",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B86",
+        "question": "Break rules",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B87",
+        "question": "Obstruct others' plans", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B88",
+        "question": "Leave my belongings around",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B89",
+        "question": "Break my promises",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B90",
+        "question": "Use others for my own ends",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B91",
+        "question": "Boast about my virtues",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B92",
+        "question": "Think highly of myself",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B93",
+        "question": "Love a good fight",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B94",
+        "question": "Have a high opinion of myself",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B95",
+        "question": "Take advantage of others",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B96",
+        "question": "Complete tasks successfully", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B97",
+        "question": "Like to tidy up",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B98",
+        "question": "Work hard",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B99",
+        "question": "Am always prepared",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B100",
+        "question": "Carry out my plans",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B101",
+        "question": "Handle tasks smoothly",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B102",
+        "question": "Excel in what I do",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "103",
+        "question": "Do more than what's expected of me",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "104",
+        "question": "Rarely overindulge",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B105",
+        "question": "Do just enough work to get by", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B106",
+        "question": "Easily resist temptations",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B107",
+        "question": "Am able to control my cravings",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B108",
+        "question": "Leave a mess in my room",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B109",
+        "question": "Waste my time",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B110",
+        "question": "Have difficulty starting tasks",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B111",
+        "question": "Prefer to stick with things that I know",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B112",
+        "question": "Dislike changes",
+        "options": [
+            "Very Inaccurate", 
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B113",
+        "question": "Make rash decisions",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B114",
+        "question": "Go on binges", 
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B115",
+        "question": "Act without thinking",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate", 
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B116",
+        "question": "Rush into things",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B117",
+        "question": "Take advantage of others",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate", 
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B118",
+        "question": "Break rules",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate",
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        },
+        {
+        "id": "B119",
+        "question": "Leave my belongings around",
+        "options": [
+            "Very Inaccurate",
+            "Moderately Inaccurate",
+            "Neither Accurate Nor Inaccurate", 
+            "Moderately Accurate",
+            "Very Accurate"
+        ]
+        }
+    ]

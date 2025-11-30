@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIA – Ancient Wisdom for Modern Careers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./template.css">
+</head>
+<body>
+    <!-- Navbar Start -->
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary navigation">
+            <input type="checkbox" id="navToggle" class="nav-toggle" aria-label="Toggle navigation menu">
+
+            <!-- Logo Section -->
+            <a href="index.html" class="brand" aria-label="SIA homepage">
+                <span class="brand__mark">
+                    <img src="./Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA golden logo">
+                </span>
+            </a>
+
+            <!-- Center Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html" aria-current="page">Home</a></li>
+                <li><a href="./About/About.html">About</a></li>
+                <li><a href="./Test/Test.html">Test</a></li>
+                <li><a href="./profile/profile.html">Profile</a></li>
+                <li><a href="./Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+            </ul>
+
+            <!-- Right Buttons Section -->
+            <div class="nav-auth" id="navAuth">
+                <a href="./sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
+                <a href="./sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+            </div>
+
+            <!-- Responsive Menu (Hamburger control + label for accessibility) -->
+            <label for="navToggle" class="hamburger" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <!-- Responsive Menu -->
+            <div class="nav-drawer" aria-hidden="true">
+                <!-- Center Navigation Links duplicated for the mobile drawer -->
+                <ul class="drawer-links">
+                    <li><a href="index.html" aria-current="page">Home</a></li>
+                    <li><a href="./About/About.html">About</a></li>
+                    <li><a href="./Test/Test.html">Test</a></li>
+                    <li><a href="./profile/profile.html">Profile</a></li>
+                    <li><a href="./Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+                </ul>
+                <!-- Right Buttons Section duplicated for stacked layout -->
+                <div class="drawer-auth">
+                    <a href="./sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
+                    <a href="./sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main style="padding-top: 80px;">
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-background"></div>
+            <div class="container">
+                <div class="hero-content fade-in">
+                    <div class="hero-logo-wrapper">
+                        <img src="./Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA Logo" class="hero-logo">
+                    </div>
+                    <p class="hero-slogan">Ancient Wisdom for Modern Careers</p>
+                    <p class="hero-description">
+                        Discover how ancient Egyptian knowledge meets modern innovation. At SIA, we combine the timeless intelligence of the past with today's technology — helping you learn, grow, and build a future powered by wisdom and skill.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#" class="btn btn-primary">Start the Test</a>
+                        <a href="#about" class="btn btn-secondary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About SIA Section -->
+        <section id="about" class="about">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2 class="section-title">About SIA</h2>
+                    <div class="title-underline"></div>
+                </div>
+                <div class="about-content fade-in">
+                    <p class="about-description">
+                        SIA (Self Intelligence Analyzer) is a platform that guides you to understand your personality traits, learning style, and professional potential. By combining personality analysis with curated learning resources, SIA empowers you to make informed decisions for your personal and professional growth.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2 class="section-title">Features</h2>
+                    <div class="title-underline"></div>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                        <h3 class="feature-title">Personality Assessment</h3>
+                        <p class="feature-description">Interactive test to evaluate your traits and learning style.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                        <h3 class="feature-title">Dynamic Dashboard</h3>
+                        <p class="feature-description">Visualize insights and key takeaways from your analysis.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon"><i class="fas fa-book"></i></div>
+                        <h3 class="feature-title">Curated Resources</h3>
+                        <p class="feature-description">Access personalized courses, books, YouTube channels, and roadmap.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon"><i class="fas fa-user"></i></div>
+                        <h3 class="feature-title">User Accounts</h3>
+                        <p class="feature-description">Secure login and profile management.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon"><i class="fas fa-cog"></i></div>
+                        <h3 class="feature-title">Admin Tools</h3>
+                        <p class="feature-description">Manage assessments, users, and reports (for administrators).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How to Start Section -->
+        <section id="how-to-start" class="how-to-start">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2 class="section-title">How to Start</h2>
+                    <div class="title-underline"></div>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card fade-in">
+                        <div class="step-number">01</div>
+                        <h3 class="step-title">Sign Up</h3>
+                        <p class="step-description">Create your account to start your journey.</p>
+                    </div>
+                    <div class="step-card fade-in">
+                        <div class="step-number">02</div>
+                        <h3 class="step-title">Take the Test</h3>
+                        <p class="step-description">Complete the personality assessment.</p>
+                    </div>
+                    <div class="step-card fade-in">
+                        <div class="step-number">03</div>
+                        <h3 class="step-title">Review Insights</h3>
+                        <p class="step-description">Explore your dashboard for tailored recommendations.</p>
+                    </div>
+                    <div class="step-card fade-in">
+                        <div class="step-number">04</div>
+                        <h3 class="step-title">Follow Your Roadmap</h3>
+                        <p class="step-description">Learn, grow, and track your progress.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="cta">
+            <div class="container">
+                <div class="cta-content fade-in">
+                    <h2 class="cta-title">Ready to unlock your potential?</h2>
+                    <div class="cta-buttons">
+                        <a href="#" class="btn btn-primary">Start the Test</a>
+                        <a href="#features" class="btn btn-secondary">Explore Resources</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer__brand">
+            <img src="./Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
+            <div>
+                <p class="footer__title">SIA</p>
+                <p class="footer__mission">We connect ancient wisdom with modern career paths.</p>
+            </div>
+        </div>
+        <div class="footer__nav" aria-label="Footer navigation">
+            <a href="index.html">Home</a>
+            <a href="./About/About.html">About</a>
+            <a href="./Test/Test.html">Test</a>
+            <a href="./profile/profile.html">Profile</a>
+            <a href="./Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a>
+        </div>
+        <p class="footer__copy">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+    </footer>
+
+    <canvas id="particles"></canvas>
+    <script src="./main.js"></script>
+<!---------------------------------------------------------------------------------------------------------->
+        <!-- Firebase SDK -->
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/12.6.0/firebase-app-compat.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/12.6.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-database-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-functions-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-messaging-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-analytics-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-remote-config-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-performance-compat.js"></script>
+    <!-- 
+        initialize the SDK after all desired features are loaded, set useEmulator to false
+        to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+<!----------------------------------------------------------------------------------------------------------------->
+</body>
+</html>

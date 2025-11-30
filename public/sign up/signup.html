@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - SIA – Ancient Wisdom for Modern Careers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="signup.css">
+    <link rel="stylesheet" href="../template.css">
+</head>
+<body>
+    <!-- Navbar Start -->
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary navigation">
+            <input type="checkbox" id="navToggle" class="nav-toggle" aria-label="Toggle navigation menu">
+
+            <!-- Logo Section -->
+            <a href="../index.html" class="brand" aria-label="SIA homepage">
+                <span class="brand__mark">
+                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA golden logo">
+                </span>
+            </a>
+
+            <!-- Center Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../About/About.html">About</a></li>
+                <li><a href="../Test/Test.html">Test</a></li>
+                <li><a href="../profile/profile.html">Profile</a></li>
+                <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+            </ul>
+
+            <!-- Right Buttons Section -->
+            <div class="nav-auth" id="navAuth">
+                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
+                <a href="./signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+            </div>
+
+            <!-- Responsive Menu (Hamburger control + label for accessibility) -->
+            <label for="navToggle" class="hamburger" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <!-- Responsive Menu -->
+            <div class="nav-drawer" aria-hidden="true">
+                <!-- Center Navigation Links duplicated for the mobile drawer -->
+                <ul class="drawer-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../About/About.html">About</a></li>
+                    <li><a href="../Test/Test.html">Test</a></li>
+                    <li><a href="../profile/profile.html">Profile</a></li>
+                    <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+                </ul>
+                <!-- Right Buttons Section duplicated for stacked layout -->
+                <div class="drawer-auth">
+                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
+                    <a href="./signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main style="padding-top: 80px;">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="hero-content fade-in">
+                    <h1 class="hero-title">Welcome!</h1>
+                    <p class="hero-subtitle">Please sign in or create an account to continue your journey with SIA.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sign Up Form Section -->
+        <section class="form-section">
+            <div class="container">
+                <div class="form-wrapper fade-in" id="signUpForm">
+                    <div class="form-header">
+                        <h2 class="form-title">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </h2>
+                    </div>
+
+                    <form id="signUpFormElement" class="auth-form">
+                        <div class="form-group">
+                            <label for="fullName" class="form-label">
+                                <i class="fas fa-user"></i> Full Name
+                            </label>
+                            <input 
+                                type="text" 
+                                id="fullName" 
+                                name="fullName" 
+                                class="form-input" 
+                                placeholder="Enter your full name"
+                                required
+                            >
+                            <span class="error-message" id="fullNameError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                class="form-input" 
+                                placeholder="Enter your email address"
+                                required
+                            >
+                            <span class="error-message" id="emailError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock"></i> Password
+                            </label>
+                            <div class="password-wrapper">
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    class="form-input" 
+                                    placeholder="Create a password"
+                                    required
+                                >
+                                <button type="button" class="password-toggle" id="passwordToggle">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <span class="error-message" id="passwordError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">
+                                <i class="fas fa-lock"></i> Confirm Password
+                            </label>
+                            <div class="password-wrapper">
+                                <input 
+                                    type="password" 
+                                    id="confirmPassword" 
+                                    name="confirmPassword" 
+                                    class="form-input" 
+                                    placeholder="Confirm your password"
+                                    required
+                                >
+                                <button type="button" class="password-toggle" id="confirmPasswordToggle">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <span class="error-message" id="confirmPasswordError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dateOfBirth" class="form-label">
+                                <i class="fas fa-calendar"></i> Date of Birth
+                            </label>
+                            <input 
+                                type="date" 
+                                id="dateOfBirth" 
+                                name="dateOfBirth" 
+                                class="form-input" 
+                                required
+                            >
+                            <span class="error-message" id="dateOfBirthError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender" class="form-label">
+                                <i class="fas fa-venus-mars"></i> Gender
+                            </label>
+                            <select id="gender" name="gender" class="form-select" required>
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                            <span class="error-message" id="genderError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="education" class="form-label">
+                                <i class="fas fa-graduation-cap"></i> Education
+                            </label>
+                            <select id="education" name="education" class="form-select" required>
+                                <option value="">Select education level</option>
+                                <option value="high-school">High School</option>
+                                <option value="diploma">Diploma</option>
+                                <option value="bachelor">Bachelor's Degree</option>
+                                <option value="master">Master's Degree</option>
+                                <option value="phd">PhD</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div class="education-other-wrapper" id="educationOtherWrapper" style="display: none;">
+                                <input 
+                                    type="text" 
+                                    id="educationOther" 
+                                    name="educationOther" 
+                                    class="form-input" 
+                                    placeholder="Please specify"
+                                    style="margin-top: 1rem;"
+                                >
+                            </div>
+                            <span class="error-message" id="educationError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="studentStatus" class="form-label">
+                                <i class="fas fa-user-graduate"></i> Student Status
+                            </label>
+                            <select id="studentStatus" name="studentStatus" class="form-select" required>
+                                <option value="">Select status</option>
+                                <option value="student">Student</option>
+                                <option value="graduate">Graduate</option>
+                            </select>
+                            <span class="error-message" id="studentStatusError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="avatarUpload" class="form-label">
+                                <i class="fas fa-image"></i> Profile Photo
+                            </label>
+                            <input 
+                                type="file" 
+                                id="avatarUpload" 
+                                name="avatar" 
+                                class="form-input" 
+                                accept="image/*"
+                            >
+                            <small class="text-muted d-block mt-1">Upload your profile photo (optional)</small>
+                            <span class="error-message" id="avatarError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="agreeTerms" required>
+                                <span>I agree to <a href="../Privacy-Terms.html" target="_blank" class="terms-link">Privacy Policy and Terms of Use</a></span>
+                            </label>
+                            <span class="error-message" id="agreeTermsError"></span>
+                        </div>
+
+                        <div class="form-error" id="signUpFormError"></div>
+
+                        <button type="submit" class="form-btn">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </button>
+                    </form>
+
+                    <div class="form-footer">
+                        <p>Already have an account? <a href="../sign in/signin.html" class="toggle-link">Sign In</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer__brand">
+            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
+            <div>
+                <p class="footer__title">SIA</p>
+                <p class="footer__mission">We connect ancient wisdom with modern career paths.</p>
+            </div>
+        </div>
+        <div class="footer__nav" aria-label="Footer navigation">
+            <a href="../index.html">Home</a>
+            <a href="../About/About.html">About</a>
+            <a href="../Test/Test.html">Test</a>
+            <a href="../profile/profile.html">Profile</a>
+            <a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a>
+        </div>
+        <p class="footer__copy">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+    </footer>
+    
+    <canvas id="particles"></canvas>
+    
+    <!-- Firebase SDK v9 compat -->
+    <!-- Firebase App -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Storage -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="../firebase-config.js"></script>
+    
+    <!-- Sign Up Script -->
+    <script src="signup.js"></script>
+
+</body>
+</html>

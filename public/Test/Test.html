@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIA - Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../template.css">
+    <link rel="stylesheet" href="Test.css">
+</head>
+<body>
+    <!-- Navbar Start -->
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary navigation">
+            <input type="checkbox" id="navToggle" class="nav-toggle" aria-label="Toggle navigation menu">
+
+            <!-- Logo Section -->
+            <a href="../index.html" class="brand" aria-label="SIA homepage">
+                <span class="brand__mark">
+                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA golden logo">
+                </span>
+            </a>
+
+            <!-- Center Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../About/About.html">About</a></li>
+                <li><a href="Test.html" aria-current="page">Test</a></li>
+                <li><a href="../profile/profile.html">Profile</a></li>
+                <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+            </ul>
+
+            <!-- Right Buttons Section REMOVED -->
+
+            <!-- Responsive Menu (Hamburger control) -->
+            <label for="navToggle" class="hamburger" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <!-- Responsive Menu -->
+            <div class="nav-drawer" aria-hidden="true">
+                <ul class="drawer-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../About/About.html">About</a></li>
+                    <li><a href="Test.html" aria-current="page">Test</a></li>
+                    <li><a href="../profile/profile.html">Profile</a></li>
+                    <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+                </ul>
+                <!-- Drawer Auth Buttons REMOVED -->
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="test-page">
+        <h1 class="page-title">Personality Assessment</h1>
+
+        <!-- 1. Selection View -->
+        <div id="selectionView" class="test-section active">
+            <div class="test-cards-container">
+                <!-- Big Five Card -->
+                <div class="test-card" data-test="Big-Five">
+                    <div class="card-image">
+                        <img src="../Images/Test/Big Five.svg" alt="Big Five Test">
+                    </div>
+                    <h2 class="card-title">Big Five Test</h2>
+                    <p class="card-desc">Understand your personality traits based on the Five-Factor Model: Openness, Conscientiousness, Extraversion, Agreeableness, and Neuroticism.</p>
+                    <button class="btn-start">Start Test</button>
+                </div>
+
+                <!-- Holland Codes Card -->
+                <div class="test-card" data-test="Holland-codes">
+                    <div class="card-image">
+                        <img src="../Images/Test/Holland codes.svg" alt="Holland Codes Test">
+                    </div>
+                    <h2 class="card-title">Holland Codes</h2>
+                    <p class="card-desc">Discover your career interests and ideal work environments based on the RIASEC model: Realistic, Investigative, Artistic, Social, Enterprising, and Conventional.</p>
+                    <button class="btn-start">Start Test</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Test View -->
+        <div id="testView" class="test-section hidden">
+            <div class="test-header">
+                <div class="progress-container">
+                    <div class="progress-text">Question <span id="currentQuestionNum">1</span> of <span id="totalQuestions">30</span></div>
+                    <div class="progress-bar-bg">
+                        <div id="progressBar" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+                <div class="timer-container">
+                    <span class="timer-icon"><i class="far fa-clock"></i></span>
+                    <span id="timerDisplay">00:00</span>
+                </div>
+            </div>
+
+            <div id="questionContainer" class="question-container">
+                <h2 id="questionText" class="question-text">Question text goes here...</h2>
+                <div id="optionsContainer" class="options-container">
+                    <!-- Options will be injected here -->
+                </div>
+            </div>
+
+            <div class="test-controls">
+                <button id="prevBtn" class="btn-control btn-prev" disabled>Previous</button>
+                <button id="nextBtn" class="btn-control btn-next" style="display: none;">Next</button>
+            </div>
+        </div>
+
+        <!-- 3. Result View -->
+        <div id="resultView" class="test-section hidden">
+            <div class="completion-card">
+                <div class="completion-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <h1>Test Completed!</h1>
+                <p>You have answered all questions.</p>
+                
+                <div class="time-stat">
+                    <span>Total Time:</span>
+                    <span id="finalTime">00:00</span>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="reviewBtn" class="btn-secondary">Review Answers</button>
+                    <button id="finishBtn" class="btn-primary">Finish & Save</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer__brand">
+            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
+            <div>
+                <p class="footer__title">SIA</p>
+                <p class="footer__mission">We connect ancient wisdom with modern career paths.</p>
+            </div>
+        </div>
+        <div class="footer__nav" aria-label="Footer navigation">
+            <a href="../index.html">Home</a>
+            <a href="../About/About.html">About</a>
+            <a href="Test.html">Test</a>
+            <a href="../profile/profile.html">Profile</a>
+            <a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a>
+        </div>
+        <p class="footer__copy">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+    </footer>
+
+    <script type="module" src="Test.js"></script>
+</body>
+</html>
