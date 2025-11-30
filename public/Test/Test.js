@@ -1,7 +1,7 @@
-import { auth } from "../firebase.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+// Test.js - Refactored for Firebase Compat SDK
+// Includes JSON Validation, Retake Prevention, and Review Mode
 
-// --- State Management ---
+// State Management
 const state = {
     currentTest: null, // 'Big-Five' or 'Holland-codes'
     questions: [],
@@ -11,10 +11,11 @@ const state = {
     timerInterval: null,
     elapsedSeconds: 0,
     isTimerRunning: false,
-    maxReachedIndex: 0 // Track furthest progress to manage "Review" vs "New"
+    maxReachedIndex: 0, // Track furthest progress to manage "Review" vs "New"
+    isReviewMode: false // Flag for Review Mode
 };
 
-// --- DOM Elements ---
+// DOM Elements
 const elements = {
     selectionView: document.getElementById('selectionView'),
     testView: document.getElementById('testView'),
@@ -24,39 +25,68 @@ const elements = {
     questionText: document.getElementById('questionText'),
     optionsContainer: document.getElementById('optionsContainer'),
     prevBtn: document.getElementById('prevBtn'),
-    nextBtn: document.getElementById('nextBtn'), // Re-added for read-only nav
+    nextBtn: document.getElementById('nextBtn'),
     currentQuestionNum: document.getElementById('currentQuestionNum'),
     totalQuestions: document.getElementById('totalQuestions'),
     progressBar: document.getElementById('progressBar'),
     timerDisplay: document.getElementById('timerDisplay'),
     finalTime: document.getElementById('finalTime'),
     finishBtn: document.getElementById('finishBtn'),
-    reviewBtn: document.getElementById('reviewBtn'), // Re-added logic for this if needed
+    reviewBtn: document.getElementById('reviewBtn'),
     navAuth: document.getElementById('navAuth')
 };
 
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait for Firebase to initialize
+    setTimeout(() => {
+        if (window.firebase) {
+            init();
+        } else {
+            console.error("Firebase not initialized!");
+            alert("System error: Firebase not connected.");
+        }
+    }, 1000);
+});
+
+function init() {
+    checkAuth();
+    setupEventListeners();
+    checkUrlParams(); // Check for Review Mode
+}
+
 // --- Authentication Check ---
 function checkAuth() {
-    onAuthStateChanged(auth, (user) => {
+    firebase.auth().onAuthStateChanged((user) => {
         if (!user) {
+            console.log("User not logged in, redirecting...");
             window.location.href = "../sign in/signin.html";
+        } else {
+            console.log("User authenticated:", user.email);
         }
     });
 }
 
-// --- Initialization ---
-function init() {
-    checkAuth();
-    setupEventListeners();
+function checkUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const testType = urlParams.get('test');
+
+    if (mode === 'review' && testType) {
+        startReview(testType);
+    }
 }
 
 function setupEventListeners() {
     // Test Selection
     elements.testCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const testType = card.dataset.test;
-            startTest(testType);
-        });
+        const startBtn = card.querySelector('.btn-start');
+        if (startBtn) {
+            startBtn.addEventListener('click', () => {
+                const testType = card.dataset.test;
+                startTest(testType);
+            });
+        }
     });
 
     // Navigation
@@ -72,10 +102,9 @@ function setupEventListeners() {
         elements.finishBtn.addEventListener('click', finishTest);
     }
     
-    // Review Button
-    const reviewBtn = document.getElementById('reviewBtn');
-    if (reviewBtn) {
-        reviewBtn.addEventListener('click', reviewAnswers);
+    // Review Button (from Result View)
+    if (elements.reviewBtn) {
+        elements.reviewBtn.addEventListener('click', reviewAnswersFromResults);
     }
 
     // Visibility Change (Pause Timer)
@@ -85,34 +114,135 @@ function setupEventListeners() {
 // --- Test Logic ---
 async function startTest(testType) {
     state.currentTest = testType;
-    
+    state.isReviewMode = false;
+    console.log("Starting test:", testType);
+
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        alert("Please sign in to start the test.");
+        return;
+    }
+
+    const db = firebase.firestore();
+
+    // 1. Check if user already completed this test
     try {
-        const response = await fetch(`../${testType}.json`);
-        if (!response.ok) throw new Error(`Failed to load ${testType} questions`);
-        
-        state.questions = await response.json();
-        
-        // Reset State
+        const userTestRef = db.collection("users").doc(user.uid).collection("tests").doc(testType);
+        const userTestSnap = await userTestRef.get();
+
+        if (userTestSnap.exists) {
+            const confirmReview = confirm("You have already completed this test. Would you like to review your answers instead?");
+            if (confirmReview) {
+                startReview(testType);
+            }
+            return; // Stop here, do not start new test
+        }
+    } catch (error) {
+        console.error("Error checking previous results:", error);
+        // Continue if check fails? Or block? Safer to block or warn.
+        // Let's continue but log error.
+    }
+
+    // 2. Fetch Test Data
+    db.collection("tests").doc(testType).get()
+        .then((doc) => {
+            if (!doc.exists) {
+                throw new Error(`Test "${testType}" not found in Firestore.`);
+            }
+            
+            const data = doc.data();
+            
+            // 3. JSON Validation
+            if (!data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
+                throw new Error("Invalid test data format: 'questions' array missing or empty.");
+            }
+
+            state.questions = data.questions;
+            
+            // Reset State
+            state.currentQuestionIndex = 0;
+            state.maxReachedIndex = 0;
+            state.answers = {};
+            state.elapsedSeconds = 0;
+            
+            // Switch View
+            elements.selectionView.classList.remove('active');
+            elements.selectionView.classList.add('hidden');
+            elements.testView.classList.remove('hidden');
+            setTimeout(() => elements.testView.classList.add('active'), 50);
+            
+            // Initialize UI
+            elements.totalQuestions.textContent = state.questions.length;
+            renderQuestion();
+            startTimer();
+        })
+        .catch((error) => {
+            console.error("Error starting test:", error);
+            alert("Failed to load the test. Please try again later.");
+        });
+}
+
+async function startReview(testType) {
+    state.currentTest = testType;
+    state.isReviewMode = true;
+    console.log("Starting review:", testType);
+
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        // If called from URL param and auth not ready yet, wait/retry logic is handled by checkAuth redirect
+        // But here we might be in the flow.
+        // checkAuth handles redirect.
+        return;
+    }
+
+    const db = firebase.firestore();
+
+    try {
+        // 1. Fetch Questions
+        const testDoc = await db.collection("tests").doc(testType).get();
+        if (!testDoc.exists) {
+            alert("Test data not found.");
+            return;
+        }
+        const testData = testDoc.data();
+        if (!testData.questions || !Array.isArray(testData.questions)) {
+            alert("Invalid test data.");
+            return;
+        }
+        state.questions = testData.questions;
+
+        // 2. Fetch User Results
+        const userTestDoc = await db.collection("users").doc(user.uid).collection("tests").doc(testType).get();
+        if (!userTestDoc.exists) {
+            alert("No results found for this test.");
+            window.location.href = "Test.html"; // Go back to selection
+            return;
+        }
+        const userData = userTestDoc.data();
+        state.answers = userData.result || {};
+        state.elapsedSeconds = userData.timeSpent || 0;
+
+        // 3. Setup Review UI
         state.currentQuestionIndex = 0;
-        state.maxReachedIndex = 0;
-        state.answers = {};
-        state.elapsedSeconds = 0;
         
-        // Switch View
         elements.selectionView.classList.remove('active');
         elements.selectionView.classList.add('hidden');
-        
         elements.testView.classList.remove('hidden');
         setTimeout(() => elements.testView.classList.add('active'), 50);
-        
-        // Initialize UI
+
         elements.totalQuestions.textContent = state.questions.length;
-        renderQuestion();
-        startTimer();
         
+        // Hide Timer or Show "Review Mode"
+        if (elements.timerDisplay) {
+            elements.timerDisplay.textContent = "Review Mode";
+        }
+        
+        renderQuestion();
+        // Do NOT start timer
+
     } catch (error) {
-        console.error("Error starting test:", error);
-        alert("Failed to load the test. Please try again.");
+        console.error("Error starting review:", error);
+        alert("Failed to load review mode.");
     }
 }
 
@@ -141,14 +271,19 @@ function renderQuestion() {
             btn.classList.add('selected');
         }
         
-        // Read-Only Logic: If answer exists, disable interaction
-        if (hasAnswer) {
-            btn.style.pointerEvents = 'none';
+        // Review Mode / Read-Only Logic
+        if (state.isReviewMode) {
+            btn.style.pointerEvents = 'none'; // Disable clicking
             if (state.answers[question.id] !== option) {
-                btn.style.opacity = '0.5';
+                btn.style.opacity = '0.5'; // Dim non-selected
             }
         } else {
-            // Click handler for Auto-Next (only if not answered)
+            // Normal Test Mode
+            if (hasAnswer) {
+                if (state.answers[question.id] === option) {
+                    btn.classList.add('selected');
+                }
+            } 
             btn.addEventListener('click', () => selectAnswer(question.id, option));
         }
         
@@ -160,13 +295,21 @@ function renderQuestion() {
         elements.prevBtn.disabled = state.currentQuestionIndex === 0;
     }
 
-    // Update Next Button (Only visible if answer exists)
+    // Update Next Button
     if (elements.nextBtn) {
-        if (hasAnswer) {
-            elements.nextBtn.style.display = 'block';
-            elements.nextBtn.disabled = false;
+        elements.nextBtn.style.display = 'block';
+        // In review mode, always enabled. In test mode, enabled if answered.
+        elements.nextBtn.disabled = state.isReviewMode ? false : !hasAnswer;
+        
+        // If last question
+        if (state.currentQuestionIndex === state.questions.length - 1) {
+             if (state.isReviewMode) {
+                 elements.nextBtn.textContent = "Back to Profile";
+             } else {
+                 elements.nextBtn.textContent = "Finish";
+             }
         } else {
-            elements.nextBtn.style.display = 'none';
+            elements.nextBtn.textContent = "Next";
         }
     }
     
@@ -176,6 +319,8 @@ function renderQuestion() {
 }
 
 function selectAnswer(questionId, answer) {
+    if (state.isReviewMode) return; // Double check
+
     // Save to state
     state.answers[questionId] = answer;
     
@@ -187,29 +332,37 @@ function selectAnswer(questionId, answer) {
     // Save to local storage
     saveProgress();
     
-    // Visual feedback (highlight selected)
+    // Visual feedback
     const buttons = elements.optionsContainer.querySelectorAll('.option-btn');
     buttons.forEach(btn => {
         if (btn.textContent === answer) {
             btn.classList.add('selected');
         } else {
-            btn.style.pointerEvents = 'none'; // Disable other options
-            btn.style.opacity = '0.5'; // Dim others
+            btn.classList.remove('selected');
         }
     });
 
+    // Enable Next button
+    if (elements.nextBtn) {
+        elements.nextBtn.disabled = false;
+    }
+
     // Auto-Next with Animation
     setTimeout(() => {
-        // 1. Fade out current question
-        elements.questionContainer.classList.remove('fade-in');
-        elements.questionContainer.classList.add('fade-out');
-        
-        // 2. Wait for fade out, then load next
-        setTimeout(() => {
-            nextQuestion();
-        }, 300); // Match CSS transition duration (0.3s)
-        
-    }, 400); // Short delay to see the selection
+        if (state.currentQuestionIndex < state.questions.length - 1) {
+            // Fade out
+            elements.questionContainer.classList.remove('fade-in');
+            elements.questionContainer.classList.add('fade-out');
+            
+            setTimeout(() => {
+                nextQuestion();
+            }, 300);
+        } else {
+            // Last question - Wait for user to click Finish manually or auto-finish?
+            // Usually auto-finish is risky if they want to change.
+            // Let's just stay here.
+        }
+    }, 500);
 }
 
 function nextQuestion() {
@@ -217,15 +370,17 @@ function nextQuestion() {
         state.currentQuestionIndex++;
         renderQuestion();
     } else {
-        // Last question submitted
-        completeTest();
+        if (state.isReviewMode) {
+            // Go back to profile
+            window.location.href = "../profile/profile.html";
+        } else {
+            completeTest();
+        }
     }
 }
 
 function prevQuestion() {
     if (state.currentQuestionIndex > 0) {
-        // Animation for previous? 
-        // Let's just do the same fade out/in for consistency
         elements.questionContainer.classList.remove('fade-in');
         elements.questionContainer.classList.add('fade-out');
         
@@ -238,7 +393,7 @@ function prevQuestion() {
 
 // --- Timer Logic ---
 function startTimer() {
-    if (state.isTimerRunning) return;
+    if (state.isTimerRunning || state.isReviewMode) return;
     
     state.isTimerRunning = true;
     state.startTime = Date.now() - (state.elapsedSeconds * 1000);
@@ -258,7 +413,9 @@ function stopTimer() {
 function updateTimerDisplay() {
     const minutes = Math.floor(state.elapsedSeconds / 60);
     const seconds = state.elapsedSeconds % 60;
-    elements.timerDisplay.textContent = `${pad(minutes)}:${pad(seconds)}`;
+    if (elements.timerDisplay) {
+        elements.timerDisplay.textContent = `${pad(minutes)}:${pad(seconds)}`;
+    }
 }
 
 function pad(num) {
@@ -266,6 +423,8 @@ function pad(num) {
 }
 
 function handleVisibilityChange() {
+    if (state.isReviewMode) return;
+
     if (document.hidden) {
         stopTimer();
     } else {
@@ -277,6 +436,8 @@ function handleVisibilityChange() {
 
 // --- Completion & Storage ---
 function saveProgress() {
+    if (state.isReviewMode) return;
+
     const progress = {
         testType: state.currentTest,
         answers: state.answers,
@@ -303,12 +464,17 @@ function completeTest() {
     const minutes = Math.floor(state.elapsedSeconds / 60);
     const seconds = state.elapsedSeconds % 60;
     elements.finalTime.textContent = `${minutes}m ${seconds}s`;
-    
-
 }
 
-function reviewAnswers() {
-    // Go back to test view, first question
+function reviewAnswersFromResults() {
+    // This is called immediately after finishing the test, before saving?
+    // Or after saving?
+    // The requirement says "Review Answers Mode... Allow the user to review answers after completing a test."
+    // If they click "Review Answers" from the result card, we just switch back to test view in review mode.
+    
+    state.isReviewMode = true;
+    
+    // Go back to test view
     elements.resultView.classList.remove('active');
     elements.resultView.classList.add('hidden');
     
@@ -317,19 +483,43 @@ function reviewAnswers() {
     
     state.currentQuestionIndex = 0;
     renderQuestion(); 
-    // Timer should probably NOT resume if just reviewing? 
-    // Requirement 4 says "Ends when the user finishes the last question".
-    // So timer stops. Review is read-only.
 }
 
 function finishTest() {
-    // Final save or cleanup
-    localStorage.removeItem('sia_test_progress'); // Clear temp progress
-    
-    // Redirect or show final message
-    alert("Test data saved locally! (Ready for Firestore integration)");
-    window.location.href = "../index.html"; // Return home
+    stopTimer();
+    localStorage.removeItem('sia_test_progress');
+
+    const totalTime = state.elapsedSeconds;
+    const finalResult = state.answers;
+    const currentTestType = state.currentTest;
+
+    saveTestResult(currentTestType, finalResult, totalTime);
 }
 
-// Start
-init();
+function saveTestResult(testType, resultData, totalTime) {
+    const user = firebase.auth().currentUser;
+
+    if (!user) {
+        alert("You must be logged in!");
+        return;
+    }
+
+    const db = firebase.firestore();
+    const testRef = db.collection("users").doc(user.uid).collection("tests").doc(testType);
+
+    testRef.set({
+        result: resultData,
+        timeSpent: totalTime,
+        finishedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+        console.log("Test result saved successfully!");
+        alert("Test data saved successfully!");
+        window.location.href = "../profile/profile.html";
+    })
+    .catch((error) => {
+        console.error("Error saving test result:", error);
+        alert("Failed to save test results. Try again.");
+    });
+}

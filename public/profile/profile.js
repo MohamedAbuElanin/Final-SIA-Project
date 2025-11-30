@@ -11,44 +11,44 @@ const state = {
 
 // Route Guard: Check Firebase Authentication state
 document.addEventListener('DOMContentLoaded', () => {
-    firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
-            // User is not authenticated, clear localStorage and redirect to Sign In page
-            localStorage.clear();
-            window.location.href = '../sign in/signin.html';
+    // Wait for Firebase to initialize
+    setTimeout(() => {
+        if (!window.firebase) {
+            console.error("Firebase not initialized!");
             return;
         }
-        
-        // User is authenticated, verify token and initialize page
-        user.getIdToken().then((token) => {
-            // Update token in localStorage
-            localStorage.setItem("authToken", token);
-            localStorage.setItem("uid", user.uid);
+
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                // User is not authenticated, clear localStorage and redirect to Sign In page
+                localStorage.clear();
+                window.location.href = '../sign in/signin.html';
+                return;
+            }
             
-            // Initialize page
-            initHamburgerMenu();
-            cacheElements();
-            bindEvents();
-            loadUserData(user); // Load user data from Firestore
-            loadPersonalityResults(); // BACK-END DEVELOPER WILL HANDLE THIS PART
-            loadCareerRecommendations(); // BACK-END DEVELOPER WILL HANDLE THIS PART
-            loadSavedJobs(); // BACK-END DEVELOPER WILL HANDLE THIS PART
-            loadActivityLog(); // BACK-END DEVELOPER WILL HANDLE THIS PART
-        }).catch((error) => {
-            console.error('Error getting token:', error);
-            // Token expired or invalid, redirect to sign in
-            localStorage.clear();
-            window.location.href = '../sign in/signin.html';
+            // User is authenticated, verify token and initialize page
+            user.getIdToken().then((token) => {
+                // Update token in localStorage
+                localStorage.setItem("authToken", token);
+                localStorage.setItem("uid", user.uid);
+                
+                // Initialize page
+                initHamburgerMenu();
+                cacheElements();
+                bindEvents();
+                loadUserData(user); // Load user data from Firestore
+                loadPersonalityResults(user); // Load Test Results
+                loadCareerRecommendations(); // BACK-END DEVELOPER WILL HANDLE THIS PART
+                loadSavedJobs(); // BACK-END DEVELOPER WILL HANDLE THIS PART
+                loadActivityLog(); // BACK-END DEVELOPER WILL HANDLE THIS PART
+            }).catch((error) => {
+                console.error('Error getting token:', error);
+                // Token expired or invalid, redirect to sign in
+                localStorage.clear();
+                window.location.href = '../sign in/signin.html';
+            });
         });
-    });
-    
-    // Monitor auth state changes (token expiration)
-    firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
-            localStorage.clear();
-            window.location.href = '../sign in/signin.html';
-        }
-    });
+    }, 1000);
 });
 
 const refs = {};
@@ -82,6 +82,10 @@ function cacheElements() {
     refs.newPasswordInput = document.getElementById('newPasswordInput');
     refs.confirmNewPasswordInput = document.getElementById('confirmNewPasswordInput');
     refs.changePasswordModal = document.getElementById('changePasswordModal');
+    
+    // Test Result Cards
+    refs.bigFiveCard = document.querySelector('#personality-results .col-md-6:nth-child(1) .card-body');
+    refs.hollandCard = document.querySelector('#personality-results .col-md-6:nth-child(2) .card-body');
 }
 
 function bindEvents() {
@@ -133,7 +137,6 @@ function loadUserData(user) {
     state.isLoading = true;
     
     // Set default avatar based on gender (before Firestore loads)
-    // Default to male if gender is missing
     let defaultAvatar = '../assets/male.svg';
     
     // Load user data from Firestore
@@ -149,10 +152,10 @@ function loadUserData(user) {
                 } else if (userGender === 'female') {
                     defaultAvatar = '../assets/female.svg';
                 } else {
-                    defaultAvatar = '../assets/male.svg'; // Default to male if gender missing
+                    defaultAvatar = '../assets/male.svg';
                 }
                 
-                // Store user data (only from Firestore, no Auth provider data)
+                // Store user data
                 state.userData = {
                     fullName: userData.fullName || '',
                     email: userData.email || '',
@@ -162,26 +165,20 @@ function loadUserData(user) {
                     studentStatus: userData.studentStatus || ''
                 };
 
-                // Avatar logic: Use Firestore avatar if exists, otherwise use default based on gender
+                // Avatar logic
                 let avatar = userData.avatar;
-                
-                // If avatar exists and is a Storage URL (starts with http/https), use it
                 if (avatar && (avatar.startsWith('http://') || avatar.startsWith('https://'))) {
-                    // Use Storage URL directly
+                    // Use Storage URL
                 } else if (avatar && (avatar === '../assets/male.svg' || avatar === '../assets/female.svg')) {
-                    // If it's still the default SVG, use default based on gender
                     avatar = defaultAvatar;
                 } else if (!avatar) {
-                    // No avatar in Firestore, use default based on gender
                     avatar = defaultAvatar;
                 }
-                // If avatar is a relative path that's not the default, keep it as is
                 
                 // Set profile photo
                 if (refs.profilePhoto) {
                     refs.profilePhoto.src = avatar;
                     refs.profilePhoto.alt = 'User avatar';
-                    // Add smooth fade-in animation
                     refs.profilePhoto.style.opacity = '0';
                     setTimeout(() => {
                         refs.profilePhoto.style.transition = 'opacity 0.3s ease-in';
@@ -189,24 +186,23 @@ function loadUserData(user) {
                     }, 100);
                 }
 
-                // Update display elements with REAL Firestore data (empty if not set)
+                // Update display elements
                 if (refs.userNameDisplay) refs.userNameDisplay.textContent = state.userData.fullName || '';
                 if (refs.userEmailDisplay) refs.userEmailDisplay.textContent = state.userData.email || '';
                 if (refs.userNameInput) refs.userNameInput.value = state.userData.fullName || '';
                 if (refs.userEmailInput) refs.userEmailInput.value = state.userData.email || '';
 
-                // Update form fields with REAL Firestore data (empty if not set, no placeholders)
+                // Update form fields
                 if (refs.fullNameInput) refs.fullNameInput.value = state.userData.fullName || '';
                 if (refs.emailInput) refs.emailInput.value = state.userData.email || '';
                 if (refs.dobInput) refs.dobInput.value = state.userData.dateOfBirth || '';
                 
-                // Handle education field - check if it's a standard option or "other"
+                // Handle education field
                 if (refs.educationSelect) {
                     const educationOptions = ['High School', 'Bachelor', 'Master', 'PhD', 'Other'];
                     if (educationOptions.includes(state.userData.education)) {
                         refs.educationSelect.value = state.userData.education;
                     } else if (state.userData.education) {
-                        // If education is not a standard option, it's a custom "Other" value
                         refs.educationSelect.value = 'Other';
                         if (refs.educationOtherInput) {
                             refs.educationOtherInput.value = state.userData.education;
@@ -216,7 +212,7 @@ function loadUserData(user) {
                     }
                 }
                 
-                // Set student status (handle both 'student'/'graduate' and 'Student'/'Graduate')
+                // Set student status
                 if (refs.statusStudent && refs.statusGraduate) {
                     refs.statusStudent.checked = false;
                     refs.statusGraduate.checked = false;
@@ -230,7 +226,7 @@ function loadUserData(user) {
 
                 handleEducationChange();
             } else {
-                // User document doesn't exist, create one with minimal data
+                // User document doesn't exist, create one
                 const defaultAvatar = '../assets/male.svg';
                 const userProfile = {
                     uid: user.uid,
@@ -247,12 +243,10 @@ function loadUserData(user) {
                 
                 firebase.firestore().collection('users').doc(user.uid).set(userProfile)
                     .then(() => {
-                        // Reload user data after creating profile
                         loadUserData(user);
                     });
             }
             
-            // Hide loading state
             state.isLoading = false;
         })
         .catch((error) => {
@@ -278,7 +272,6 @@ function saveProfileChanges() {
     const educationValue = formData.get('education');
     const educationOtherValue = formData.get('educationOther');
     
-    // If education is "Other", use the educationOther value, otherwise use education
     const finalEducation = educationValue === 'other' && educationOtherValue 
         ? educationOtherValue 
         : educationValue;
@@ -292,30 +285,24 @@ function saveProfileChanges() {
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    // Get current user
     const user = firebase.auth().currentUser;
     if (!user) {
-        console.error('No user logged in');
         window.location.href = '../sign in/signin.html';
         return;
     }
 
-    // Show loading state
     const saveBtn = refs.saveProfileBtn;
     const originalText = saveBtn.innerHTML;
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
     saveBtn.disabled = true;
 
-    // Update Firestore
     firebase.firestore().collection('users').doc(user.uid).update(updatedData)
         .then(() => {
-            // Update local state
             state.userData = {
                 ...state.userData,
                 ...updatedData
             };
 
-            // Update display with real data
             if (refs.userNameDisplay) refs.userNameDisplay.textContent = state.userData.fullName || '';
             if (refs.userEmailDisplay) refs.userEmailDisplay.textContent = state.userData.email || '';
 
@@ -325,7 +312,6 @@ function saveProfileChanges() {
             if (refs.editProfileBtn) refs.editProfileBtn.classList.remove('disabled');
             state.isEditing = false;
 
-            // Show success message
             alert('Profile updated successfully!');
         })
         .catch((error) => {
@@ -377,13 +363,11 @@ function handleAvatarUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
     
-    // Validate file type
     if (!file.type.startsWith('image/')) {
         alert('Please select an image file.');
         return;
     }
     
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
         alert('Image size must be less than 5MB.');
         return;
@@ -395,31 +379,26 @@ function handleAvatarUpload(event) {
         return;
     }
     
-    // Show loading state
     const uploadBtn = refs.uploadPhotoBtn;
     const originalText = uploadBtn.innerHTML;
     uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
     uploadBtn.disabled = true;
     
-    // Upload to Firebase Storage
     const storageRef = firebase.storage().ref(`avatars/${user.uid}.jpg`);
     let downloadURL = null;
     
     storageRef.put(file)
         .then((snapshot) => {
-            // Get download URL
             return snapshot.ref.getDownloadURL();
         })
         .then((url) => {
             downloadURL = url;
-            // Update Firestore with new avatar URL
             return firebase.firestore().collection('users').doc(user.uid).update({
                 avatar: downloadURL,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         })
         .then(() => {
-            // Update profile photo display with smooth animation
             if (refs.profilePhoto && downloadURL) {
                 refs.profilePhoto.style.opacity = '0';
                 setTimeout(() => {
@@ -429,7 +408,6 @@ function handleAvatarUpload(event) {
                 }, 100);
             }
             
-            // Reload user data
             loadUserData(user);
             
             uploadBtn.innerHTML = originalText;
@@ -444,7 +422,6 @@ function handleAvatarUpload(event) {
             uploadBtn.disabled = false;
         });
     
-    // Reset input
     event.target.value = '';
 }
 
@@ -455,7 +432,6 @@ function handleChangePassword(e) {
     const newPassword = refs.newPasswordInput.value;
     const confirmPassword = refs.confirmNewPasswordInput.value;
     
-    // Validation
     if (!currentPassword || !newPassword || !confirmPassword) {
         alert('Please fill in all fields.');
         return;
@@ -477,21 +453,17 @@ function handleChangePassword(e) {
         return;
     }
     
-    // Re-authenticate user first
     const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
     user.reauthenticateWithCredential(credential)
         .then(() => {
-            // Update password
             return user.updatePassword(newPassword);
         })
         .then(() => {
             alert('Password changed successfully!');
-            // Close modal
             const modal = bootstrap.Modal.getInstance(refs.changePasswordModal);
             if (modal) {
                 modal.hide();
             }
-            // Clear form
             refs.changePasswordForm.reset();
         })
         .catch((error) => {
@@ -516,9 +488,62 @@ function handleChangePassword(e) {
         });
 }
 
-function loadPersonalityResults() {
-    // BACK-END DEVELOPER WILL HANDLE THIS PART
-    console.info('Personality results placeholder ready.');
+function loadPersonalityResults(user) {
+    const db = firebase.firestore();
+    
+    // Load Big Five
+    db.collection("users").doc(user.uid).collection("tests").doc("Big-Five").get()
+        .then((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                const date = data.finishedAt ? data.finishedAt.toDate().toLocaleDateString() : "Unknown";
+                const timeSpent = data.timeSpent ? Math.floor(data.timeSpent / 60) + "m " + (data.timeSpent % 60) + "s" : "Unknown";
+                
+                if (refs.bigFiveCard) {
+                    refs.bigFiveCard.innerHTML = `
+                        <h6 class="card-title text-gold">Big Five Overview</h6>
+                        <p class="text-muted mb-2">Completed on: ${date}</p>
+                        <p class="text-muted mb-3">Time spent: ${timeSpent}</p>
+                        <a href="../Test/Test.html?mode=review&test=Big-Five" class="btn btn-outline-light btn-sm">Review Answers</a>
+                    `;
+                }
+            } else {
+                if (refs.bigFiveCard) {
+                    refs.bigFiveCard.innerHTML = `
+                        <h6 class="card-title text-gold">Big Five Overview</h6>
+                        <p class="text-muted mb-3">Not yet completed.</p>
+                        <a href="../Test/Test.html" class="btn btn-gold btn-sm">Start Test</a>
+                    `;
+                }
+            }
+        });
+
+    // Load Holland Codes
+    db.collection("users").doc(user.uid).collection("tests").doc("Holland-codes").get()
+        .then((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                const date = data.finishedAt ? data.finishedAt.toDate().toLocaleDateString() : "Unknown";
+                const timeSpent = data.timeSpent ? Math.floor(data.timeSpent / 60) + "m " + (data.timeSpent % 60) + "s" : "Unknown";
+                
+                if (refs.hollandCard) {
+                    refs.hollandCard.innerHTML = `
+                        <h6 class="card-title text-gold">Holland Codes Overview</h6>
+                        <p class="text-muted mb-2">Completed on: ${date}</p>
+                        <p class="text-muted mb-3">Time spent: ${timeSpent}</p>
+                        <a href="../Test/Test.html?mode=review&test=Holland-codes" class="btn btn-outline-light btn-sm">Review Answers</a>
+                    `;
+                }
+            } else {
+                if (refs.hollandCard) {
+                    refs.hollandCard.innerHTML = `
+                        <h6 class="card-title text-gold">Holland Codes Overview</h6>
+                        <p class="text-muted mb-3">Not yet completed.</p>
+                        <a href="../Test/Test.html" class="btn btn-gold btn-sm">Start Test</a>
+                    `;
+                }
+            }
+        });
 }
 
 function loadCareerRecommendations() {

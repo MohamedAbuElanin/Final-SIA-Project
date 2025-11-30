@@ -2,11 +2,18 @@
 console.log("Welcome to SIA — Ancient Wisdom for Modern Careers");
 
 // Route Guard: Redirect if already logged in
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-        // User is already logged in, redirect to profile
-        window.location.href = '../profile/profile.html';
-    }
+// Wait for Firebase to initialize
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        if (window.firebase) {
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    // User is already logged in, redirect to profile
+                    window.location.href = '../profile/profile.html';
+                }
+            });
+        }
+    }, 1000);
 });
 
 // Mobile hamburger menu toggle
