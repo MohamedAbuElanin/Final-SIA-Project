@@ -3,7 +3,7 @@
 
 // State Management
 const state = {
-    currentTest: null, // 'Big-Five' or 'Holland-codes'
+    currentTest: null, // 'Big-Five' or 'Holland'
     questions: [],
     currentQuestionIndex: 0,
     answers: {}, // { questionId: answerValue }
@@ -113,6 +113,11 @@ function setupEventListeners() {
 
 // --- Test Logic ---
 async function startTest(testType) {
+    // Normalize Holland Codes ID
+    if (testType === 'Holland-codes') {
+        testType = 'Holland';
+    }
+
     state.currentTest = testType;
     state.isReviewMode = false;
     console.log("Starting test:", testType);
@@ -183,6 +188,11 @@ async function startTest(testType) {
 }
 
 async function startReview(testType) {
+    // Normalize Holland Codes ID
+    if (testType === 'Holland-codes') {
+        testType = 'Holland';
+    }
+
     state.currentTest = testType;
     state.isReviewMode = true;
     console.log("Starting review:", testType);
