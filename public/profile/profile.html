@@ -32,13 +32,11 @@
                 <li><a href="../About/About.html">About</a></li>
                 <li><a href="../Test/Test.html">Test</a></li>
                 <li><a href="./profile.html" aria-current="page">Profile</a></li>
-                <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
+                <li><a href="../privacy-terms.html">Privacy & Terms</a></li>
             </ul>
 
             <!-- Right Buttons Section -->
-            <div class="nav-auth" id="navAuth">
-                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+            <div class="nav-auth" id="navAuth" style="display: none;">
             </div>
 
             <!-- Responsive Menu (Hamburger control + label for accessibility) -->
@@ -59,9 +57,7 @@
                     <li><a href="../Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a></li>
                 </ul>
                 <!-- Right Buttons Section duplicated for stacked layout -->
-                <div class="drawer-auth">
-                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                <div class="drawer-auth" style="display: none;">
                 </div>
             </div>
         </nav>
@@ -75,7 +71,7 @@
                     <div class="card-body d-flex flex-column flex-md-row align-items-center gap-4">
                         <div class="position-relative text-center">
                             <img src="../Images/Team/Mohamed Osman.JPG" alt="User avatar" class="profile-photo rounded-circle" id="profilePhoto">
-                            <button class="btn btn-outline-light btn-sm mt-3" type="button" id="uploadPhotoBtn">
+                            <button class="btn btn-gold btn-sm mt-3" type="button" id="uploadPhotoBtn">
                                 <i class="fa-solid fa-upload me-2"></i>Upload
                             </button>
                         </div>
@@ -92,8 +88,11 @@
                                     </div>
                                 </div>
                                 <div class="btn-group flex-wrap">
-                                    <button class="btn btn-outline-light" type="button" id="editProfileBtn">
+                                    <button class="btn btn-gold" type="button" id="editProfileBtn">
                                         <i class="fa-solid fa-pen-to-square me-2"></i>Edit Profile
+                                    </button>
+                                    <button class="btn btn-gold" type="button" id="exportPdfBtn">
+                                        <i class="fa-solid fa-file-pdf me-2"></i>Export PDF
                                     </button>
                                     <button class="btn btn-gold d-none" type="button" id="saveProfileBtn">
                                         <i class="fa-solid fa-floppy-disk me-2"></i>Save Changes
@@ -138,9 +137,11 @@
                                 </select>
                                 <input type="text" class="form-control mt-2 d-none" id="educationOtherInput" name="educationOther" placeholder="Please specify" disabled>
                             </div>
+
+                            <!-- Student Status Section -->
                             <div class="col-md-6">
-                                <label class="form-label d-block">Student Status</label>
-                                <div class="d-flex align-items-center gap-4">
+                                <label class="form-label">Status</label>
+                                <div class="d-flex gap-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="studentStatus" id="statusStudent" value="Student" disabled>
                                         <label class="form-check-label" for="statusStudent">Student</label>
@@ -151,7 +152,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- BACK-END DEVELOPER WILL HANDLE THIS PART -->
                         </form>
                     </div>
                 </div>
@@ -177,6 +177,19 @@
                             <div class="card-body">
                                 <h6 class="card-title text-gold">Holland Codes Overview</h6>
                                 <p class="text-muted mb-0">Results will load here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Chart Section -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card bg-dark border-gold">
+                            <div class="card-body">
+                                <h6 class="card-title text-gold">Personality Visualization</h6>
+                                <div style="max-height: 400px; position: relative;">
+                                    <canvas id="resultsChart"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -229,7 +242,7 @@
                             <p class="text-muted mb-0">Manage security or close your account securely.</p>
                         </div>
                         <div class="btn-group flex-column flex-sm-row">
-                            <button class="btn btn-outline-light" type="button" id="changePasswordBtn" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
+                            <button class="btn btn-gold" type="button" id="changePasswordBtn" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
                             <button class="btn btn-outline-warning" type="button" id="logoutBtn">
                                 <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
                             </button>
@@ -320,6 +333,12 @@
     
     <!-- Profile Script -->
     <script src="./profile.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
 </body>

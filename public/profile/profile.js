@@ -1,17 +1,20 @@
 /* ============================================================
    SIA Profile Page Scripts
-   Clean, optimized version with real Firestore data only
    ============================================================ */
 
 const state = {
     isEditing: false,
     userData: null,
-    isLoading: true
+    isLoading: true,
+    testResults: {
+        bigFive: null,
+        holland: null
+    },
+    aiAnalysis: null
 };
 
-// Route Guard: Check Firebase Authentication state
+// Route Guard & Initialization
 document.addEventListener('DOMContentLoaded', () => {
-    // Wait for Firebase to initialize
     setTimeout(() => {
         if (!window.firebase) {
             console.error("Firebase not initialized!");
@@ -20,30 +23,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
-                // User is not authenticated, clear localStorage and redirect to Sign In page
                 localStorage.clear();
                 window.location.href = '../sign in/signin.html';
                 return;
             }
             
-            // User is authenticated, verify token and initialize page
             user.getIdToken().then((token) => {
-                // Update token in localStorage
                 localStorage.setItem("authToken", token);
                 localStorage.setItem("uid", user.uid);
                 
-                // Initialize page
                 initHamburgerMenu();
                 cacheElements();
                 bindEvents();
-                loadUserData(user); // Load user data from Firestore
-                loadPersonalityResults(user); // Load Test Results
-                loadCareerRecommendations(); // BACK-END DEVELOPER WILL HANDLE THIS PART
-                loadSavedJobs(); // BACK-END DEVELOPER WILL HANDLE THIS PART
-                loadActivityLog(); // BACK-END DEVELOPER WILL HANDLE THIS PART
+                loadUserData(user);
+                loadTestResults(user); // Load Big Five & Holland
             }).catch((error) => {
                 console.error('Error getting token:', error);
-                // Token expired or invalid, redirect to sign in
                 localStorage.clear();
                 window.location.href = '../sign in/signin.html';
             });
@@ -54,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const refs = {};
 
 function cacheElements() {
+    // User Info
     refs.userNameDisplay = document.getElementById('userNameDisplay');
     refs.userEmailDisplay = document.getElementById('userEmailDisplay');
     refs.userNameInput = document.getElementById('userNameInput');
@@ -61,600 +57,666 @@ function cacheElements() {
     refs.fullNameInput = document.getElementById('fullNameInput');
     refs.emailInput = document.getElementById('emailInput');
     refs.dobInput = document.getElementById('dobInput');
+    refs.profilePhoto = document.getElementById('profilePhoto');
+    
+    // Forms & Buttons
     refs.editProfileBtn = document.getElementById('editProfileBtn');
     refs.saveProfileBtn = document.getElementById('saveProfileBtn');
     refs.personalInfoForm = document.getElementById('personalInfoForm');
     refs.educationSelect = document.getElementById('educationSelect');
     refs.educationOtherInput = document.getElementById('educationOtherInput');
-    refs.statusStudent = document.getElementById('statusStudent');
-    refs.statusGraduate = document.getElementById('statusGraduate');
-    refs.recommendationsGrid = document.getElementById('recommendationsGrid');
-    refs.savedJobsGrid = document.getElementById('savedJobsGrid');
-    refs.activityList = document.getElementById('activityList');
+
     refs.uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
+    refs.avatarUploadInput = document.getElementById('avatarUploadInput');
+    
+    // Account Actions
     refs.changePasswordBtn = document.getElementById('changePasswordBtn');
     refs.deleteAccountBtn = document.getElementById('deleteAccountBtn');
-    refs.profilePhoto = document.getElementById('profilePhoto');
     refs.logoutBtn = document.getElementById('logoutBtn');
-    refs.avatarUploadInput = document.getElementById('avatarUploadInput');
+    refs.exportPdfBtn = document.getElementById('exportPdfBtn');
+    
+    // Modals
+    refs.changePasswordModal = document.getElementById('changePasswordModal');
     refs.changePasswordForm = document.getElementById('changePasswordForm');
     refs.currentPasswordInput = document.getElementById('currentPasswordInput');
     refs.newPasswordInput = document.getElementById('newPasswordInput');
     refs.confirmNewPasswordInput = document.getElementById('confirmNewPasswordInput');
-    refs.changePasswordModal = document.getElementById('changePasswordModal');
     
-    // Test Result Cards
+    // Sections
     refs.bigFiveCard = document.querySelector('#personality-results .col-md-6:nth-child(1) .card-body');
     refs.hollandCard = document.querySelector('#personality-results .col-md-6:nth-child(2) .card-body');
+    refs.recommendationsGrid = document.getElementById('recommendationsGrid');
+    refs.savedJobsGrid = document.getElementById('savedJobsGrid');
+    refs.activityList = document.getElementById('activityList');
+    refs.resultsChartCanvas = document.getElementById('resultsChart');
 }
 
 function bindEvents() {
     refs.editProfileBtn?.addEventListener('click', enableEditMode);
     refs.saveProfileBtn?.addEventListener('click', saveProfileChanges);
-    refs.uploadPhotoBtn?.addEventListener('click', () => {
-        if (refs.avatarUploadInput) {
-            refs.avatarUploadInput.click();
-        }
-    });
-    if (refs.avatarUploadInput) {
-        refs.avatarUploadInput.addEventListener('change', handleAvatarUpload);
-    }
+    refs.uploadPhotoBtn?.addEventListener('click', () => refs.avatarUploadInput?.click());
+    refs.avatarUploadInput?.addEventListener('change', handleAvatarUpload);
     refs.educationSelect?.addEventListener('change', handleEducationChange);
+    
     refs.changePasswordBtn?.addEventListener('click', () => {
         if (refs.changePasswordModal) {
             const modal = new bootstrap.Modal(refs.changePasswordModal);
             modal.show();
         }
     });
+    refs.changePasswordForm?.addEventListener('submit', handleChangePassword);
     
-    if (refs.changePasswordForm) {
-        refs.changePasswordForm.addEventListener('submit', handleChangePassword);
-    }
-    refs.deleteAccountBtn?.addEventListener('click', () => {
-        console.warn('Delete account requested.');
-        // BACK-END DEVELOPER WILL HANDLE THIS PART
-    });
-    if (refs.logoutBtn) {
-        refs.logoutBtn.addEventListener('click', handleLogout);
-    }
+    refs.logoutBtn?.addEventListener('click', handleLogout);
+    refs.deleteAccountBtn?.addEventListener('click', handleDeleteAccount);
+    refs.exportPdfBtn?.addEventListener('click', handleExportPDF);
 }
 
+// ==========================================
+// 1. User Data & Auth
+// ==========================================
+
 function handleLogout() {
-    firebase.auth().signOut()
-        .then(() => {
-            localStorage.clear();
-            window.location.href = '../sign in/signin.html';
-        })
-        .catch((error) => {
-            console.error('Error signing out:', error);
-            localStorage.clear();
-            window.location.href = '../sign in/signin.html';
+    firebase.auth().signOut().then(() => {
+        localStorage.clear();
+        window.location.href = '../sign in/signin.html';
+    });
+}
+
+function handleDeleteAccount() {
+    if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) return;
+    
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+
+    // Delete user data from Firestore
+    const batch = firebase.firestore().batch();
+    batch.delete(firebase.firestore().collection('users').doc(user.uid));
+    batch.delete(firebase.firestore().collection('TestsResults').doc(user.uid));
+    
+    batch.commit().then(() => {
+        user.delete().then(() => {
+            alert("Account deleted.");
+            window.location.href = '../sign up/signup.html';
+        }).catch(err => {
+            console.error("Error deleting auth account:", err);
+            alert("Error deleting account. You may need to re-login first.");
         });
+    }).catch(err => console.error("Error deleting user data:", err));
 }
 
 function loadUserData(user) {
-    // Show loading state
     state.isLoading = true;
     
-    // Set default avatar based on gender (before Firestore loads)
-    let defaultAvatar = '../assets/male.svg';
-    
-    // Load user data from Firestore
     firebase.firestore().collection('users').doc(user.uid).get()
         .then((doc) => {
-            if (doc.exists) {
-                const userData = doc.data();
-                
-                // Determine default avatar based on gender from Firestore
-                const userGender = userData.gender || 'male';
-                if (userGender === 'male') {
-                    defaultAvatar = '../assets/male.svg';
-                } else if (userGender === 'female') {
-                    defaultAvatar = '../assets/female.svg';
-                } else {
-                    defaultAvatar = '../assets/male.svg';
+            const data = doc.exists ? doc.data() : {};
+            state.userData = data;
+            
+            // Update UI with Fallbacks
+            const displayName = data.fullName || user.displayName || 'SIA User';
+            const email = data.email || user.email || 'No email provided';
+            
+            if (refs.userNameDisplay) refs.userNameDisplay.textContent = displayName;
+            if (refs.userEmailDisplay) refs.userEmailDisplay.textContent = email;
+            
+            // Form Fields
+            if (refs.fullNameInput) refs.fullNameInput.value = data.fullName || '';
+            if (refs.emailInput) refs.emailInput.value = data.email || user.email || '';
+            if (refs.dobInput) refs.dobInput.value = data.dateOfBirth || '';
+            
+            // Education
+            if (refs.educationSelect) {
+                const opts = ['High School', 'Bachelor', 'Master', 'PhD', 'Other'];
+                if (opts.includes(data.education)) {
+                    refs.educationSelect.value = data.education;
+                } else if (data.education) {
+                    refs.educationSelect.value = 'Other';
+                    if (refs.educationOtherInput) {
+                        refs.educationOtherInput.value = data.education;
+                        refs.educationOtherInput.classList.remove('d-none');
+                    }
                 }
-                
-                // Store user data
-                state.userData = {
-                    fullName: userData.fullName || '',
-                    email: userData.email || '',
-                    dateOfBirth: userData.dateOfBirth || '',
-                    gender: userData.gender || '',
-                    education: userData.education || '',
-                    studentStatus: userData.studentStatus || ''
+            }
+
+            // Student Status
+            if (data.studentStatus === 'Student') {
+                const el = document.getElementById('statusStudent');
+                if (el) el.checked = true;
+            } else if (data.studentStatus === 'Graduate') {
+                const el = document.getElementById('statusGraduate');
+                if (el) el.checked = true;
+            }
+            
+            // Avatar Handling
+            const setAvatar = (src) => {
+                if (!refs.profilePhoto) return;
+                refs.profilePhoto.src = src;
+                refs.profilePhoto.onerror = () => {
+                    refs.profilePhoto.onerror = null; 
+                    refs.profilePhoto.src = data.gender === 'female' ? '../assets/female.svg' : '../assets/male.svg';
                 };
+            };
 
-                // Avatar logic
-                let avatar = userData.avatar;
-                if (avatar && (avatar.startsWith('http://') || avatar.startsWith('https://'))) {
-                    // Use Storage URL
-                } else if (avatar && (avatar === '../assets/male.svg' || avatar === '../assets/female.svg')) {
-                    avatar = defaultAvatar;
-                } else if (!avatar) {
-                    avatar = defaultAvatar;
-                }
-                
-                // Set profile photo
-                if (refs.profilePhoto) {
-                    refs.profilePhoto.src = avatar;
-                    refs.profilePhoto.alt = 'User avatar';
-                    refs.profilePhoto.style.opacity = '0';
-                    setTimeout(() => {
-                        refs.profilePhoto.style.transition = 'opacity 0.3s ease-in';
-                        refs.profilePhoto.style.opacity = '1';
-                    }, 100);
-                }
-
-                // Update display elements
-                if (refs.userNameDisplay) refs.userNameDisplay.textContent = state.userData.fullName || '';
-                if (refs.userEmailDisplay) refs.userEmailDisplay.textContent = state.userData.email || '';
-                if (refs.userNameInput) refs.userNameInput.value = state.userData.fullName || '';
-                if (refs.userEmailInput) refs.userEmailInput.value = state.userData.email || '';
-
-                // Update form fields
-                if (refs.fullNameInput) refs.fullNameInput.value = state.userData.fullName || '';
-                if (refs.emailInput) refs.emailInput.value = state.userData.email || '';
-                if (refs.dobInput) refs.dobInput.value = state.userData.dateOfBirth || '';
-                
-                // Handle education field
-                if (refs.educationSelect) {
-                    const educationOptions = ['High School', 'Bachelor', 'Master', 'PhD', 'Other'];
-                    if (educationOptions.includes(state.userData.education)) {
-                        refs.educationSelect.value = state.userData.education;
-                    } else if (state.userData.education) {
-                        refs.educationSelect.value = 'Other';
-                        if (refs.educationOtherInput) {
-                            refs.educationOtherInput.value = state.userData.education;
-                        }
-                    } else {
-                        refs.educationSelect.value = '';
-                    }
-                }
-                
-                // Set student status
-                if (refs.statusStudent && refs.statusGraduate) {
-                    refs.statusStudent.checked = false;
-                    refs.statusGraduate.checked = false;
-                    
-                    if (state.userData.studentStatus === 'student' || state.userData.studentStatus === 'Student') {
-                        refs.statusStudent.checked = true;
-                    } else if (state.userData.studentStatus === 'graduate' || state.userData.studentStatus === 'Graduate') {
-                        refs.statusGraduate.checked = true;
-                    }
-                }
-
-                handleEducationChange();
+            if (data.avatar) {
+                setAvatar(data.avatar);
+            } else if (user.photoURL) {
+                setAvatar(user.photoURL);
             } else {
-                // User document doesn't exist, create one
-                const defaultAvatar = '../assets/male.svg';
-                const userProfile = {
-                    uid: user.uid,
-                    fullName: '',
-                    email: user.email || '',
-                    dateOfBirth: '',
-                    gender: 'male',
-                    education: '',
-                    studentStatus: '',
-                    avatar: defaultAvatar,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                firebase.firestore().collection('users').doc(user.uid).set(userProfile)
-                    .then(() => {
-                        loadUserData(user);
-                    });
+                setAvatar(data.gender === 'female' ? '../assets/female.svg' : '../assets/male.svg');
             }
             
             state.isLoading = false;
+            
+            // Load Activity Log
+            loadActivityLog(user);
         })
-        .catch((error) => {
-            console.error('Error loading user data:', error);
+        .catch(err => {
+            console.error("Error loading user data:", err);
+            if (refs.userNameDisplay) refs.userNameDisplay.textContent = user.displayName || 'SIA User';
+            if (refs.userEmailDisplay) refs.userEmailDisplay.textContent = user.email || '';
             state.isLoading = false;
         });
 }
+
+function loadActivityLog(user) {
+    if (!refs.activityList) return;
+    
+    const logsRef = firebase.firestore().collection('users').doc(user.uid).collection('activityLogs');
+    
+    logsRef.orderBy('timestamp', 'desc').limit(5).get()
+        .then(snapshot => {
+            if (snapshot.empty) {
+                refs.activityList.innerHTML = `
+                    <li class="list-group-item bg-transparent text-muted border-secondary">
+                        <i class="fas fa-info-circle me-2 text-gold"></i> Welcome to your new profile!
+                    </li>
+                `;
+                return;
+            }
+            
+            refs.activityList.innerHTML = '';
+            snapshot.forEach(doc => {
+                const log = doc.data();
+                const date = log.timestamp ? new Date(log.timestamp.toDate()).toLocaleDateString() : '';
+                const item = document.createElement('li');
+                item.className = 'list-group-item bg-transparent text-muted border-secondary d-flex justify-content-between align-items-center';
+                item.innerHTML = `
+                    <div>
+                        <i class="fas fa-check-circle me-2 text-gold"></i> ${log.action}
+                    </div>
+                    <small style="font-size: 0.8em;">${date}</small>
+                `;
+                refs.activityList.appendChild(item);
+            });
+        })
+        .catch(err => {
+            console.error("Error loading activity log:", err);
+            refs.activityList.innerHTML = '<li class="list-group-item bg-transparent text-danger border-secondary">Could not load activities.</li>';
+        });
+}
+
+function loadTestResults(user) {
+    const db = firebase.firestore();
+    const resultsRef = db.collection("TestsResults").doc(user.uid);
+
+    resultsRef.get().then((doc) => {
+        if (doc.exists) {
+            const data = doc.data();
+            state.testResults.bigFive = data["Big-Five"] || data["BigFive"] || null;
+            state.testResults.holland = data["Holland-Code"] || data["Holland"] || data["HollandCodes"] || null;
+            state.aiAnalysis = data["AI_Analysis"] || null;
+
+            displayTestResults();
+            
+            if (state.aiAnalysis) {
+                console.log("Loading existing AI Analysis...");
+                displayAIAnalysis(state.aiAnalysis);
+                renderChart();
+            } else if (state.testResults.bigFive || state.testResults.holland) {
+                console.log("Tests found but no analysis. Generating...");
+                generateAIAnalysis(user);
+            } else {
+                renderChart();
+            }
+        } else {
+            console.log("No test results found.");
+            displayTestResults();
+        }
+    }).catch(err => console.error("Error loading test results:", err));
+}
+
+function displayTestResults() {
+    // Big Five
+    if (refs.bigFiveCard) {
+        const bigFiveImg = '../Images/Test/Big Five.svg';
+        if (state.testResults.bigFive) {
+            refs.bigFiveCard.innerHTML = `
+                <div class="text-center mb-3">
+                    <img src="${bigFiveImg}" alt="Big Five" style="width: 80px; height: auto;">
+                </div>
+                <h6 class="card-title text-gold">Big Five Overview</h6>
+                <p class="text-muted mb-2">Completed</p>
+                <a href="../Test/Test.html?mode=review&test=Big-Five" class="btn btn-outline-light btn-sm">View Result</a>
+            `;
+        } else {
+            refs.bigFiveCard.innerHTML = `
+                <div class="text-center mb-3">
+                    <img src="${bigFiveImg}" alt="Big Five" style="width: 80px; height: auto; opacity: 0.5;">
+                </div>
+                <h6 class="card-title text-gold">Big Five Overview</h6>
+                <p class="text-muted mb-3">Not yet completed.</p>
+                <a href="../Test/Test.html" class="btn btn-gold btn-sm">Start Test</a>
+            `;
+        }
+    }
+
+    // Holland
+    if (refs.hollandCard) {
+        const hollandImg = '../Images/Test/Holland codes.svg';
+        if (state.testResults.holland) {
+            refs.hollandCard.innerHTML = `
+                <div class="text-center mb-3">
+                    <img src="${hollandImg}" alt="Holland Codes" style="width: 80px; height: auto;">
+                </div>
+                <h6 class="card-title text-gold">Holland Codes Overview</h6>
+                <p class="text-muted mb-2">Completed</p>
+                <a href="../Test/Test.html?mode=review&test=Holland-codes" class="btn btn-outline-light btn-sm">View Result</a>
+            `;
+        } else {
+            refs.hollandCard.innerHTML = `
+                <div class="text-center mb-3">
+                    <img src="${hollandImg}" alt="Holland Codes" style="width: 80px; height: auto; opacity: 0.5;">
+                </div>
+                <h6 class="card-title text-gold">Holland Codes Overview</h6>
+                <p class="text-muted mb-3">Not yet completed.</p>
+                <a href="../Test/Test.html" class="btn btn-gold btn-sm">Start Test</a>
+            `;
+        }
+    }
+}
+
+async function generateAIAnalysis(user) {
+    // Show loading state in recommendations area
+    if (refs.recommendationsGrid) {
+        refs.recommendationsGrid.innerHTML = '<div class="col-12 text-center"><i class="fas fa-spinner fa-spin fa-2x text-gold"></i><p class="mt-2">Generating personalized AI analysis...</p></div>';
+    }
+
+    try {
+        const response = await fetch('http://localhost:5000/api/analyze-profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userData: state.userData,
+                bigFive: state.testResults.bigFive,
+                holland: state.testResults.holland
+            })
+        });
+
+        if (!response.ok) throw new Error('AI Analysis failed');
+
+        const analysis = await response.json();
+        
+        // Save to Firestore
+        await firebase.firestore().collection('TestsResults').doc(user.uid).update({
+            AI_Analysis: analysis
+        });
+
+        state.aiAnalysis = analysis;
+        displayAIAnalysis(analysis);
+        renderChart();
+
+    } catch (error) {
+        console.error("AI Generation Error:", error);
+        if (refs.recommendationsGrid) {
+            refs.recommendationsGrid.innerHTML = '<div class="col-12 text-center text-danger"><p>Failed to generate analysis. Please try again later.</p></div>';
+        }
+    }
+}
+
+function displayAIAnalysis(analysis) {
+    if (!analysis) return;
+
+    // 1. Personality Analysis
+    const personalitySection = document.getElementById('personality-results');
+    let analysisDiv = document.getElementById('ai-personality-analysis');
+    
+    // Remove existing if any to prevent duplicates
+    if (analysisDiv) analysisDiv.remove();
+    
+    analysisDiv = document.createElement('div');
+    analysisDiv.id = 'ai-personality-analysis';
+    analysisDiv.className = 'col-12 mt-4';
+    analysisDiv.innerHTML = `
+        <div class="card bg-dark border-gold">
+            <div class="card-body">
+                <h6 class="text-gold mb-3"><i class="fas fa-brain me-2"></i>AI Personality Insights</h6>
+                <p class="text-muted mb-0" style="line-height: 1.6;">${analysis.personalityAnalysis}</p>
+            </div>
+        </div>
+    `;
+    
+    // Insert after the test cards row
+    if (personalitySection) {
+        personalitySection.appendChild(analysisDiv);
+    }
+
+    // 2. Career Recommendations
+    if (refs.recommendationsGrid) {
+        refs.recommendationsGrid.innerHTML = '';
+        if (analysis.recommendedCareers && analysis.recommendedCareers.length > 0) {
+            analysis.recommendedCareers.forEach(career => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4';
+                col.innerHTML = `
+                    <article class="job-card h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="mb-0 text-gold text-uppercase" style="font-size: 0.9rem; letter-spacing: 0.05em;">${career.title}</h6>
+                            <span class="fit-pill">${career.fit}</span>
+                        </div>
+                        <p class="text-muted mb-3 small flex-grow-1">${career.reason}</p>
+                        <div class="job-card__skills mt-auto">
+                            ${career.skills ? career.skills.map(skill => `<span>${skill}</span>`).join('') : ''}
+                        </div>
+                    </article>
+                `;
+                refs.recommendationsGrid.appendChild(col);
+            });
+        } else {
+            refs.recommendationsGrid.innerHTML = '<div class="col-12 text-center text-muted"><p>No specific career recommendations found.</p></div>';
+        }
+    }
+
+    // 3. Resources
+    const savedCareersSection = document.getElementById('saved-careers');
+    if (savedCareersSection) {
+        // Update section header
+        const header = savedCareersSection.querySelector('.section-heading');
+        if (header) {
+            header.querySelector('h5').textContent = "Recommended Resources";
+            header.querySelector('p').textContent = "Curated learning path based on your profile.";
+        }
+        
+        const container = document.getElementById('savedJobsGrid');
+        if (container) {
+            container.innerHTML = '';
+            
+            // Helper to create resource lists
+            const createResourceList = (title, items, icon) => {
+                if (!items || items.length === 0) return '';
+                return `
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 bg-dark border-secondary">
+                            <div class="card-body">
+                                <h6 class="text-gold mb-3"><i class="${icon} me-2"></i>${title}</h6>
+                                <ul class="list-group list-group-flush bg-transparent">
+                                    ${items.map(item => `
+                                        <li class="list-group-item bg-transparent text-muted border-secondary px-0 py-2">
+                                            <a href="${item.link || '#'}" target="_blank" class="text-decoration-none text-light hover-gold d-flex justify-content-between align-items-center">
+                                                <span>${item.title}</span>
+                                                <i class="fas fa-external-link-alt small text-muted ms-2"></i>
+                                            </a>
+                                            ${item.platform || item.author ? `<small class="d-block text-muted mt-1">${item.platform || item.author}</small>` : ''}
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            let resourcesHTML = '<div class="row g-4 w-100">';
+            
+            // Courses
+            const courses = [...(analysis.learningResources?.paidCourses || []), ...(analysis.learningResources?.freeCourses || [])];
+            resourcesHTML += createResourceList('Top Courses', courses.slice(0, 5), 'fa-solid fa-graduation-cap');
+            
+            // Books
+            resourcesHTML += createResourceList('Recommended Books', analysis.learningResources?.books?.slice(0, 5), 'fa-solid fa-book');
+            
+            // Videos/Podcasts
+            const media = [...(analysis.learningResources?.youtubeVideos || []), ...(analysis.learningResources?.podcasts || [])];
+            resourcesHTML += createResourceList('Videos & Podcasts', media.slice(0, 5), 'fa-brands fa-youtube');
+            
+            // Roadmap
+            if (analysis.roadmap) {
+                const roadmapItems = analysis.roadmap.map(r => ({ 
+                    title: r.step, 
+                    platform: r.description 
+                }));
+                resourcesHTML += createResourceList('Learning Roadmap', roadmapItems, 'fa-solid fa-road');
+            }
+            
+            resourcesHTML += '</div>';
+            container.innerHTML = resourcesHTML;
+        }
+    }
+}
+
+// ==========================================
+// 3. Visualization (Chart.js)
+// ==========================================
+
+function renderChart() {
+    if (!refs.resultsChartCanvas) return;
+
+    // Destroy existing chart if any
+    if (window.myProfileChart) {
+        window.myProfileChart.destroy();
+    }
+
+    const ctx = refs.resultsChartCanvas.getContext('2d');
+    
+    // Prepare data
+    let labels = [];
+    let dataPoints = [];
+    let label = '';
+    let chartType = 'bar';
+
+    if (state.testResults.bigFive) {
+        // Big Five Radar Chart
+        labels = ['Openness', 'Conscientiousness', 'Extraversion', 'Agreeableness', 'Neuroticism'];
+        const b5 = state.testResults.bigFive;
+        // Handle different casing/naming
+        dataPoints = [
+            b5.Openness || b5.openness || 0,
+            b5.Conscientiousness || b5.conscientiousness || 0,
+            b5.Extraversion || b5.extraversion || 0,
+            b5.Agreeableness || b5.agreeableness || 0,
+            b5.Neuroticism || b5.neuroticism || 0
+        ];
+        label = 'Big Five Traits';
+        chartType = 'radar';
+    } else if (state.testResults.holland) {
+        // Holland Bar Chart
+        labels = ['Realistic', 'Investigative', 'Artistic', 'Social', 'Enterprising', 'Conventional'];
+        const h = state.testResults.holland;
+        dataPoints = [
+            h.Realistic || h.realistic || h.R || 0,
+            h.Investigative || h.investigative || h.I || 0,
+            h.Artistic || h.artistic || h.A || 0,
+            h.Social || h.social || h.S || 0,
+            h.Enterprising || h.enterprising || h.E || 0,
+            h.Conventional || h.conventional || h.C || 0
+        ];
+        label = 'Holland Codes';
+        chartType = 'bar';
+    } else {
+        return; // No data to chart
+    }
+
+    window.myProfileChart = new Chart(ctx, {
+        type: chartType,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: label,
+                data: dataPoints,
+                backgroundColor: 'rgba(212, 175, 55, 0.2)', // Gold with opacity
+                borderColor: '#d4af37', // Gold
+                borderWidth: 2,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#d4af37'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: { // For radar
+                    angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    pointLabels: { color: '#fff', font: { size: 12 } },
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                },
+                y: { // For bar
+                    display: chartType === 'bar',
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#fff' }
+                },
+                x: {
+                    display: chartType === 'bar',
+                    grid: { display: false },
+                    ticks: { color: '#fff' }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: '#fff' } }
+            }
+        }
+    });
+}
+
+// ==========================================
+// 4. Export PDF
+// ==========================================
+
+function handleExportPDF() {
+    const element = document.querySelector('.profile-page');
+    const opt = {
+        margin: [5, 5],
+        filename: `SIA_Profile_${state.userData?.fullName || 'Report'}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    // Temporarily hide buttons for clean PDF
+    const buttons = document.querySelectorAll('button, .btn');
+    buttons.forEach(b => b.classList.add('d-none-print'));
+    
+    // Add print style class
+    document.body.classList.add('printing-pdf');
+
+    html2pdf().set(opt).from(element).save().then(() => {
+        // Restore buttons
+        buttons.forEach(b => b.classList.remove('d-none-print'));
+        document.body.classList.remove('printing-pdf');
+    });
+}
+
+// ==========================================
+// 5. Helpers
+// ==========================================
 
 function enableEditMode() {
     state.isEditing = true;
     refs.saveProfileBtn.classList.remove('d-none');
     refs.editProfileBtn.classList.add('disabled');
-
     toggleHeaderInputs(true);
     togglePersonalInfoFields(false);
-    refs.saveProfileBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function saveProfileChanges() {
     if (!state.isEditing) return;
-    
     const formData = new FormData(refs.personalInfoForm);
-    const educationValue = formData.get('education');
-    const educationOtherValue = formData.get('educationOther');
     
-    const finalEducation = educationValue === 'other' && educationOtherValue 
-        ? educationOtherValue 
-        : educationValue;
-    
-    const updatedData = {
-        fullName: formData.get('fullName') || '',
-        email: formData.get('email') || '',
-        dateOfBirth: formData.get('dob') || '',
-        education: finalEducation || '',
-        studentStatus: formData.get('studentStatus') || '',
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
+    // Get radio value manually if needed, or rely on FormData
+    let studentStatus = null;
+    if (document.getElementById('statusStudent').checked) studentStatus = 'Student';
+    if (document.getElementById('statusGraduate').checked) studentStatus = 'Graduate';
 
-    const user = firebase.auth().currentUser;
-    if (!user) {
-        window.location.href = '../sign in/signin.html';
-        return;
+    const updatedData = {
+        fullName: formData.get('fullName'),
+        email: formData.get('email'), // Allow email update if needed, or keep read-only
+        dateOfBirth: formData.get('dob'),
+        education: formData.get('education'),
+        studentStatus: studentStatus
+    };
+    
+    // If 'Other' education is selected, save the specific text
+    if (updatedData.education === 'Other') {
+        updatedData.education = formData.get('educationOther');
     }
 
-    const saveBtn = refs.saveProfileBtn;
-    const originalText = saveBtn.innerHTML;
-    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-    saveBtn.disabled = true;
-
-    firebase.firestore().collection('users').doc(user.uid).update(updatedData)
+    firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update(updatedData)
         .then(() => {
-            state.userData = {
-                ...state.userData,
-                ...updatedData
-            };
-
-            if (refs.userNameDisplay) refs.userNameDisplay.textContent = state.userData.fullName || '';
-            if (refs.userEmailDisplay) refs.userEmailDisplay.textContent = state.userData.email || '';
-
+            state.isEditing = false;
+            refs.saveProfileBtn.classList.add('d-none');
+            refs.editProfileBtn.classList.remove('disabled');
             toggleHeaderInputs(false);
             togglePersonalInfoFields(true);
-            if (refs.saveProfileBtn) refs.saveProfileBtn.classList.add('d-none');
-            if (refs.editProfileBtn) refs.editProfileBtn.classList.remove('disabled');
-            state.isEditing = false;
-
-            alert('Profile updated successfully!');
+            loadUserData(firebase.auth().currentUser); // Reload to refresh
+            
+            // Log Activity
+            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).collection('activityLogs').add({
+                action: 'Updated Profile Information',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            alert('Saved!');
         })
-        .catch((error) => {
-            console.error('Error updating profile:', error);
-            alert('Failed to update profile. Please try again.');
-        })
-        .finally(() => {
-            saveBtn.innerHTML = originalText;
-            saveBtn.disabled = false;
+        .catch(err => {
+            console.error("Error saving profile:", err);
+            alert("Error saving changes: " + err.message);
         });
 }
 
-function toggleHeaderInputs(isEditing) {
-    refs.userNameDisplay.classList.toggle('d-none', isEditing);
-    refs.userEmailDisplay.classList.toggle('d-none', isEditing);
-    refs.userNameInput.classList.toggle('d-none', !isEditing);
-    refs.userEmailInput.classList.toggle('d-none', !isEditing);
-
-    refs.userNameInput.disabled = !isEditing;
-    refs.userEmailInput.disabled = !isEditing;
-
-    if (isEditing) {
-        refs.userNameInput.value = refs.userNameDisplay.textContent.trim();
-        refs.userEmailInput.value = refs.userEmailDisplay.textContent.trim();
-    } else {
-        refs.userNameDisplay.textContent = refs.userNameInput.value || '';
-        refs.userEmailDisplay.textContent = refs.userEmailInput.value || '';
-    }
+function toggleHeaderInputs(show) {
+    refs.userNameDisplay.classList.toggle('d-none', show);
+    refs.userNameInput.classList.toggle('d-none', !show);
+    // ... handle other inputs
 }
 
 function togglePersonalInfoFields(disabled) {
     const fields = refs.personalInfoForm.querySelectorAll('input, select');
-    fields.forEach(field => {
-        if (field.id === 'educationOtherInput' && field.classList.contains('d-none')) {
-            field.disabled = true;
-            return;
-        }
-        field.disabled = disabled;
-    });
+    fields.forEach(f => f.disabled = disabled);
 }
 
 function handleEducationChange() {
-    const isOther = refs.educationSelect.value === 'other';
+    const isOther = refs.educationSelect.value === 'other' || refs.educationSelect.value === 'Other';
     refs.educationOtherInput.classList.toggle('d-none', !isOther);
-    refs.educationOtherInput.disabled = !isOther || refs.educationSelect.disabled;
 }
 
-function handleAvatarUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    if (!file.type.startsWith('image/')) {
-        alert('Please select an image file.');
-        return;
-    }
-    
-    if (file.size > 5 * 1024 * 1024) {
-        alert('Image size must be less than 5MB.');
-        return;
-    }
-    
-    const user = firebase.auth().currentUser;
-    if (!user) {
-        window.location.href = '../sign in/signin.html';
-        return;
-    }
-    
-    const uploadBtn = refs.uploadPhotoBtn;
-    const originalText = uploadBtn.innerHTML;
-    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
-    uploadBtn.disabled = true;
-    
-    const storageRef = firebase.storage().ref(`avatars/${user.uid}.jpg`);
-    let downloadURL = null;
-    
-    storageRef.put(file)
-        .then((snapshot) => {
-            return snapshot.ref.getDownloadURL();
-        })
-        .then((url) => {
-            downloadURL = url;
-            return firebase.firestore().collection('users').doc(user.uid).update({
-                avatar: downloadURL,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        })
-        .then(() => {
-            if (refs.profilePhoto && downloadURL) {
-                refs.profilePhoto.style.opacity = '0';
-                setTimeout(() => {
-                    refs.profilePhoto.src = downloadURL;
-                    refs.profilePhoto.style.transition = 'opacity 0.3s ease-in';
-                    refs.profilePhoto.style.opacity = '1';
-                }, 100);
-            }
-            
-            loadUserData(user);
-            
-            uploadBtn.innerHTML = originalText;
-            uploadBtn.disabled = false;
-            
-            alert('Profile photo updated successfully!');
-        })
-        .catch((error) => {
-            console.error('Error uploading avatar:', error);
-            alert('Failed to upload profile photo. Please try again.');
-            uploadBtn.innerHTML = originalText;
-            uploadBtn.disabled = false;
-        });
-    
-    event.target.value = '';
+function handleAvatarUpload(e) {
+    // Placeholder for avatar upload logic
+    console.log("Avatar upload triggered");
 }
 
 function handleChangePassword(e) {
     e.preventDefault();
-    
-    const currentPassword = refs.currentPasswordInput.value;
-    const newPassword = refs.newPasswordInput.value;
-    const confirmPassword = refs.confirmNewPasswordInput.value;
-    
-    if (!currentPassword || !newPassword || !confirmPassword) {
-        alert('Please fill in all fields.');
-        return;
-    }
-    
-    if (newPassword.length < 8) {
-        alert('New password must be at least 8 characters long.');
-        return;
-    }
-    
-    if (newPassword !== confirmPassword) {
-        alert('New passwords do not match.');
-        return;
-    }
-    
+    const newPass = refs.newPasswordInput.value;
     const user = firebase.auth().currentUser;
-    if (!user) {
-        window.location.href = '../sign in/signin.html';
-        return;
-    }
     
-    const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
-    user.reauthenticateWithCredential(credential)
-        .then(() => {
-            return user.updatePassword(newPassword);
-        })
-        .then(() => {
-            alert('Password changed successfully!');
-            const modal = bootstrap.Modal.getInstance(refs.changePasswordModal);
-            if (modal) {
-                modal.hide();
-            }
-            refs.changePasswordForm.reset();
-        })
-        .catch((error) => {
-            console.error('Error changing password:', error);
-            let errorMessage = 'Failed to change password. ';
-            
-            switch (error.code) {
-                case 'auth/wrong-password':
-                    errorMessage += 'Current password is incorrect.';
-                    break;
-                case 'auth/weak-password':
-                    errorMessage += 'New password is too weak.';
-                    break;
-                case 'auth/requires-recent-login':
-                    errorMessage += 'Please sign out and sign in again before changing your password.';
-                    break;
-                default:
-                    errorMessage += error.message || 'Please try again.';
-            }
-            
-            alert(errorMessage);
-        });
+    user.updatePassword(newPass).then(() => {
+        alert("Password updated!");
+        bootstrap.Modal.getInstance(refs.changePasswordModal).hide();
+    }).catch(err => alert(err.message));
 }
 
-function loadPersonalityResults(user) {
-    const db = firebase.firestore();
-    
-    // Load Big Five
-    db.collection("users").doc(user.uid).collection("tests").doc("Big-Five").get()
-        .then((doc) => {
-            if (doc.exists) {
-                const data = doc.data();
-                const date = data.finishedAt ? data.finishedAt.toDate().toLocaleDateString() : "Unknown";
-                const timeSpent = data.timeSpent ? Math.floor(data.timeSpent / 60) + "m " + (data.timeSpent % 60) + "s" : "Unknown";
-                
-                if (refs.bigFiveCard) {
-                    refs.bigFiveCard.innerHTML = `
-                        <h6 class="card-title text-gold">Big Five Overview</h6>
-                        <p class="text-muted mb-2">Completed on: ${date}</p>
-                        <p class="text-muted mb-3">Time spent: ${timeSpent}</p>
-                        <a href="../Test/Test.html?mode=review&test=Big-Five" class="btn btn-outline-light btn-sm">Review Answers</a>
-                    `;
-                }
-            } else {
-                if (refs.bigFiveCard) {
-                    refs.bigFiveCard.innerHTML = `
-                        <h6 class="card-title text-gold">Big Five Overview</h6>
-                        <p class="text-muted mb-3">Not yet completed.</p>
-                        <a href="../Test/Test.html" class="btn btn-gold btn-sm">Start Test</a>
-                    `;
-                }
-            }
-        });
-
-    // Load Holland Codes
-    db.collection("users").doc(user.uid).collection("tests").doc("Holland-codes").get()
-        .then((doc) => {
-            if (doc.exists) {
-                const data = doc.data();
-                const date = data.finishedAt ? data.finishedAt.toDate().toLocaleDateString() : "Unknown";
-                const timeSpent = data.timeSpent ? Math.floor(data.timeSpent / 60) + "m " + (data.timeSpent % 60) + "s" : "Unknown";
-                
-                if (refs.hollandCard) {
-                    refs.hollandCard.innerHTML = `
-                        <h6 class="card-title text-gold">Holland Codes Overview</h6>
-                        <p class="text-muted mb-2">Completed on: ${date}</p>
-                        <p class="text-muted mb-3">Time spent: ${timeSpent}</p>
-                        <a href="../Test/Test.html?mode=review&test=Holland-codes" class="btn btn-outline-light btn-sm">Review Answers</a>
-                    `;
-                }
-            } else {
-                if (refs.hollandCard) {
-                    refs.hollandCard.innerHTML = `
-                        <h6 class="card-title text-gold">Holland Codes Overview</h6>
-                        <p class="text-muted mb-3">Not yet completed.</p>
-                        <a href="../Test/Test.html" class="btn btn-gold btn-sm">Start Test</a>
-                    `;
-                }
-            }
-        });
-}
-
-function loadCareerRecommendations() {
-    // BACK-END DEVELOPER WILL HANDLE THIS PART
-    const placeholderJobs = [
-        { title: 'Data Strategist', skills: ['Python', 'SQL', 'Storytelling'], fit: '82%' },
-        { title: 'Learning Experience Designer', skills: ['UX', 'Content', 'AI Tools'], fit: '75%' },
-        { title: 'Talent Intelligence Analyst', skills: ['Power BI', 'Communication'], fit: '78%' }
-    ];
-
-    if (refs.recommendationsGrid) {
-        refs.recommendationsGrid.innerHTML = '';
-        placeholderJobs.forEach(job => {
-            const col = document.createElement('div');
-            col.className = 'col-md-4';
-            col.innerHTML = `
-                <article class="job-card">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="mb-1 text-gold">${job.title}</h6>
-                            <p class="text-muted mb-2 small">Next-gen role aligned with your assessments.</p>
-                        </div>
-                        <span class="fit-pill">${job.fit} fit</span>
-                    </div>
-                    <div class="job-card__skills">
-                        ${job.skills.map(skill => `<span>${skill}</span>`).join('')}
-                    </div>
-                    <button class="btn btn-outline-light btn-sm align-self-start">View roadmap</button>
-                </article>
-            `;
-            refs.recommendationsGrid.appendChild(col);
-        });
-    }
-}
-
-function loadSavedJobs() {
-    // BACK-END DEVELOPER WILL HANDLE THIS PART
-    const savedJobs = [
-        { title: 'AI Product Manager', note: 'Blend research + execution', status: 'Monitoring updates' },
-        { title: 'Career Coach (Hybrid)', note: 'High empathy role', status: 'Shortlisted' },
-        { title: 'People Analytics Partner', note: 'Impact-driven insights', status: 'Interview scheduled' }
-    ];
-
-    if (refs.savedJobsGrid) {
-        refs.savedJobsGrid.innerHTML = '';
-        savedJobs.forEach(job => {
-            const col = document.createElement('div');
-            col.className = 'col-md-4';
-            col.innerHTML = `
-                <article class="saved-card h-100 d-flex flex-column">
-                    <h6 class="text-gold">${job.title}</h6>
-                    <p class="text-muted flex-grow-1">${job.note}</p>
-                    <span class="badge bg-dark border border-light align-self-start">${job.status}</span>
-                </article>
-            `;
-            refs.savedJobsGrid.appendChild(col);
-        });
-    }
-}
-
-function loadActivityLog() {
-    // BACK-END DEVELOPER WILL HANDLE THIS PART
-    const activities = [
-        { text: 'Completed Big Five assessment', time: '2 days ago' },
-        { text: 'Viewed career recommendations', time: 'Yesterday' },
-        { text: 'Edited profile information', time: 'Today' }
-    ];
-
-    if (refs.activityList) {
-        refs.activityList.innerHTML = '';
-        activities.forEach(item => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item d-flex justify-content-between align-items-center';
-            li.innerHTML = `
-                <span>${item.text}</span>
-                <small class="text-muted">${item.time}</small>
-            `;
-            refs.activityList.appendChild(li);
-        });
-    }
-}
-
-// Hamburger menu functionality
 function initHamburgerMenu() {
-    const hamburger = document.getElementById('hamburger');
-    const navLinks = document.getElementById('navLinks');
-    const navAuth = document.getElementById('navAuth');
-    
-    if (hamburger && navLinks && navAuth) {
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    const navAuth = document.querySelector('.nav-auth');
+
+    if (hamburger) {
         hamburger.addEventListener('click', () => {
             hamburger.classList.toggle('active');
             navLinks.classList.toggle('active');
             navAuth.classList.toggle('active');
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!hamburger.contains(e.target) && !navLinks.contains(e.target) && !navAuth.contains(e.target)) {
-                hamburger.classList.remove('active');
-                navLinks.classList.remove('active');
-                navAuth.classList.remove('active');
-            }
-        });
-        
-        // Close menu when clicking a link
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navLinks.classList.remove('active');
-                navAuth.classList.remove('active');
-            });
         });
     }
 }
