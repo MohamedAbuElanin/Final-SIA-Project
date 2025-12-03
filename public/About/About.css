@@ -288,7 +288,7 @@ main {
 }
 
 section {
-    padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 5rem);
+    padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 5rem); 
 }
 
 .hero {
@@ -430,12 +430,6 @@ section {
 
 .roadmap {
     background: linear-gradient(120deg, rgba(5, 5, 5, 0.9), rgba(10, 10, 10, 0.7));
-}
-
-.roadmap__content {
-    max-width: 900px;
-    margin: 0 auto;
-    text-align: center;
 }
 
 .roadmap__cta {

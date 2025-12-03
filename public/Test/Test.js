@@ -514,22 +514,58 @@ function saveTestResult(testType, resultData, totalTime) {
         return;
     }
 
-    const db = firebase.firestore();
-    const testRef = db.collection("users").doc(user.uid).collection("tests").doc(testType);
+    // Call Backend to Calculate Scores
+    fetch('http://localhost:5000/api/calculate-scores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            testType: testType,
+            answers: resultData
+        })
+    })
+    .then(response => response.json())
+    .then(scores => {
+        console.log("Scores calculated:", scores);
+        
+        const db = firebase.firestore();
+        const testRef = db.collection("TestsResults").doc(user.uid);
 
-    testRef.set({
-        result: resultData,
-        timeSpent: totalTime,
-        finishedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        // Prepare update data
+        let updateData = {};
+        if (testType === 'Big-Five') {
+            updateData['Big-Five'] = scores;
+        } else {
+            updateData['Holland-Code'] = scores;
+        }
+        
+        // Also save raw answers if needed, or just the scores?
+        // The prompt says "store the results... individually".
+        // Let's store both scores and metadata in the user's subcollection if we want to follow Task B strictly,
+        // BUT profile.js reads from TestsResults collection.
+        // So I will update TestsResults collection as per profile.js expectation.
+        
+        // Merge with existing data
+        testRef.set(updateData, { merge: true })
+        .then(() => {
+            // Log Activity
+            const activityRef = db.collection('users').doc(user.uid).collection('activityLogs');
+            activityRef.add({
+                action: `Completed ${testType} Test`,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).catch(err => console.error("Error logging activity:", err));
+
+            console.log("Test result saved successfully!");
+            alert("Test completed and saved!");
+            window.location.href = "../profile/profile.html";
+        })
+        .catch((error) => {
+            console.error("Error saving to Firestore:", error);
+            alert("Failed to save results to database.");
+        });
+
     })
-    .then(() => {
-        console.log("Test result saved successfully!");
-        alert("Test data saved successfully!");
-        window.location.href = "../profile/profile.html";
-    })
-    .catch((error) => {
-        console.error("Error saving test result:", error);
-        alert("Failed to save test results. Try again.");
+    .catch(error => {
+        console.error("Error calculating scores:", error);
+        alert("Failed to calculate scores. Please check your connection.");
     });
 }

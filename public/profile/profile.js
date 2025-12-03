@@ -519,11 +519,11 @@ function renderChart() {
         const b5 = state.testResults.bigFive;
         // Handle different casing/naming
         dataPoints = [
-            b5.Openness || b5.openness || 0,
-            b5.Conscientiousness || b5.conscientiousness || 0,
-            b5.Extraversion || b5.extraversion || 0,
-            b5.Agreeableness || b5.agreeableness || 0,
-            b5.Neuroticism || b5.neuroticism || 0
+            b5.Openness || b5.openness || b5.O || 0,
+            b5.Conscientiousness || b5.conscientiousness || b5.C || 0,
+            b5.Extraversion || b5.extraversion || b5.E || 0,
+            b5.Agreeableness || b5.agreeableness || b5.A || 0,
+            b5.Neuroticism || b5.neuroticism || b5.N || 0
         ];
         label = 'Big Five Traits';
         chartType = 'radar';
@@ -654,15 +654,24 @@ function saveProfileChanges() {
 
     firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update(updatedData)
         .then(() => {
+            // Sync with Auth Profile
+            const user = firebase.auth().currentUser;
+            user.updateProfile({
+                displayName: updatedData.fullName,
+                // photoURL: updatedData.avatar // If avatar was updated
+            }).then(() => {
+                console.log("Auth profile updated");
+            }).catch(err => console.error("Error updating auth profile:", err));
+
             state.isEditing = false;
             refs.saveProfileBtn.classList.add('d-none');
             refs.editProfileBtn.classList.remove('disabled');
             toggleHeaderInputs(false);
             togglePersonalInfoFields(true);
-            loadUserData(firebase.auth().currentUser); // Reload to refresh
+            loadUserData(user); // Reload to refresh
             
             // Log Activity
-            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).collection('activityLogs').add({
+            firebase.firestore().collection('users').doc(user.uid).collection('activityLogs').add({
                 action: 'Updated Profile Information',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
