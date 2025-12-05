@@ -3,17 +3,16 @@ console.log("Welcome to SIA — Ancient Wisdom for Modern Careers");
 
 // Route Guard: Redirect if already logged in
 // Wait for Firebase to initialize
+// Route Guard: Redirect if already logged in
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        if (window.firebase) {
-            firebase.auth().onAuthStateChanged((user) => {
-                if (user) {
-                    // User is already logged in, redirect to profile
-                    window.location.href = '../profile/profile.html';
-                }
-            });
-        }
-    }, 1000);
+    if (window.firebase) {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // User is already logged in, redirect to profile
+                window.location.href = '../profile/profile.html';
+            }
+        });
+    }
 });
 
 // Mobile hamburger menu toggle
@@ -478,6 +477,12 @@ if (signUpForm) {
                 }, 1500);
             })
             .catch((error) => {
+                // Rollback: Delete user from Auth if Firestore/Storage failed
+                const currentUser = firebase.auth().currentUser;
+                if (currentUser) {
+                    currentUser.delete().catch(err => console.error("Rollback failed:", err));
+                }
+
                 // Handle errors
                 let errorMessage = 'An error occurred. Please try again.';
                 

@@ -1,4 +1,7 @@
 // Firebase Configuration - v9 Compat Mode
+// Note: Firebase API keys are safe to expose in client-side code (publicly visible).
+// They identify your project, but security is handled via Firebase Security Rules (Firestore/Storage) and App Check.
+// Do not commit service account keys (private keys) which are for backend only.
 const firebaseConfig = {
   apiKey: "AIzaSyBbcUi02rCzwZOVY3uRloGKk21-fC7IFDk",
   authDomain: "sia-project-2458a.firebaseapp.com",
@@ -10,7 +13,9 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase (v9 compat mode)
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
 // Initialize Firebase services
 const auth = firebase.auth();

@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "sia-project-2458a"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }

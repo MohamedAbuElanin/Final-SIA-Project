@@ -12,7 +12,8 @@ const state = {
     elapsedSeconds: 0,
     isTimerRunning: false,
     maxReachedIndex: 0, // Track furthest progress to manage "Review" vs "New"
-    isReviewMode: false // Flag for Review Mode
+    isReviewMode: false, // Flag for Review Mode
+    isSaving: false // Flag to prevent duplicate submissions
 };
 
 // DOM Elements
@@ -496,6 +497,12 @@ function reviewAnswersFromResults() {
 }
 
 function finishTest() {
+    // Prevent duplicate submissions
+    if (state.isSaving) {
+        console.log("Test result is already being saved. Please wait...");
+        return;
+    }
+
     stopTimer();
     localStorage.removeItem('sia_test_progress');
 
@@ -503,49 +510,86 @@ function finishTest() {
     const finalResult = state.answers;
     const currentTestType = state.currentTest;
 
+    // Validate that we have answers
+    if (!currentTestType || Object.keys(finalResult).length === 0) {
+        alert("Error: No test data to save. Please complete the test first.");
+        return;
+    }
+
     saveTestResult(currentTestType, finalResult, totalTime);
 }
 
 function saveTestResult(testType, resultData, totalTime) {
+    // Set saving flag to prevent duplicate submissions
+    if (state.isSaving) {
+        console.log("Already saving test result. Ignoring duplicate call.");
+        return;
+    }
+    state.isSaving = true;
+
     const user = firebase.auth().currentUser;
 
     if (!user) {
+        state.isSaving = false;
         alert("You must be logged in!");
         return;
     }
 
+    // Disable finish button to prevent multiple clicks
+    const finishBtn = elements.finishBtn;
+    if (finishBtn) {
+        finishBtn.disabled = true;
+        finishBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+    }
+
     // Call Backend to Calculate Scores
-    fetch('http://localhost:5000/api/calculate-scores', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            testType: testType,
-            answers: resultData
+    user.getIdToken().then(token => {
+        fetch(`${CONFIG.API_BASE_URL}/calculate-scores`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                testType: testType,
+                answers: resultData
+            })
         })
-    })
-    .then(response => response.json())
-    .then(scores => {
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(scores => {
         console.log("Scores calculated:", scores);
         
         const db = firebase.firestore();
-        const testRef = db.collection("TestsResults").doc(user.uid);
+        
+        // Prepare data for both storage locations
+        const testResultData = {
+            result: scores,
+            answers: resultData, // Raw answers for review mode
+            timeSpent: totalTime,
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            testType: testType
+        };
 
-        // Prepare update data
-        let updateData = {};
+        // 1. Save to subcollection for review mode access
+        const subcollectionRef = db.collection('users').doc(user.uid).collection('tests').doc(testType);
+        
+        // 2. Save scores to TestsResults collection for profile page
+        const testResultsRef = db.collection("TestsResults").doc(user.uid);
+        let profileUpdateData = {};
         if (testType === 'Big-Five') {
-            updateData['Big-Five'] = scores;
+            profileUpdateData['bigFive'] = scores;
         } else {
-            updateData['Holland-Code'] = scores;
+            profileUpdateData['hollandCode'] = scores; // Standardized key
         }
         
-        // Also save raw answers if needed, or just the scores?
-        // The prompt says "store the results... individually".
-        // Let's store both scores and metadata in the user's subcollection if we want to follow Task B strictly,
-        // BUT profile.js reads from TestsResults collection.
-        // So I will update TestsResults collection as per profile.js expectation.
-        
-        // Merge with existing data
-        testRef.set(updateData, { merge: true })
+        // Save to both locations simultaneously
+        Promise.all([
+            subcollectionRef.set(testResultData),
+            testResultsRef.set(profileUpdateData, { merge: true })
+        ])
         .then(() => {
             // Log Activity
             const activityRef = db.collection('users').doc(user.uid).collection('activityLogs');
@@ -554,18 +598,30 @@ function saveTestResult(testType, resultData, totalTime) {
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             }).catch(err => console.error("Error logging activity:", err));
 
-            console.log("Test result saved successfully!");
+            console.log("Test result saved successfully to both locations!");
+            state.isSaving = false;
             alert("Test completed and saved!");
             window.location.href = "../profile/profile.html";
         })
         .catch((error) => {
             console.error("Error saving to Firestore:", error);
-            alert("Failed to save results to database.");
+            state.isSaving = false;
+            if (finishBtn) {
+                finishBtn.disabled = false;
+                finishBtn.innerHTML = 'Finish & Save';
+            }
+            alert("Failed to save results to database: " + error.message);
         });
 
     })
     .catch(error => {
         console.error("Error calculating scores:", error);
+        state.isSaving = false;
+        if (finishBtn) {
+            finishBtn.disabled = false;
+            finishBtn.innerHTML = 'Finish & Save';
+        }
         alert("Failed to calculate scores. Please check your connection.");
     });
+    }); // Close getIdToken
 }

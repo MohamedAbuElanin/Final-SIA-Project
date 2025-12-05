@@ -14,36 +14,36 @@ const state = {
 };
 
 // Route Guard & Initialization
+// Route Guard & Initialization
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        if (!window.firebase) {
-            console.error("Firebase not initialized!");
+    if (!window.firebase) {
+        console.error("Firebase not initialized!");
+        return;
+    }
+
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+            localStorage.clear();
+            window.location.href = '../sign in/signin.html';
             return;
         }
-
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-                localStorage.clear();
-                window.location.href = '../sign in/signin.html';
-                return;
-            }
+        
+        user.getIdToken().then((token) => {
+            localStorage.setItem("authToken", token);
+            localStorage.setItem("uid", user.uid);
             
-            user.getIdToken().then((token) => {
-                localStorage.setItem("authToken", token);
-                localStorage.setItem("uid", user.uid);
-                
-                initHamburgerMenu();
-                cacheElements();
-                bindEvents();
-                loadUserData(user);
-                loadTestResults(user); // Load Big Five & Holland
-            }).catch((error) => {
-                console.error('Error getting token:', error);
-                localStorage.clear();
-                window.location.href = '../sign in/signin.html';
-            });
+            initHamburgerMenu();
+            cacheElements();
+            bindEvents();
+            loadUserData(user);
+            loadTestResults(user); // Load Big Five & Holland
+            checkUrlParams(); // Check if we need to enter edit mode immediately
+        }).catch((error) => {
+            console.error('Error getting token:', error);
+            localStorage.clear();
+            window.location.href = '../sign in/signin.html';
         });
-    }, 1000);
+    });
 });
 
 const refs = {};
@@ -88,7 +88,9 @@ function cacheElements() {
     refs.recommendationsGrid = document.getElementById('recommendationsGrid');
     refs.savedJobsGrid = document.getElementById('savedJobsGrid');
     refs.activityList = document.getElementById('activityList');
-    refs.resultsChartCanvas = document.getElementById('resultsChart');
+    refs.bigFiveChartContainer = document.getElementById('bigFiveChart');
+    refs.hollandChartContainer = document.getElementById('hollandChart');
+    refs.careerAnalysisContainer = document.getElementById('careerAnalysisContainer');
 }
 
 function bindEvents() {
@@ -262,8 +264,8 @@ function loadTestResults(user) {
     resultsRef.get().then((doc) => {
         if (doc.exists) {
             const data = doc.data();
-            state.testResults.bigFive = data["Big-Five"] || data["BigFive"] || null;
-            state.testResults.holland = data["Holland-Code"] || data["Holland"] || data["HollandCodes"] || null;
+            state.testResults.bigFive = data["bigFive"] || data["Big-Five"] || data["BigFive"] || null;
+            state.testResults.hollandCode = data["hollandCode"] || data["Holland-Code"] || data["Holland"] || null;
             state.aiAnalysis = data["AI_Analysis"] || null;
 
             displayTestResults();
@@ -271,12 +273,12 @@ function loadTestResults(user) {
             if (state.aiAnalysis) {
                 console.log("Loading existing AI Analysis...");
                 displayAIAnalysis(state.aiAnalysis);
-                renderChart();
-            } else if (state.testResults.bigFive || state.testResults.holland) {
+                renderCharts();
+            } else if (state.testResults.bigFive || state.testResults.hollandCode) {
                 console.log("Tests found but no analysis. Generating...");
                 generateAIAnalysis(user);
             } else {
-                renderChart();
+                renderCharts();
             }
         } else {
             console.log("No test results found.");
@@ -296,7 +298,7 @@ function displayTestResults() {
                 </div>
                 <h6 class="card-title text-gold">Big Five Overview</h6>
                 <p class="text-muted mb-2">Completed</p>
-                <a href="../Test/Test.html?mode=review&test=Big-Five" class="btn btn-outline-light btn-sm">View Result</a>
+                <a href="../Test/Test.html?mode=review&test=Big-Five" class="btn btn-outline-light btn-sm">View Results</a>
             `;
         } else {
             refs.bigFiveCard.innerHTML = `
@@ -313,14 +315,14 @@ function displayTestResults() {
     // Holland
     if (refs.hollandCard) {
         const hollandImg = '../Images/Test/Holland codes.svg';
-        if (state.testResults.holland) {
+        if (state.testResults.hollandCode) {
             refs.hollandCard.innerHTML = `
                 <div class="text-center mb-3">
                     <img src="${hollandImg}" alt="Holland Codes" style="width: 80px; height: auto;">
                 </div>
                 <h6 class="card-title text-gold">Holland Codes Overview</h6>
                 <p class="text-muted mb-2">Completed</p>
-                <a href="../Test/Test.html?mode=review&test=Holland-codes" class="btn btn-outline-light btn-sm">View Result</a>
+                <a href="../Test/Test.html?mode=review&test=Holland-codes" class="btn btn-outline-light btn-sm">View Results</a>
             `;
         } else {
             refs.hollandCard.innerHTML = `
@@ -342,13 +344,21 @@ async function generateAIAnalysis(user) {
     }
 
     try {
-        const response = await fetch('http://localhost:5000/api/analyze-profile', {
+        const user = firebase.auth().currentUser;
+        if (!user) throw new Error("User not authenticated");
+        
+        const token = await user.getIdToken();
+
+        const response = await fetch(`${CONFIG.API_BASE_URL}/analyze-profile`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({
                 userData: state.userData,
                 bigFive: state.testResults.bigFive,
-                holland: state.testResults.holland
+                holland: state.testResults.hollandCode
             })
         });
 
@@ -363,7 +373,7 @@ async function generateAIAnalysis(user) {
 
         state.aiAnalysis = analysis;
         displayAIAnalysis(analysis);
-        renderChart();
+        renderCharts();
 
     } catch (error) {
         console.error("AI Generation Error:", error);
@@ -383,39 +393,42 @@ function displayAIAnalysis(analysis) {
     // Remove existing if any to prevent duplicates
     if (analysisDiv) analysisDiv.remove();
     
-    analysisDiv = document.createElement('div');
-    analysisDiv.id = 'ai-personality-analysis';
-    analysisDiv.className = 'col-12 mt-4';
-    analysisDiv.innerHTML = `
-        <div class="card bg-dark border-gold">
-            <div class="card-body">
-                <h6 class="text-gold mb-3"><i class="fas fa-brain me-2"></i>AI Personality Insights</h6>
-                <p class="text-muted mb-0" style="line-height: 1.6;">${analysis.personalityAnalysis}</p>
+    if (analysis.personalityAnalysis) {
+        analysisDiv = document.createElement('div');
+        analysisDiv.id = 'ai-personality-analysis';
+        analysisDiv.className = 'col-12 mt-4';
+        analysisDiv.innerHTML = `
+            <div class="card bg-dark border-gold">
+                <div class="card-body">
+                    <h6 class="text-gold mb-3"><i class="fas fa-brain me-2"></i>AI Personality Insights</h6>
+                    <p class="text-muted mb-0" style="line-height: 1.6;">${analysis.personalityAnalysis}</p>
+                </div>
             </div>
-        </div>
-    `;
-    
-    // Insert after the test cards row
-    if (personalitySection) {
-        personalitySection.appendChild(analysisDiv);
+        `;
+        
+        // Insert after the test cards row
+        if (personalitySection) {
+            personalitySection.appendChild(analysisDiv);
+        }
     }
 
-    // 2. Career Recommendations
+    // 2. Career Recommendations (Simplified cards in recommendations section)
     if (refs.recommendationsGrid) {
         refs.recommendationsGrid.innerHTML = '';
-        if (analysis.recommendedCareers && analysis.recommendedCareers.length > 0) {
-            analysis.recommendedCareers.forEach(career => {
+        const careers = analysis.top3Careers || analysis.recommendedCareers || [];
+        if (careers.length > 0) {
+            careers.forEach((career, index) => {
                 const col = document.createElement('div');
                 col.className = 'col-md-4';
                 col.innerHTML = `
                     <article class="job-card h-100">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h6 class="mb-0 text-gold text-uppercase" style="font-size: 0.9rem; letter-spacing: 0.05em;">${career.title}</h6>
-                            <span class="fit-pill">${career.fit}</span>
+                            <span class="badge bg-gold text-dark">${career.fit || 'N/A'}</span>
                         </div>
-                        <p class="text-muted mb-3 small flex-grow-1">${career.reason}</p>
+                        <p class="text-muted mb-3 small flex-grow-1">${career.reason || 'No reason provided.'}</p>
                         <div class="job-card__skills mt-auto">
-                            ${career.skills ? career.skills.map(skill => `<span>${skill}</span>`).join('') : ''}
+                            ${career.skills && career.skills.length > 0 ? career.skills.map(skill => `<span class="badge bg-secondary me-1 mb-1">${skill}</span>`).join('') : '<span class="text-muted small">No skills listed</span>'}
                         </div>
                     </article>
                 `;
@@ -426,112 +439,197 @@ function displayAIAnalysis(analysis) {
         }
     }
 
-    // 3. Resources
-    const savedCareersSection = document.getElementById('saved-careers');
-    if (savedCareersSection) {
-        // Update section header
-        const header = savedCareersSection.querySelector('.section-heading');
-        if (header) {
-            header.querySelector('h5').textContent = "Recommended Resources";
-            header.querySelector('p').textContent = "Curated learning path based on your profile.";
-        }
-        
-        const container = document.getElementById('savedJobsGrid');
-        if (container) {
-            container.innerHTML = '';
+    // 3. Final Career Analysis with Roadmaps and Resources
+    if (refs.careerAnalysisContainer) {
+        const careers = analysis.top3Careers || [];
+        if (careers.length > 0) {
+            let careerHTML = '';
             
-            // Helper to create resource lists
-            const createResourceList = (title, items, icon) => {
-                if (!items || items.length === 0) return '';
-                return `
-                    <div class="col-md-6 mb-4">
-                        <div class="card h-100 bg-dark border-secondary">
-                            <div class="card-body">
-                                <h6 class="text-gold mb-3"><i class="${icon} me-2"></i>${title}</h6>
-                                <ul class="list-group list-group-flush bg-transparent">
-                                    ${items.map(item => `
-                                        <li class="list-group-item bg-transparent text-muted border-secondary px-0 py-2">
-                                            <a href="${item.link || '#'}" target="_blank" class="text-decoration-none text-light hover-gold d-flex justify-content-between align-items-center">
-                                                <span>${item.title}</span>
-                                                <i class="fas fa-external-link-alt small text-muted ms-2"></i>
-                                            </a>
-                                            ${item.platform || item.author ? `<small class="d-block text-muted mt-1">${item.platform || item.author}</small>` : ''}
-                                        </li>
-                                    `).join('')}
-                                </ul>
+            careers.forEach((career, index) => {
+                const rankEmojis = ['🥇', '🥈', '🥉'];
+                careerHTML += `
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-header border-gold">
+                            <h5 class="text-gold mb-0">
+                                ${rankEmojis[index]} ${career.title} 
+                                <span class="badge bg-gold text-dark ms-2">${career.fit || 'N/A'} Match</span>
+                            </h5>
+                            <p class="text-muted mb-0 mt-2">${career.reason || ''}</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <!-- Roadmap Section -->
+                                <div class="col-md-12">
+                                    <h6 class="text-gold mb-3"><i class="fas fa-route me-2"></i>Career Roadmap</h6>
+                                    <div class="roadmap-timeline">
+                                        ${career.roadmap && career.roadmap.length > 0 ? career.roadmap.map((step, stepIndex) => `
+                                            <div class="roadmap-step mb-3">
+                                                <div class="d-flex align-items-start">
+                                                    <div class="roadmap-number me-3">${stepIndex + 1}</div>
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="text-light mb-1">${step.step || `Phase ${stepIndex + 1}`}</h6>
+                                                        <p class="text-muted mb-0">${step.description || 'No description provided.'}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('') : '<p class="text-muted">No roadmap available for this career.</p>'}
+                                    </div>
+                                </div>
+                                
+                                <!-- Resources Section -->
+                                <div class="col-md-12">
+                                    <h6 class="text-gold mb-3"><i class="fas fa-book-open me-2"></i>Top Resources</h6>
+                                    <div class="row g-3">
+                                        ${career.resources ? `
+                                            <!-- Books -->
+                                            ${career.resources.books && career.resources.books.length > 0 ? `
+                                                <div class="col-md-4">
+                                                    <div class="card bg-dark border-secondary h-100">
+                                                        <div class="card-body">
+                                                            <h6 class="text-gold mb-3"><i class="fas fa-book me-2"></i>Recommended Book</h6>
+                                                            ${career.resources.books.slice(0, 1).map(book => `
+                                                                <a href="${book.link || '#'}" target="_blank" class="text-decoration-none text-light d-block mb-2">
+                                                                    <strong>${book.title || 'N/A'}</strong>
+                                                                    ${book.author ? `<br><small class="text-muted">by ${book.author}</small>` : ''}
+                                                                    <i class="fas fa-external-link-alt small text-muted ms-2"></i>
+                                                                </a>
+                                                            `).join('')}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ` : ''}
+                                            
+                                            <!-- YouTube Courses -->
+                                            ${career.resources.youtubeCourses && career.resources.youtubeCourses.length > 0 ? `
+                                                <div class="col-md-4">
+                                                    <div class="card bg-dark border-secondary h-100">
+                                                        <div class="card-body">
+                                                            <h6 class="text-gold mb-3"><i class="fab fa-youtube me-2"></i>YouTube Course</h6>
+                                                            ${career.resources.youtubeCourses.slice(0, 1).map(yt => `
+                                                                <a href="${yt.link || '#'}" target="_blank" class="text-decoration-none text-light d-block mb-2">
+                                                                    <strong>${yt.title || 'N/A'}</strong>
+                                                                    ${yt.channel ? `<br><small class="text-muted">${yt.channel}</small>` : ''}
+                                                                    <i class="fas fa-external-link-alt small text-muted ms-2"></i>
+                                                                </a>
+                                                            `).join('')}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ` : ''}
+                                            
+                                            <!-- Platform Courses -->
+                                            ${career.resources.platforms && career.resources.platforms.length > 0 ? `
+                                                <div class="col-md-4">
+                                                    <div class="card bg-dark border-secondary h-100">
+                                                        <div class="card-body">
+                                                            <h6 class="text-gold mb-3"><i class="fas fa-graduation-cap me-2"></i>Platform Course</h6>
+                                                            ${career.resources.platforms.slice(0, 1).map(platform => `
+                                                                <a href="${platform.link || '#'}" target="_blank" class="text-decoration-none text-light d-block mb-2">
+                                                                    <strong>${platform.title || 'N/A'}</strong>
+                                                                    ${platform.platform ? `<br><small class="text-muted">on ${platform.platform}</small>` : ''}
+                                                                    <i class="fas fa-external-link-alt small text-muted ms-2"></i>
+                                                                </a>
+                                                            `).join('')}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ` : ''}
+                                        ` : '<div class="col-12"><p class="text-muted">No resources available for this career.</p></div>'}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
-            };
-
-            let resourcesHTML = '<div class="row g-4 w-100">';
+            });
             
-            // Courses
-            const courses = [...(analysis.learningResources?.paidCourses || []), ...(analysis.learningResources?.freeCourses || [])];
-            resourcesHTML += createResourceList('Top Courses', courses.slice(0, 5), 'fa-solid fa-graduation-cap');
-            
-            // Books
-            resourcesHTML += createResourceList('Recommended Books', analysis.learningResources?.books?.slice(0, 5), 'fa-solid fa-book');
-            
-            // Videos/Podcasts
-            const media = [...(analysis.learningResources?.youtubeVideos || []), ...(analysis.learningResources?.podcasts || [])];
-            resourcesHTML += createResourceList('Videos & Podcasts', media.slice(0, 5), 'fa-brands fa-youtube');
-            
-            // Roadmap
-            if (analysis.roadmap) {
-                const roadmapItems = analysis.roadmap.map(r => ({ 
-                    title: r.step, 
-                    platform: r.description 
-                }));
-                resourcesHTML += createResourceList('Learning Roadmap', roadmapItems, 'fa-solid fa-road');
-            }
-            
-            resourcesHTML += '</div>';
-            container.innerHTML = resourcesHTML;
+            refs.careerAnalysisContainer.innerHTML = careerHTML;
+        } else {
+            refs.careerAnalysisContainer.innerHTML = '<div class="alert alert-info bg-dark border-gold text-muted">No career analysis available yet. Complete both tests to generate recommendations.</div>';
         }
     }
 }
 
 // ==========================================
-// 3. Visualization (Chart.js)
+// 3. Visualization (ApexCharts)
 // ==========================================
 
-function renderChart() {
-    if (!refs.resultsChartCanvas) return;
-
-    // Destroy existing chart if any
-    if (window.myProfileChart) {
-        window.myProfileChart.destroy();
-    }
-
-    const ctx = refs.resultsChartCanvas.getContext('2d');
-    
-    // Prepare data
-    let labels = [];
-    let dataPoints = [];
-    let label = '';
-    let chartType = 'bar';
-
-    if (state.testResults.bigFive) {
-        // Big Five Radar Chart
-        labels = ['Openness', 'Conscientiousness', 'Extraversion', 'Agreeableness', 'Neuroticism'];
+function renderCharts() {
+    // Render Big Five Radar Chart
+    if (state.testResults.bigFive && refs.bigFiveChartContainer) {
         const b5 = state.testResults.bigFive;
-        // Handle different casing/naming
-        dataPoints = [
+        const labels = ['Openness', 'Conscientiousness', 'Extraversion', 'Agreeableness', 'Neuroticism'];
+        const dataPoints = [
             b5.Openness || b5.openness || b5.O || 0,
             b5.Conscientiousness || b5.conscientiousness || b5.C || 0,
             b5.Extraversion || b5.extraversion || b5.E || 0,
             b5.Agreeableness || b5.agreeableness || b5.A || 0,
             b5.Neuroticism || b5.neuroticism || b5.N || 0
         ];
-        label = 'Big Five Traits';
-        chartType = 'radar';
-    } else if (state.testResults.holland) {
-        // Holland Bar Chart
-        labels = ['Realistic', 'Investigative', 'Artistic', 'Social', 'Enterprising', 'Conventional'];
-        const h = state.testResults.holland;
-        dataPoints = [
+
+        // Destroy existing chart if any
+        if (window.bigFiveChart) {
+            window.bigFiveChart.destroy();
+        }
+
+        const options = {
+            series: [{ name: 'Score', data: dataPoints }],
+            chart: {
+                type: 'radar',
+                height: 400,
+                toolbar: { show: false },
+                background: 'transparent'
+            },
+            colors: ['#d4af37'],
+            xaxis: { categories: labels },
+            yaxis: {
+                min: 0,
+                max: 100,
+                tickAmount: 5
+            },
+            plotOptions: {
+                radar: {
+                    polygons: {
+                        strokeColors: 'rgba(255, 255, 255, 0.1)',
+                        fill: {
+                            colors: ['transparent']
+                        }
+                    }
+                }
+            },
+            fill: {
+                opacity: 0.3
+            },
+            stroke: {
+                width: 2,
+                colors: ['#d4af37']
+            },
+            markers: {
+                size: 5,
+                colors: ['#d4af37'],
+                strokeColors: '#fff',
+                strokeWidth: 2
+            },
+            theme: {
+                mode: 'dark'
+            },
+            tooltip: {
+                theme: 'dark',
+                y: {
+                    formatter: (val) => `${val}%`
+                }
+            }
+        };
+
+        window.bigFiveChart = new ApexCharts(refs.bigFiveChartContainer, options);
+        window.bigFiveChart.render();
+    }
+
+    // Render Holland Code Hexagon/Bar Chart
+    if (state.testResults.hollandCode && refs.hollandChartContainer) {
+        const h = state.testResults.hollandCode;
+        const labels = ['Realistic', 'Investigative', 'Artistic', 'Social', 'Enterprising', 'Conventional'];
+        const dataPoints = [
             h.Realistic || h.realistic || h.R || 0,
             h.Investigative || h.investigative || h.I || 0,
             h.Artistic || h.artistic || h.A || 0,
@@ -539,54 +637,89 @@ function renderChart() {
             h.Enterprising || h.enterprising || h.E || 0,
             h.Conventional || h.conventional || h.C || 0
         ];
-        label = 'Holland Codes';
-        chartType = 'bar';
-    } else {
-        return; // No data to chart
-    }
 
-    window.myProfileChart = new Chart(ctx, {
-        type: chartType,
-        data: {
-            labels: labels,
-            datasets: [{
-                label: label,
-                data: dataPoints,
-                backgroundColor: 'rgba(212, 175, 55, 0.2)', // Gold with opacity
-                borderColor: '#d4af37', // Gold
-                borderWidth: 2,
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#d4af37'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                r: { // For radar
-                    angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    pointLabels: { color: '#fff', font: { size: 12 } },
-                    suggestedMin: 0,
-                    suggestedMax: 100
-                },
-                y: { // For bar
-                    display: chartType === 'bar',
-                    beginAtZero: true,
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#fff' }
-                },
-                x: {
-                    display: chartType === 'bar',
-                    grid: { display: false },
-                    ticks: { color: '#fff' }
+        // Destroy existing chart if any
+        if (window.hollandChart) {
+            window.hollandChart.destroy();
+        }
+
+        const options = {
+            series: [{ name: 'Score', data: dataPoints }],
+            chart: {
+                type: 'bar',
+                height: 400,
+                toolbar: { show: false },
+                background: 'transparent'
+            },
+            colors: ['#d4af37'],
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    horizontal: false,
+                    distributed: false,
+                    columnWidth: '60%'
                 }
             },
-            plugins: {
-                legend: { labels: { color: '#fff' } }
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ['#fff']
+                },
+                formatter: (val) => `${val}%`
+            },
+            xaxis: {
+                categories: labels,
+                labels: {
+                    style: {
+                        colors: '#fff'
+                    }
+                }
+            },
+            yaxis: {
+                min: 0,
+                max: 100,
+                labels: {
+                    style: {
+                        colors: '#fff'
+                    },
+                    formatter: (val) => `${val}%`
+                },
+                grid: {
+                    borderColor: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            grid: {
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                strokeDashArray: 4
+            },
+            fill: {
+                opacity: 0.8,
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    type: 'vertical',
+                    shadeIntensity: 0.5,
+                    gradientToColors: ['#f4d03f'],
+                    inverseColors: false,
+                    opacityFrom: 0.8,
+                    opacityTo: 0.3,
+                    stops: [0, 100]
+                }
+            },
+            theme: {
+                mode: 'dark'
+            },
+            tooltip: {
+                theme: 'dark',
+                y: {
+                    formatter: (val) => `${val}%`
+                }
             }
-        }
-    });
+        };
+
+        window.hollandChart = new ApexCharts(refs.hollandChartContainer, options);
+        window.hollandChart.render();
+    }
 }
 
 // ==========================================
@@ -594,27 +727,67 @@ function renderChart() {
 // ==========================================
 
 function handleExportPDF() {
+    // Show loading state
+    const exportBtn = refs.exportPdfBtn;
+    const originalText = exportBtn.innerHTML;
+    exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating PDF...';
+    exportBtn.disabled = true;
+
     const element = document.querySelector('.profile-page');
+    
+    // Ensure Final Career Analysis section is visible
+    const careerAnalysisSection = document.getElementById('final-career-analysis');
+    if (careerAnalysisSection) {
+        careerAnalysisSection.classList.remove('d-none');
+    }
+
     const opt = {
-        margin: [5, 5],
-        filename: `SIA_Profile_${state.userData?.fullName || 'Report'}.pdf`,
+        margin: [10, 10, 10, 10],
+        filename: `SIA_Profile_${state.userData?.fullName?.replace(/[^a-z0-9]/gi, '_') || 'Report'}_${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
+        html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            logging: false,
+            windowWidth: element.scrollWidth,
+            windowHeight: element.scrollHeight,
+            backgroundColor: '#000000'
+        },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'], before: '.profile-section' }
     };
 
-    // Temporarily hide buttons for clean PDF
-    const buttons = document.querySelectorAll('button, .btn');
-    buttons.forEach(b => b.classList.add('d-none-print'));
+    // Temporarily hide interactive elements for clean PDF
+    const buttons = document.querySelectorAll('button, .btn:not(.d-print-block)');
+    const inputs = document.querySelectorAll('input, select, textarea');
+    const socialIcons = document.querySelectorAll('.footer__social');
+    
+    buttons.forEach(b => {
+        if (!b.classList.contains('d-print-block')) {
+            b.style.display = 'none';
+        }
+    });
+    inputs.forEach(inp => inp.style.display = 'none');
+    socialIcons.forEach(icon => icon.style.display = 'none');
     
     // Add print style class
     document.body.classList.add('printing-pdf');
 
     html2pdf().set(opt).from(element).save().then(() => {
-        // Restore buttons
-        buttons.forEach(b => b.classList.remove('d-none-print'));
+        // Restore elements
+        buttons.forEach(b => b.style.display = '');
+        inputs.forEach(inp => inp.style.display = '');
+        socialIcons.forEach(icon => icon.style.display = '');
         document.body.classList.remove('printing-pdf');
+        
+        // Restore button
+        exportBtn.innerHTML = originalText;
+        exportBtn.disabled = false;
+    }).catch((error) => {
+        console.error("PDF Export Error:", error);
+        alert("Failed to generate PDF. Please try again.");
+        exportBtn.innerHTML = originalText;
+        exportBtn.disabled = false;
     });
 }
 
@@ -692,7 +865,12 @@ function toggleHeaderInputs(show) {
 
 function togglePersonalInfoFields(disabled) {
     const fields = refs.personalInfoForm.querySelectorAll('input, select');
-    fields.forEach(f => f.disabled = disabled);
+    fields.forEach(f => {
+        // Keep email disabled to prevent mismatch with Auth email
+        if (f.id !== 'emailInput') {
+            f.disabled = disabled;
+        }
+    });
 }
 
 function handleEducationChange() {
@@ -701,8 +879,70 @@ function handleEducationChange() {
 }
 
 function handleAvatarUpload(e) {
-    // Placeholder for avatar upload logic
-    console.log("Avatar upload triggered");
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) {
+        alert('Please select an image file.');
+        return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        alert('Image size should be less than 5MB.');
+        return;
+    }
+
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+
+    // Show loading state
+    const uploadBtn = refs.uploadPhotoBtn;
+    const originalText = uploadBtn.innerHTML;
+    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+    uploadBtn.disabled = true;
+
+    // Create a reference to the file location
+    const storageRef = firebase.storage().ref();
+    const fileRef = storageRef.child(`users/${user.uid}/profile_${Date.now()}.jpg`);
+
+    // Upload file
+    fileRef.put(file).then((snapshot) => {
+        // Get the URL
+        return snapshot.ref.getDownloadURL();
+    }).then((downloadURL) => {
+        // Update Firestore
+        return firebase.firestore().collection('users').doc(user.uid).update({
+            avatar: downloadURL
+        }).then(() => {
+            return downloadURL; // Pass URL to next chain
+        });
+    }).then((downloadURL) => {
+        // Update Auth Profile (optional but good for consistency)
+        return user.updateProfile({
+            photoURL: downloadURL
+        }).then(() => downloadURL);
+    }).then((downloadURL) => {
+        // Update UI
+        if (refs.profilePhoto) refs.profilePhoto.src = downloadURL;
+        
+        // Log Activity
+        firebase.firestore().collection('users').doc(user.uid).collection('activityLogs').add({
+            action: 'Updated Profile Picture',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert('Profile photo updated successfully!');
+    }).catch((error) => {
+        console.error("Error uploading avatar:", error);
+        alert('Failed to upload image: ' + error.message);
+    }).finally(() => {
+        // Reset button
+        uploadBtn.innerHTML = originalText;
+        uploadBtn.disabled = false;
+        // Clear input so same file can be selected again if needed
+        e.target.value = '';
+    });
 }
 
 function handleChangePassword(e) {

@@ -602,6 +602,39 @@ section {
     border-top: 1px solid var(--color-gold-medium);
 }
 
+/* Social Media Icons */
+.footer__social {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.1);
+    color: rgba(248, 246, 240, 0.8);
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.social-icon:hover {
+    background: rgba(212, 175, 55, 0.2);
+    color: var(--color-gold);
+    transform: translateY(-3px);
+    border-color: var(--color-gold);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
 .copyright {
     color: #888888;
     font-size: 14px;

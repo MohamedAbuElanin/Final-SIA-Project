@@ -9,20 +9,29 @@ service cloud.firestore {
 
     // Users Collection: Users can read/write their own profile
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read: if isOwner(userId);
+      // Allow creation as long as uid matches auth.uid (flexible for Google sign-in, email sign-up)
+      allow create: if isOwner(userId) && request.resource.data.uid == request.auth.uid;
+      allow update: if isOwner(userId);
       
       // Subcollections (e.g., activityLogs, tests)
-      match /{document=**} {
+      match /activityLogs/{logId} {
+        allow read, create: if isOwner(userId);
+      }
+      
+      match /tests/{testId} {
         allow read, write: if isOwner(userId);
       }
     }
 
     // TestsResults Collection: Users can read/write their own results
     match /TestsResults/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId);
+      allow delete: if false; // Prevent accidental deletion
     }
 
-    // Tests Collection (Questions): Public read, Admin write (restricted for now)
+    // Tests Collection (Questions): Public read, Admin write (restricted)
     match /tests/{testId} {
       allow read: if true;
       allow write: if false; // Only allow manual updates via console for now

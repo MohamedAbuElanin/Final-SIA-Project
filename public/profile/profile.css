@@ -414,6 +414,82 @@ body {
   font-size: 0.85rem;
 }
 
+/* Social Media Icons */
+.footer__social {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.1);
+  color: rgba(248, 246, 240, 0.8);
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.social-icon:hover {
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--sia-gold);
+  transform: translateY(-3px);
+  border-color: var(--sia-gold);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+/* Roadmap Timeline Styles */
+.roadmap-timeline {
+  position: relative;
+  padding-left: 1rem;
+}
+
+.roadmap-step {
+  position: relative;
+  padding-left: 2rem;
+  border-left: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.roadmap-step:last-child {
+  border-left: none;
+}
+
+.roadmap-step::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 0.5rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--sia-gold);
+  border: 2px solid rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+}
+
+.roadmap-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--sia-gold);
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
 .footer__links,
 .footer__legal {
   display: flex;
@@ -436,6 +512,33 @@ body {
 .footer__copy {
   color: rgba(248, 246, 240, 0.6);
   font-size: 0.85rem;
+}
+
+/* Print Styles for PDF Export */
+@media print {
+  .printing-pdf * {
+    color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .printing-pdf button,
+  .printing-pdf .btn:not(.d-print-block),
+  .printing-pdf input,
+  .printing-pdf select,
+  .printing-pdf textarea,
+  .printing-pdf .footer__social {
+    display: none !important;
+  }
+
+  .printing-pdf .profile-section {
+    page-break-inside: avoid;
+    margin-bottom: 1.5rem;
+  }
+
+  .printing-pdf .card {
+    page-break-inside: avoid;
+  }
 }
 
 @media (min-width: 992px) {

@@ -2,9 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const { GoogleGenAI } = require("@google/genai");
 
-// Initialize Gemini AI (Using key from server.js)
+const dotenv = require('dotenv');
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+// Initialize Gemini AI (Using key from .env)
 const ai = new GoogleGenAI({
-  apiKey: "AIzaSyAtY70sfw-CUUQ12TntqnmxTjH5yPt6XFU"
+    apiKey: process.env.GEMINI_API_KEY
 });
 
 async function mapQuestions() {

@@ -10,7 +10,7 @@
     />
     <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./template.css" />
-    <link rel="icon" type="../Images/ICO/favicon.ico" href="../public/Images/ICO/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="./Images/ICO/favicon.ico" />
   </head>
   <body>
     <!-- Navbar Start -->
@@ -74,7 +74,7 @@
             <li><a href="./Test/Test.html">Test</a></li>
             <li><a href="./profile/profile.html">Profile</a></li>
             <li>
-              <a href="../public/privacy-terms.html">Privacy & Terms</a>
+              <a href="./privacy-terms.html">Privacy & Terms</a>
             </li>
           </ul>
           <!-- Right Buttons Section duplicated for stacked layout -->
@@ -112,7 +112,7 @@
               powered by wisdom and skill.
             </p>
             <div class="hero-buttons">
-              <a href="#" class="btn btn-primary">Start the Test</a>
+              <a href="./Test/Test.html" class="btn btn-primary">Start the Test</a>
               <a href="#about" class="btn btn-secondary">Learn More</a>
             </div>
           </div>
@@ -232,7 +232,7 @@
           <div class="cta-content fade-in">
             <h2 class="cta-title">Ready to unlock your potential?</h2>
             <div class="cta-buttons">
-              <a href="#" class="btn btn-primary">Start the Test</a>
+              <a href="./Test/Test.html" class="btn btn-primary">Start the Test</a>
               <a href="#features" class="btn btn-secondary"
                 >Explore Resources</a
               >
@@ -262,7 +262,25 @@
         <a href="./About/About.html">About</a>
         <a href="./Test/Test.html">Test</a>
         <a href="./profile/profile.html">Profile</a>
-        <a href="../public/privacy-terms.html">Privacy & Terms</a>
+        <a href="./privacy-terms.html">Privacy & Terms</a>
+      </div>
+      <!-- Social Media Icons -->
+      <div class="footer__social">
+        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="social-icon">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="social-icon">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="social-icon">
+          <i class="fab fa-x-twitter"></i>
+        </a>
+        <a href="https://wa.me" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="social-icon">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="mailto:contact@sia.careers" aria-label="Email" class="social-icon">
+          <i class="fas fa-envelope"></i>
+        </a>
       </div>
       <p class="footer__copy">
         Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers
@@ -273,44 +291,11 @@
     <script src="./main.js"></script>
     <!---------------------------------------------------------------------------------------------------------->
     <!-- Firebase SDK -->
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.6.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.6.0/firebase-auth-compat.js"></script>
-    <script
-      defer
-      src="/__/firebase/12.6.0/firebase-database-compat.js"
-    ></script>
-    <script
-      defer
-      src="/__/firebase/12.6.0/firebase-firestore-compat.js"
-    ></script>
-    <script
-      defer
-      src="/__/firebase/12.6.0/firebase-functions-compat.js"
-    ></script>
-    <script
-      defer
-      src="/__/firebase/12.6.0/firebase-messaging-compat.js"
-    ></script>
-    <script defer src="/__/firebase/12.6.0/firebase-storage-compat.js"></script>
-    <script
-      defer
-      src="/__/firebase/12.6.0/firebase-analytics-compat.js"
-    ></script>
-    <script
-      defer
-      src="/__/firebase/12.6.0/firebase-remote-config-compat.js"
-    ></script>
-    <script
-      defer
-      src="/__/firebase/12.6.0/firebase-performance-compat.js"
-    ></script>
-    <!-- 
-        initialize the SDK after all desired features are loaded, set useEmulator to false
-        to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+    <!-- Firebase SDK (v9 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <script src="./firebase-config.js"></script>
     <script src="./auth.js"></script>
 

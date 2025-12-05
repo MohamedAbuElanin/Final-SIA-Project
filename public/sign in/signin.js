@@ -3,17 +3,16 @@ console.log("Welcome to SIA — Ancient Wisdom for Modern Careers");
 
 // Route Guard: Redirect if already logged in
 // Wait for Firebase to initialize
+// Route Guard: Redirect if already logged in
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        if (window.firebase) {
-            firebase.auth().onAuthStateChanged((user) => {
-                if (user) {
-                    // User is already logged in, redirect to profile
-                    window.location.href = '../profile/profile.html';
-                }
-            });
-        }
-    }, 1000);
+    if (window.firebase) {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // User is already logged in, redirect to profile
+                window.location.href = '../profile/profile.html';
+            }
+        });
+    }
 });
 
 // Mobile hamburger menu toggle
@@ -265,13 +264,19 @@ if (googleBtn) {
                                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                                 };
                                 
-                                return firebase.firestore().collection('users').doc(user.uid).set(userProfile);
+                                return firebase.firestore().collection('users').doc(user.uid).set(userProfile)
+                                    .then(() => true); // Return true indicating new user
                             }
+                            return false; // Return false indicating existing user
                         });
                 });
             })
-            .then(() => {
-                window.location.href = '../profile/profile.html';
+            .then((isNewUser) => {
+                if (isNewUser) {
+                    window.location.href = '../profile/profile.html?edit=true';
+                } else {
+                    window.location.href = '../profile/profile.html';
+                }
             })
             .catch((error) => {
                 let errorMessage = 'An error occurred. Please try again.';
