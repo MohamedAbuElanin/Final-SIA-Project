@@ -520,7 +520,6 @@ function finishTest() {
 }
 
 function saveTestResult(testType, resultData, totalTime) {
-    // Set saving flag to prevent duplicate submissions
     if (state.isSaving) {
         console.log("Already saving test result. Ignoring duplicate call.");
         return;
@@ -535,20 +534,18 @@ function saveTestResult(testType, resultData, totalTime) {
         return;
     }
 
-    // Disable finish button to prevent multiple clicks
     const finishBtn = elements.finishBtn;
     if (finishBtn) {
         finishBtn.disabled = true;
         finishBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
     }
 
-    // Call Backend to Calculate Scores
     user.getIdToken().then(token => {
         let endpoint = '';
         if (testType === 'Big-Five') {
-            endpoint = '/bigfive';
+            endpoint = '/api/bigfive';
         } else if (testType === 'Holland' || testType === 'Holland-codes') {
-            endpoint = '/holland';
+            endpoint = '/api/holland';
         } else {
             console.error("Unknown test type:", testType);
             alert("Error: Unknown test type.");
@@ -557,7 +554,16 @@ function saveTestResult(testType, resultData, totalTime) {
             return;
         }
 
-        fetch(`${CONFIG.API_BASE_URL}${endpoint}`, {
+        // Use CONFIG.API_BASE_URL if available, otherwise relative path
+        const baseUrl = (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) ? CONFIG.API_BASE_URL : '';
+        // If config has /api suffix, avoid double /api? 
+        // My config.js usually has /api. 
+        // Let's assume relative path /api/bigfive works with rewrite.
+        // OR rely on full URL.
+        // Safe bet: fetch('/api/bigfive') works because of firebase.json rewrite.
+        const url = endpoint; 
+
+        fetch(url, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -568,58 +574,23 @@ function saveTestResult(testType, resultData, totalTime) {
             })
         })
         .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) throw new Error('Network response was not ok: ' + response.statusText);
             return response.json();
         })
-        // .then(scores => { // The API returns { results, analysis }
         .then(data => {
-            const scores = data.results;
-            const analysis = data.analysis;
-            console.log("Scores calculated:", scores);
-            
-            const db = firebase.firestore();
-            
-            // Prepare data for both storage locations
-            // Note: The API already saves to user_results, but keeping frontend firestore save 
-            // AS A BACKUP or removing it?
-            // "Fix all calls" implies we should rely on API.
-            // The API code I wrote: 
-            // await admin.firestore().collection('user_results').doc(req.user.uid).set...
-            // It saves to 'user_results' collection.
-            // BUT Frontend uses 'users/{uid}/tests/{testType}' AND 'TestsResults/{uid}'.
-            // My API only saved to 'user_results'.
-            // I SHOULD HAVE updated API to save where Frontend expects it, OR update Frontend to read from where API saves.
-            // User requirement: "Create a full backend API ... Uses Firebase Admin SDK".
-            // It didn't explicitly say "Stop saving from frontend".
-            // BUT "Connect Front-End to Back-End" usually means offloading logic.
-            // Converting Frontend to ONLY use API for saving is safer.
-            // I will Update Frontend to NOT save to Firestore directly, just rely on API response, 
-            // AND I MUST UPDATE BACKEND TO SAVE TO THE CORRECT COLLECTIONS if I want the rest of the app (Profile) to work unmodified.
-            
-            // Profile.js reads from 'TestsResults/{uid}'.
-            // Test.js (Review Mode) reads from 'users/{uid}/tests/{testType}'.
-            
-            // I should update API.js to save to THESE specific paths.
-            // Since I can't update API.js in this specific tool call (I am editing Test.js), 
-            // I will assume the API *SHOULD* be updated. 
-            // I will update API.js in the next step.
-            // For now, in Test.js, I will REMOVE the direct Firestore writes and trust the API.
-            // I will trigger a redirect.
-            
-            console.log("Test result saved successfully via API!");
+            console.log("Test saved successfully via API:", data);
             state.isSaving = false;
             alert("Test completed and saved!");
             window.location.href = "../profile/profile.html";
-
-    })
-    .catch(error => {
-        console.error("Error calculating scores:", error);
-        state.isSaving = false;
-        if (finishBtn) {
-            finishBtn.disabled = false;
-            finishBtn.innerHTML = 'Finish & Save';
-        }
-        alert("Failed to calculate scores. Please check your connection.");
+        })
+        .catch(error => {
+            console.error("Error saving test:", error);
+            state.isSaving = false;
+            if (finishBtn) {
+                finishBtn.disabled = false;
+                finishBtn.innerHTML = 'Finish & Save';
+            }
+            alert("Failed to save result. Please check your connection.");
+        });
     });
-    }); // Close getIdToken
 }

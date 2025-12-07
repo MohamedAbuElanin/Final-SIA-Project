@@ -16,7 +16,7 @@ function checkAdminAuth() {
 }
 
 function fetchUsers(token) {
-    fetch(`${CONFIG.API_BASE_URL}/admin/users`, {
+    fetch('/api/admin/users', {
         headers: {
             'Authorization': `Bearer ${token}`
         }

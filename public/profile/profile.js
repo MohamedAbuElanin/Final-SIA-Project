@@ -151,7 +151,7 @@ function loadUserData(user) {
     
     // Use API Instead of Direct Firestore
     user.getIdToken().then(token => {
-        fetch(`${CONFIG.API_BASE_URL}/profile`, {
+        fetch('/api/profile', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -368,7 +368,7 @@ async function generateAIAnalysis(user) {
         
         const token = await user.getIdToken();
 
-        const response = await fetch(`${CONFIG.API_BASE_URL}/analyze-profile`, {
+        const response = await fetch('/api/analyze-profile', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
