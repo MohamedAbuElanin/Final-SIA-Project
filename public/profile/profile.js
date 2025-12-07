@@ -149,9 +149,19 @@ function handleDeleteAccount() {
 function loadUserData(user) {
     state.isLoading = true;
     
-    firebase.firestore().collection('users').doc(user.uid).get()
-        .then((doc) => {
-            const data = doc.exists ? doc.data() : {};
+    // Use API Instead of Direct Firestore
+    user.getIdToken().then(token => {
+        fetch(`${CONFIG.API_BASE_URL}/profile`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch profile api');
+            return response.json();
+        })
+        .then(data => {
             state.userData = data;
             
             // Update UI with Fallbacks
@@ -209,52 +219,61 @@ function loadUserData(user) {
             
             state.isLoading = false;
             
-            // Load Activity Log
-            loadActivityLog(user);
+            // Render Activity Log from API response
+            renderActivityLog(data.activity || []);
+            
+            // Initial Test Results from API response (optional, can still reload separately)
+             if (data.testResults) {
+                state.testResults.bigFive = data.testResults["bigFive"] || data.testResults["Big-Five"] || null;
+                state.testResults.hollandCode = data.testResults["hollandCode"] || data.testResults["Holland"] || null;
+                state.aiAnalysis = data.testResults["AI_Analysis"] || null;
+                displayTestResults();
+                if (state.aiAnalysis) {
+                     displayAIAnalysis(state.aiAnalysis);
+                     renderCharts();
+                } else {
+                     renderCharts(); 
+                }
+            } else {
+                 loadTestResults(user); // Fallback if API didn't return test results
+            }
+
         })
         .catch(err => {
-            console.error("Error loading user data:", err);
+            console.error("Error loading user data via API:", err);
+            // Fallback to minimal display
             if (refs.userNameDisplay) refs.userNameDisplay.textContent = user.displayName || 'SIA User';
             if (refs.userEmailDisplay) refs.userEmailDisplay.textContent = user.email || '';
             state.isLoading = false;
         });
+    });
 }
 
-function loadActivityLog(user) {
+function renderActivityLog(activities) {
     if (!refs.activityList) return;
     
-    const logsRef = firebase.firestore().collection('users').doc(user.uid).collection('activityLogs');
+    if (!activities || activities.length === 0) {
+        refs.activityList.innerHTML = `
+            <li class="list-group-item bg-transparent text-muted border-secondary">
+                <i class="fas fa-info-circle me-2 text-gold"></i> Welcome to your new profile!
+            </li>
+        `;
+        return;
+    }
     
-    logsRef.orderBy('timestamp', 'desc').limit(5).get()
-        .then(snapshot => {
-            if (snapshot.empty) {
-                refs.activityList.innerHTML = `
-                    <li class="list-group-item bg-transparent text-muted border-secondary">
-                        <i class="fas fa-info-circle me-2 text-gold"></i> Welcome to your new profile!
-                    </li>
-                `;
-                return;
-            }
-            
-            refs.activityList.innerHTML = '';
-            snapshot.forEach(doc => {
-                const log = doc.data();
-                const date = log.timestamp ? new Date(log.timestamp.toDate()).toLocaleDateString() : '';
-                const item = document.createElement('li');
-                item.className = 'list-group-item bg-transparent text-muted border-secondary d-flex justify-content-between align-items-center';
-                item.innerHTML = `
-                    <div>
-                        <i class="fas fa-check-circle me-2 text-gold"></i> ${log.action}
-                    </div>
-                    <small style="font-size: 0.8em;">${date}</small>
-                `;
-                refs.activityList.appendChild(item);
-            });
-        })
-        .catch(err => {
-            console.error("Error loading activity log:", err);
-            refs.activityList.innerHTML = '<li class="list-group-item bg-transparent text-danger border-secondary">Could not load activities.</li>';
-        });
+    refs.activityList.innerHTML = '';
+    activities.forEach(log => {
+        const date = log.timestamp ? new Date(log.timestamp).toLocaleDateString() : '';
+        const item = document.createElement('li');
+        item.className = 'list-group-item bg-transparent text-muted border-secondary d-flex justify-content-between align-items-center';
+        item.innerHTML = `
+            <div>
+                <i class="fas fa-check-circle me-2 text-gold"></i> ${log.action}
+            </div>
+            <small style="font-size: 0.8em;">${date}</small>
+        `;
+        refs.activityList.appendChild(item);
+    });
 }
 
 function loadTestResults(user) {

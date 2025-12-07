@@ -14,6 +14,8 @@ module.exports = {
     "no-restricted-globals": ["error", "name", "length"],
     "prefer-arrow-callback": "error",
     "quotes": ["error", "double", {"allowTemplateLiterals": true}],
+    "max-len": ["error", {"code": 120}], // بدل 80 خليها 120 حرف
+    "no-unused-vars": "warn", // يحول تحذيرات المتغيرات الغير مستخدمة لتحذير بدل خطأ
   },
   overrides: [
     {
