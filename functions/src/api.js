@@ -205,17 +205,27 @@ app.post('/activity', authenticateUser, async (req, res) => {
     }
 });
 
-// 6. Admin: List Users
-app.get('/admin/users', authenticateUser, async (req, res) => {
+// --- ADMIN ROUTES ---
+const adminLogic = require('./admin');
+
+// Middleware: Strict Admin Check
+const requireAdmin = (req, res, next) => {
+    if (req.user.email !== 'mohamedosman@gamil.com') {
+        return res.status(403).json({ error: 'Unauthorized: Admin access only' });
+    }
+    next();
+};
+
+// 6. Admin: List Users (Updated)
+app.get('/admin/users', authenticateUser, requireAdmin, async (req, res) => {
     try {
-        // Verify if user is admin (simplified check, maybe check email or claim)
-        // For now, allow any authenticated user to keep it working as per "restore" goal without complex role setup
-        const listUsersResult = await admin.auth().listUsers(100);
-        const users = listUsersResult.users.map(userRecord => ({
-            uid: userRecord.uid,
-            email: userRecord.email,
-            displayName: userRecord.displayName,
-            metadata: userRecord.metadata
+        const listUsersResult = await admin.auth().listUsers(1000); // Fetch up to 1000
+        const users = listUsersResult.users.map(user => ({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            metadata: user.metadata
         }));
         res.json(users);
     } catch (error) {
@@ -224,5 +234,25 @@ app.get('/admin/users', authenticateUser, async (req, res) => {
     }
 });
 
+// 7. Admin: Get Stats
+app.get('/admin/stats', authenticateUser, requireAdmin, async (req, res) => {
+    try {
+        const stats = await adminLogic.getStats();
+        res.json(stats);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+// 8. Admin: Get User Details
+app.get('/admin/user/:uid', authenticateUser, requireAdmin, async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const details = await adminLogic.getUserDetails(uid);
+        res.json(details);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
 
 module.exports = app;

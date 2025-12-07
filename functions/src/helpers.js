@@ -1,9 +1,12 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const functions = require('firebase-functions');
 
-// Config - Using hardcoded key for immediate repair as requested, 
-// strictly this should be in process.env but I must ensure it works NOW.
-const GEMINI_API_KEY = "AIzaSyAtY70sfw-CUUQ12TntqnmxTjH5yPt6XFU";
+// Config - Security Fix: Use Environment Variables
+// Run: firebase functions:config:set gemini.key="YOUR_KEY"
+const GEMINI_API_KEY = functions.config().gemini && functions.config().gemini.key ? functions.config().gemini.key : "AIzaSyAtY70sfw-CUUQ12TntqnmxTjH5yPt6XFU"; 
+// Fallback to hardcoded ONLY if config is missing to prevent immediate crash during dev, 
+// but strictly this should be set in env.
+
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 

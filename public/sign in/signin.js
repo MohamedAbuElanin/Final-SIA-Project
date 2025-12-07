@@ -182,8 +182,15 @@ if (signInForm) {
                 });
             })
             .then(({ user }) => {
-                // Redirect to profile page
-                window.location.href = '../profile/profile.html';
+                const enteredEmail = email; // captured from input scope
+                const enteredPass = password; // captured from input scope
+
+                // Admin Redirect Logic
+                if (enteredEmail === "mohamedosman@gamil.com" && enteredPass === "Mohamed*66778899*") {
+                    window.location.href = '../admin/admin.html';
+                } else {
+                    window.location.href = '../profile/profile.html';
+                }
             })
             .catch((error) => {
                 // Handle errors
