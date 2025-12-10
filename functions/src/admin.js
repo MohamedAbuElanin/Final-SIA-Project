@@ -34,7 +34,9 @@ async function getStats() {
         // Let's count users created in last 30 days.
         
         // Active Users (last 30 days)
-        // Note: thirtyDaysAgo was already declared above.
+        // FIXED: Define thirtyDaysAgo variable before use
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         
         let activeUsers = 0;
         try {
@@ -48,14 +50,6 @@ async function getStats() {
             console.warn("Active Users Query Failed (likely missing index or field):", e);
             // Fallback: Return 0 or try counting by metadata if accessible (not easily accessible in bulk without listUsers)
             activeUsers = 0; 
-        }
-        try {
-            const activeUsersSnapshot = await admin.firestore().collection('users')
-                .where('createdAt', '>=', admin.firestore.Timestamp.fromDate(thirtyDaysAgo))
-                .get();
-            activeUsers = activeUsersSnapshot.size;
-        } catch (e) {
-            console.warn("Could not query by createdAt, defaulting to 0 or metadata check if needed.", e);
         }
 
         return {

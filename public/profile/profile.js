@@ -14,36 +14,41 @@ const state = {
 };
 
 // Route Guard & Initialization
-// Route Guard & Initialization
+// FIXED: Now uses centralized auth state to prevent redirect loops
 document.addEventListener('DOMContentLoaded', () => {
-    if (!window.firebase) {
-        console.error("Firebase not initialized!");
-        return;
-    }
-
-    firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
-            localStorage.clear();
-            window.location.href = '../sign in/signin.html';
+    // Wait for auth state to be ready
+    function initProfile() {
+        if (typeof window.onAuthStateReady === 'undefined') {
+            setTimeout(initProfile, 100);
             return;
         }
-        
-        user.getIdToken().then((token) => {
-            localStorage.setItem("authToken", token);
-            localStorage.setItem("uid", user.uid);
+
+        window.onAuthStateReady((user) => {
+            if (!user) {
+                // Auth guard will handle redirect, but clear local storage
+                localStorage.clear();
+                return;
+            }
             
-            initHamburgerMenu();
-            cacheElements();
-            bindEvents();
-            loadUserData(user);
-            loadTestResults(user); // Load Big Five & Holland
-            checkUrlParams(); // Check if we need to enter edit mode immediately
-        }).catch((error) => {
-            console.error('Error getting token:', error);
-            localStorage.clear();
-            window.location.href = '../sign in/signin.html';
+            user.getIdToken().then((token) => {
+                localStorage.setItem("authToken", token);
+                localStorage.setItem("uid", user.uid);
+                
+                initHamburgerMenu();
+                cacheElements();
+                bindEvents();
+                loadUserData(user);
+                loadTestResults(user); // Load Big Five & Holland
+                checkUrlParams(); // Check if we need to enter edit mode immediately
+            }).catch((error) => {
+                console.error('Error getting token:', error);
+                localStorage.clear();
+                // Don't redirect here - let auth guard handle it
+            });
         });
-    });
+    }
+
+    initProfile();
 });
 
 const refs = {};
@@ -276,11 +281,16 @@ function renderActivityLog(activities) {
     });
 }
 
+/**
+ * Load test results with real-time listener
+ * Updates UI automatically when results change
+ */
 function loadTestResults(user) {
     const db = firebase.firestore();
     const resultsRef = db.collection("TestsResults").doc(user.uid);
 
-    resultsRef.get().then((doc) => {
+    // Set up real-time listener for instant updates
+    const unsubscribe = resultsRef.onSnapshot((doc) => {
         if (doc.exists) {
             const data = doc.data();
             state.testResults.bigFive = data["bigFive"] || data["Big-Five"] || data["BigFive"] || null;
@@ -303,7 +313,22 @@ function loadTestResults(user) {
             console.log("No test results found.");
             displayTestResults();
         }
-    }).catch(err => console.error("Error loading test results:", err));
+    }, (err) => {
+        console.error("Error in real-time listener:", err);
+        // Fallback to one-time read
+        resultsRef.get().then((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                state.testResults.bigFive = data["bigFive"] || data["Big-Five"] || data["BigFive"] || null;
+                state.testResults.hollandCode = data["hollandCode"] || data["Holland-Code"] || data["Holland"] || null;
+                state.aiAnalysis = data["AI_Analysis"] || null;
+                displayTestResults();
+            }
+        });
+    });
+
+    // Store unsubscribe function for cleanup if needed
+    window.testResultsUnsubscribe = unsubscribe;
 }
 
 function displayTestResults() {

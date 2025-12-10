@@ -1,127 +1,335 @@
-// admin.js
+/**
+ * SIA Admin Panel - Main Script
+ * Improved structure with centralized functions and toast notifications
+ */
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Auth Guard
-    firebase.auth().onAuthStateChanged(async (user) => {
-        if (!user) {
-            window.location.href = '../sign in/signin.html';
+// ============================================
+// State Management
+// ============================================
+const adminState = {
+    currentUser: null,
+    authToken: null,
+    allUsers: [],
+    currentSection: 'dashboard',
+    isLoading: false
+};
+
+// ============================================
+// Toast Notification System
+// ============================================
+function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-exclamation-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    };
+
+    toast.innerHTML = `
+        <i class="fas ${icons[type] || icons.info} toast-icon"></i>
+        <span class="toast-message">${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    container.appendChild(toast);
+
+    // Auto remove after duration
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideInRight 0.3s ease reverse';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, duration);
+}
+
+// ============================================
+// Loading State Management
+// ============================================
+function showLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.style.display = 'flex';
+    adminState.isLoading = true;
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.style.display = 'none';
+    adminState.isLoading = false;
+}
+
+// ============================================
+// Firebase Initialization
+// ============================================
+function initializeFirebase() {
+    return new Promise((resolve, reject) => {
+        if (typeof window.onAuthStateReady === 'undefined') {
+            setTimeout(() => initializeFirebase().then(resolve).catch(reject), 100);
             return;
         }
-
-        if (user.email !== "mohamedosman@gamil.com") {
-            alert("Unauthorized Access");
-            await firebase.auth().signOut();
-            window.location.href = '../sign in/signin.html';
-            return;
-        }
-
-        const token = await user.getIdToken();
-        document.getElementById('adminEmailDisplay').textContent = user.email;
-        
-        // Load Initial Data
-        initDashboard(token);
+        resolve();
     });
+}
 
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        firebase.auth().signOut().then(() => {
-            window.location.href = '../sign in/signin.html';
+// ============================================
+// Admin Authentication Check
+// ============================================
+async function checkAdminAccess(user) {
+    if (!user) {
+        return false;
+    }
+
+    try {
+        const token = await user.getIdToken();
+        const res = await fetch('/api/admin/stats', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 403 || res.status === 401) {
+            return false;
+        }
+
+        if (!res.ok) {
+            throw new Error('Failed to verify admin access');
+        }
+
+        adminState.currentUser = user;
+        adminState.authToken = token;
+        return true;
+    } catch (error) {
+        console.error('Error checking admin access:', error);
+        return false;
+    }
+}
+
+// ============================================
+// Main Initialization
+// ============================================
+async function initializeAdmin() {
+    showLoading();
+
+    try {
+        await initializeFirebase();
+
+        window.onAuthStateReady(async (user) => {
+            if (!user) {
+                showToast('Please sign in to access admin panel', 'warning');
+                setTimeout(() => {
+                    window.location.href = '../sign in/signin.html';
+                }, 1500);
+                return;
+            }
+
+            const isAdmin = await checkAdminAccess(user);
+            
+            if (!isAdmin) {
+                showToast('Unauthorized: Admin privileges required', 'error');
+                await firebase.auth().signOut();
+                setTimeout(() => {
+                    window.location.href = '../sign in/signin.html';
+                }, 2000);
+                return;
+            }
+
+            // User is admin, proceed
+            document.getElementById('adminEmailDisplay').textContent = user.email;
+            hideLoading();
+            showToast('Welcome to Admin Panel', 'success');
+            setupEventListeners();
+            initDashboard(adminState.authToken);
+        });
+    } catch (error) {
+        console.error('Error initializing admin:', error);
+        showToast('Error initializing admin panel', 'error');
+        hideLoading();
+    }
+}
+
+// ============================================
+// Event Listeners Setup
+// ============================================
+function setupEventListeners() {
+    // Logout button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+
+    // Refresh button
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            if (adminState.authToken) {
+                initDashboard(adminState.authToken);
+                showToast('Data refreshed', 'success');
+            }
+        });
+    }
+
+    // User search
+    const userSearch = document.getElementById('userSearch');
+    if (userSearch) {
+        userSearch.addEventListener('input', (e) => {
+            filterUsers(e.target.value);
+        });
+    }
+
+    // Navigation items
+    const navItems = document.querySelectorAll('.admin-nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = item.dataset.section;
+            switchSection(section);
         });
     });
 
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-        const user = firebase.auth().currentUser;
-        if (user) user.getIdToken().then(initDashboard);
+    // Mobile menu toggle
+    const mobileToggle = document.getElementById('mobileMenuToggle');
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', () => {
+            const sidebar = document.getElementById('adminSidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('open');
+            }
+        });
+    }
+}
+
+// ============================================
+// Section Navigation
+// ============================================
+function switchSection(sectionName) {
+    // Update nav items
+    document.querySelectorAll('.admin-nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.section === sectionName) {
+            item.classList.add('active');
+        }
     });
 
-    document.getElementById('userSearch').addEventListener('input', (e) => {
-        filterUsers(e.target.value);
+    // Update sections
+    document.querySelectorAll('.admin-section').forEach(section => {
+        section.style.display = 'none';
     });
-});
 
-let allUsers = []; // Store fetched users locally for filtering
+    const targetSection = document.getElementById(`${sectionName}Section`);
+    if (targetSection) {
+        targetSection.style.display = 'block';
+    }
 
-async function initDashboard(token) {
+    adminState.currentSection = sectionName;
+}
+
+// ============================================
+// Dashboard Initialization
+// ============================================
+function initDashboard(token) {
     loadStats(token);
     loadUsers(token);
 }
 
-// --- API Calls ---
-
+// ============================================
+// API Calls
+// ============================================
 async function loadStats(token) {
     try {
         const res = await fetch('/api/admin/stats', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+        
         if (res.status === 401 || res.status === 403) {
             handleAuthError();
             return;
         }
+        
         if (!res.ok) throw new Error('Failed to load stats');
+        
         const data = await res.json();
         
         document.getElementById('totalUsersStr').textContent = data.totalUsers || 0;
         document.getElementById('totalTestsStr').textContent = data.totalTests || 0;
         document.getElementById('activeUsersStr').textContent = data.activeUsers || 0;
     } catch (err) {
-        console.error(err);
+        console.error('Error loading stats:', err);
+        showToast('Failed to load statistics', 'error');
     }
 }
 
 async function loadUsers(token) {
     const listEl = document.getElementById('usersList');
+    if (!listEl) return;
+
     listEl.innerHTML = '<div class="text-center p-3"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
 
     try {
         const res = await fetch('/api/admin/users', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (!res.ok) throw new Error('Failed to load users');
-        const users = await res.json();
         
-        allUsers = users; // Cache
+        if (!res.ok) throw new Error('Failed to load users');
+        
+        const users = await res.json();
+        adminState.allUsers = users;
         renderUsers(users);
     } catch (err) {
-        console.error(err);
+        console.error('Error loading users:', err);
         if (err.message.includes('403') || err.message.includes('401')) {
             handleAuthError();
             return;
         }
         listEl.innerHTML = '<div class="text-white p-3">Error loading users. <button class="btn btn-sm btn-outline-light" onclick="loadUsers()">Retry</button></div>';
+        showToast('Failed to load users', 'error');
     }
 }
 
 async function loadUserDetails(uid) {
     const panel = document.getElementById('userDetailPanel');
+    if (!panel) return;
+
     panel.innerHTML = '<div class="text-center p-5"><i class="fas fa-spinner fa-spin fa-2x text-gold"></i><p class="mt-3">Loading details...</p></div>';
 
     try {
         const user = firebase.auth().currentUser;
-        const token = await user.getIdToken();
+        if (!user) {
+            handleAuthError();
+            return;
+        }
 
+        const token = await user.getIdToken();
         const res = await fetch(`/api/admin/user/${uid}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (!res.ok) throw new Error('Failed to load details');
-        const data = await res.json();
         
+        const data = await res.json();
         renderUserDetails(data);
     } catch (err) {
-        console.error(err);
+        console.error('Error loading user details:', err);
         if (err.message.includes('403') || err.message.includes('401')) {
             handleAuthError();
             return;
         }
         panel.innerHTML = '<div class="p-3 text-white border border-secondary rounded bg-dark">Failed to load user details.</div>';
+        showToast('Failed to load user details', 'error');
     }
 }
 
-// --- Rendering ---
-
-// --- Rendering ---
-
+// ============================================
+// Rendering Functions
+// ============================================
 function renderUsers(users) {
     const listEl = document.getElementById('usersList');
+    if (!listEl) return;
+
     if (users.length === 0) {
         listEl.innerHTML = '<div class="p-3 text-white text-center">No users found.</div>';
         return;
@@ -129,8 +337,11 @@ function renderUsers(users) {
 
     listEl.innerHTML = '';
     users.forEach(user => {
-        const lastSignIn = user.metadata.lastSignInTime ? new Date(user.metadata.lastSignInTime).toLocaleDateString() : 'N/A';
-        const item = document.createElement('div'); // Div wrapper to allow better styling control if needed
+        const lastSignIn = user.metadata.lastSignInTime 
+            ? new Date(user.metadata.lastSignInTime).toLocaleDateString() 
+            : 'N/A';
+        
+        const item = document.createElement('div');
         item.style.cursor = 'pointer';
         item.className = 'list-group-item list-group-item-action bg-dark text-white border-secondary user-row';
         item.innerHTML = `
@@ -141,29 +352,27 @@ function renderUsers(users) {
             <p class="mb-1 text-truncate small text-white">${user.email}</p>
             <small class="text-white-50" style="font-size: 0.75rem;">UID: ${user.uid}</small>
         `;
-        // Explicitly force white color style inline as requested for strictness
-        item.style.color = '#ffffff'; 
+        item.style.color = '#ffffff';
         
         item.onclick = () => {
-            // Visualize selection
             document.querySelectorAll('.user-row').forEach(el => {
                 el.classList.remove('active');
-                el.classList.remove('bg-secondary'); // fallback active style
             });
             item.classList.add('active');
             loadUserDetails(user.uid);
         };
+        
         listEl.appendChild(item);
     });
 }
 
 function filterUsers(query) {
     if (!query) {
-        renderUsers(allUsers);
+        renderUsers(adminState.allUsers);
         return;
     }
     const lower = query.toLowerCase();
-    const filtered = allUsers.filter(u => 
+    const filtered = adminState.allUsers.filter(u => 
         (u.email && u.email.toLowerCase().includes(lower)) ||
         (u.displayName && u.displayName.toLowerCase().includes(lower)) ||
         (u.uid && u.uid.includes(query))
@@ -174,8 +383,8 @@ function filterUsers(query) {
 function renderUserDetails(data) {
     const { info, results, activity } = data;
     const panel = document.getElementById('userDetailPanel');
+    if (!panel) return;
 
-    // Safe accessors
     const bf = results.bigFive || {};
     const hc = results.hollandCode || {};
     const ai = results.AI_Analysis || {};
@@ -198,7 +407,6 @@ function renderUserDetails(data) {
         </div>
 
         <div class="row g-4 text-white">
-            <!-- Test Scores -->
             <div class="col-md-6">
                 <div class="card bg-dark border-secondary mb-3">
                     <div class="card-header border-secondary text-gold">Big Five Scores</div>
@@ -217,11 +425,11 @@ function renderUserDetails(data) {
             </div>
 
             <div class="col-md-6">
-                 <div class="card bg-dark border-secondary mb-3">
+                <div class="card bg-dark border-secondary mb-3">
                     <div class="card-header border-secondary text-gold">Holland Codes</div>
                     <div class="card-body text-white">
                         ${Object.keys(hc).length ? `
-                             <ul class="list-unstyled mb-0">
+                            <ul class="list-unstyled mb-0">
                                 <li class="d-flex justify-content-between"><span>Realistic:</span> <span>${hc.Realistic || 0}</span></li>
                                 <li class="d-flex justify-content-between"><span>Investigative:</span> <span>${hc.Investigative || 0}</span></li>
                                 <li class="d-flex justify-content-between"><span>Artistic:</span> <span>${hc.Artistic || 0}</span></li>
@@ -234,7 +442,6 @@ function renderUserDetails(data) {
                 </div>
             </div>
 
-            <!-- AI Insight -->
             <div class="col-12">
                 <div class="card bg-dark border-secondary mb-3">
                     <div class="card-header border-secondary text-gold">Latest AI Analysis</div>
@@ -244,7 +451,6 @@ function renderUserDetails(data) {
                 </div>
             </div>
 
-            <!-- Activity Log -->
             <div class="col-12">
                 <div class="card bg-dark border-secondary">
                     <div class="card-header border-secondary text-gold">Recent Activity</div>
@@ -256,7 +462,6 @@ function renderUserDetails(data) {
         </div>
     `;
     
-    // Final force white text on everything in panel
     panel.querySelectorAll('*').forEach(el => {
         if (!el.classList.contains('text-gold')) {
             el.style.color = '#ffffff';
@@ -264,9 +469,34 @@ function renderUserDetails(data) {
     });
 }
 
-function handleAuthError() {
-    console.warn("Auth Error or Token Expired.");
+// ============================================
+// Event Handlers
+// ============================================
+function handleLogout() {
     firebase.auth().signOut().then(() => {
-        window.location.href = '../sign in/signin.html';
+        showToast('Logged out successfully', 'success');
+        setTimeout(() => {
+            window.location.href = '../sign in/signin.html';
+        }, 1000);
+    }).catch(error => {
+        console.error('Logout error:', error);
+        showToast('Error during logout', 'error');
     });
 }
+
+function handleAuthError() {
+    console.warn("Auth Error or Token Expired.");
+    showToast('Authentication error. Please sign in again.', 'error');
+    firebase.auth().signOut().then(() => {
+        setTimeout(() => {
+            window.location.href = '../sign in/signin.html';
+        }, 2000);
+    });
+}
+
+// ============================================
+// DOM Ready
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+    initializeAdmin();
+});

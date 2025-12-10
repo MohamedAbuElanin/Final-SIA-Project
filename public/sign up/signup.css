@@ -517,6 +517,68 @@ body {
     transform: translateY(0);
 }
 
+/* Social Login Styles */
+.social-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: #888888;
+    font-size: 14px;
+}
+
+.social-divider::before,
+.social-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--color-gold-medium);
+}
+
+.social-divider span {
+    padding: 0 1rem;
+}
+
+.social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.social-btn {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid var(--color-gold-medium);
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.social-btn:hover {
+    border-color: var(--color-gold);
+    background-color: rgba(212, 175, 55, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--color-gold-medium);
+}
+
+.social-btn i {
+    font-size: 18px;
+}
+
+.google-btn:hover {
+    border-color: #4285F4;
+    background-color: rgba(66, 133, 244, 0.1);
+}
+
 .form-footer {
     text-align: center;
     margin-top: 2rem;

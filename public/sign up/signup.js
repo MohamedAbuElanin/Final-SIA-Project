@@ -2,17 +2,23 @@
 console.log("Welcome to SIA — Ancient Wisdom for Modern Careers");
 
 // Route Guard: Redirect if already logged in
-// Wait for Firebase to initialize
-// Route Guard: Redirect if already logged in
+// FIXED: Use centralized auth state to prevent redirect loops
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.firebase) {
-        firebase.auth().onAuthStateChanged((user) => {
+    function checkAuthAndRedirect() {
+        if (typeof window.onAuthStateReady === 'undefined') {
+            setTimeout(checkAuthAndRedirect, 100);
+            return;
+        }
+
+        window.onAuthStateReady((user) => {
             if (user) {
                 // User is already logged in, redirect to profile
                 window.location.href = '../profile/profile.html';
             }
         });
     }
+
+    checkAuthAndRedirect();
 });
 
 // Mobile hamburger menu toggle
@@ -513,6 +519,144 @@ if (signUpForm) {
                 submitBtn.disabled = false;
             });
     });
+}
+
+// Google Sign Up
+// FIXED: Wait for Firebase to be ready and handle domain authorization errors
+function setupGoogleSignUp() {
+    const googleBtn = document.querySelector('.google-btn');
+    if (!googleBtn) return;
+
+    // Wait for Firebase to be initialized
+    function waitForFirebase(callback, maxAttempts = 50) {
+        let attempts = 0;
+        const checkInterval = setInterval(() => {
+            attempts++;
+            if (typeof firebase !== 'undefined' && firebase.auth) {
+                clearInterval(checkInterval);
+                callback();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkInterval);
+                console.error('Firebase not initialized after', maxAttempts, 'attempts');
+                if (signUpFormError) {
+                    signUpFormError.textContent = 'Firebase initialization failed. Please refresh the page.';
+                    signUpFormError.classList.add('show');
+                }
+            }
+        }, 100);
+    }
+
+    waitForFirebase(() => {
+        googleBtn.addEventListener('click', async () => {
+            // Store original text outside try-catch for proper scope
+            const originalText = googleBtn.innerHTML;
+            let googleBtnElement = googleBtn; // Store reference
+            
+            try {
+                // Check if Firebase is properly initialized
+                if (!firebase.auth) {
+                    throw new Error('Firebase Auth not available');
+                }
+
+                googleBtnElement.disabled = true;
+                googleBtnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing up...';
+
+                const provider = new firebase.auth.GoogleAuthProvider();
+                
+                // Add scopes if needed
+                provider.addScope('profile');
+                provider.addScope('email');
+
+                // Use signInWithPopup with better error handling
+                const result = await firebase.auth().signInWithPopup(provider);
+                const user = result.user;
+                
+                // Get ID token and save to localStorage
+                const token = await user.getIdToken();
+                localStorage.setItem("authToken", token);
+                localStorage.setItem("uid", user.uid);
+                
+                // Check if user document exists in Firestore
+                const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    // Create user profile with Google data
+                    const defaultAvatar = '../assets/male.svg';
+                    
+                    const userProfile = {
+                        uid: user.uid,
+                        fullName: user.displayName || '', // Use Google display name
+                        email: user.email || '',
+                        dateOfBirth: '',
+                        gender: 'male', // Default, user can update later
+                        education: '',
+                        studentStatus: '',
+                        avatar: user.photoURL || defaultAvatar, // Use Google photo if available
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    
+                    await firebase.firestore().collection('users').doc(user.uid).set(userProfile);
+                    
+                    // Redirect to profile with edit mode for new users to complete profile
+                    window.location.href = '../profile/profile.html?edit=true';
+                } else {
+                    // User already exists, just sign them in
+                    window.location.href = '../profile/profile.html';
+                }
+            } catch (error) {
+                console.error('Google sign-up error:', error);
+                
+                let errorMessage = 'An error occurred. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/popup-closed-by-user':
+                        errorMessage = 'Sign-up popup was closed. Please try again.';
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        errorMessage = 'Sign-up was cancelled.';
+                        break;
+                    case 'auth/popup-blocked':
+                        errorMessage = 'Popup was blocked by browser. Please allow popups for this site.';
+                        break;
+                    case 'auth/unauthorized-domain':
+                        errorMessage = 'This domain is not authorized. Please add ' + window.location.hostname + ' to Firebase Console → Authentication → Authorized domains.';
+                        console.error('Domain authorization error. Current domain:', window.location.hostname);
+                        console.error('Expected domains: sia-993a7.firebaseapp.com, sia-993a7.web.app');
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your connection.';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMessage = 'Google sign-in is not enabled. Please contact support.';
+                        break;
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'This email is already registered. Please sign in instead.';
+                        break;
+                    default:
+                        errorMessage = error.message || 'Failed to sign up with Google. Please try again.';
+                }
+                
+                if (signUpFormError) {
+                    signUpFormError.textContent = errorMessage;
+                    signUpFormError.classList.add('show');
+                }
+                
+                // Restore button state
+                if (googleBtnElement) {
+                    googleBtnElement.innerHTML = originalText;
+                    googleBtnElement.disabled = false;
+                }
+            }
+        });
+    });
+}
+
+// Setup Google sign-up when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupGoogleSignUp);
+} else {
+    setupGoogleSignUp();
 }
 
 // Fade-in animation on scroll

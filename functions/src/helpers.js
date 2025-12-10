@@ -1,11 +1,15 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const functions = require('firebase-functions');
 
-// Config - Security Fix: Use Environment Variables
+// Config - Security Fix: Use Environment Variables ONLY
+// FIXED: Removed hardcoded API key - must be set via environment variable
 // Run: firebase functions:config:set gemini.key="YOUR_KEY"
-const GEMINI_API_KEY = functions.config().gemini && functions.config().gemini.key ? functions.config().gemini.key : "AIzaSyAtY70sfw-CUUQ12TntqnmxTjH5yPt6XFU"; 
-// Fallback to hardcoded ONLY if config is missing to prevent immediate crash during dev, 
-// but strictly this should be set in env.
+// Or use: firebase functions:secrets:set GEMINI_API_KEY
+const GEMINI_API_KEY = functions.config().gemini?.key || process.env.GEMINI_API_KEY;
+
+if (!GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY must be set in Firebase Functions config or environment variables. Run: firebase functions:config:set gemini.key="YOUR_KEY"');
+}
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });

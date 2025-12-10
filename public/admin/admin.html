@@ -9,141 +9,137 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../template.css">
     <link rel="stylesheet" href="admin.css">
-    <style>
-        /* MANDATORY TEXT COLOR OVERRIDE */
-        .admin-container {
-            color: white !important;
-        }
-        
-        /* Layout adjustments */
-        body {
-            background-color: #121212;
-            color: #e0e0e0;
-        }
-        .admin-header {
-            background-color: #1a1a1a;
-            border-bottom: 1px solid #d4af37;
-            padding: 1rem 2rem;
-        }
-        .stat-card {
-            background: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 1.5rem;
-            transition: transform 0.2s;
-        }
-        .stat-card:hover {
-            transform: translateY(-2px);
-            border-color: #d4af37;
-        }
-        .user-list-container {
-            background: #1e1e1e;
-            border-radius: 8px;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-        .user-row {
-            cursor: pointer;
-            transition: background 0.2s;
-            color: white !important; /* Ensure list items are white */
-        }
-        .user-row:hover {
-            background-color: #2a2a2a;
-        }
-        .user-row.active {
-            background-color: #333;
-            border-left: 3px solid #d4af37;
-        }
-        .detail-panel {
-            background: #1e1e1e;
-            border-radius: 8px;
-            min-height: 600px;
-            border: 1px solid #333;
-        }
-        .text-gold { color: #d4af37 !important; }
-        .text-light { color: #f8f9fa !important; }
-        .text-muted { color: #adb5bd !important; } /* Lighten muted text for better contrast on dark */
-        
-        .btn-gold {
-            background-color: #d4af37;
-            color: #000;
-            border: none;
-        }
-        .btn-gold:hover {
-            background-color: #b5952f;
-            color: #000;
-        }
-    </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
     <div class="admin-container">
-        <!-- Admin Header -->
-        <header class="admin-header d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA Logo" style="height: 40px; margin-right: 15px;">
-                <h4 class="mb-0 text-gold">Admin Console</h4>
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-sidebar-header">
+                <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA Logo">
+                <h4>Admin</h4>
             </div>
-            <div class="d-flex align-items-center gap-3">
-                <span id="adminEmailDisplay" class="text-light small">Loading...</span>
-                <button id="logoutBtn" class="btn btn-outline-light btn-sm"><i class="fas fa-sign-out-alt me-1"></i> Logout</button>
-            </div>
-        </header>
+            <nav class="admin-nav">
+                <a href="#" class="admin-nav-item active" data-section="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    Dashboard
+                </a>
+                <a href="#" class="admin-nav-item" data-section="users">
+                    <i class="fas fa-users"></i>
+                    Users
+                </a>
+                <a href="#" class="admin-nav-item" data-section="tests">
+                    <i class="fas fa-clipboard-list"></i>
+                    Tests
+                </a>
+                <a href="#" class="admin-nav-item" data-section="results">
+                    <i class="fas fa-chart-bar"></i>
+                    Results
+                </a>
+                <a href="#" class="admin-nav-item" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </nav>
+        </aside>
 
-        <div class="container-fluid p-4">
-            <!-- Stats Row -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-4">
-                    <div class="stat-card">
-                        <h6 class="text-white text-uppercase mb-2">Total Users</h6>
-                        <h2 class="text-gold mb-0" id="totalUsersStr">0</h2>
-                    </div>
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Admin Header -->
+            <header class="admin-header">
+                <div class="admin-header-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h5 class="mb-0 text-gold">Admin Console</h5>
                 </div>
-                <div class="col-md-4">
-                    <div class="stat-card">
-                        <h6 class="text-white text-uppercase mb-2">Total Tests Completed</h6>
-                        <h2 class="text-gold mb-0" id="totalTestsStr">0</h2>
-                    </div>
+                <div class="admin-header-right">
+                    <span id="adminEmailDisplay" class="admin-header-email">Loading...</span>
+                    <button id="logoutBtn" class="btn-outline-gold">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
                 </div>
-                <div class="col-md-4">
-                    <div class="stat-card">
-                        <h6 class="text-white text-uppercase mb-2">Active Users (30 Days)</h6>
-                        <h2 class="text-gold mb-0" id="activeUsersStr">0</h2>
-                    </div>
-                </div>
-            </div>
+            </header>
 
-            <!-- Main Content -->
-            <div class="row g-4">
-                <!-- Left: User List -->
-                <div class="col-lg-4">
-                    <div class="card bg-dark border-secondary h-100">
-                        <div class="card-header border-secondary d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 text-white"><i class="fas fa-users me-2"></i>Users</h5>
-                            <button id="refreshBtn" class="btn btn-sm btn-outline-light"><i class="fas fa-sync-alt"></i></button>
+            <!-- Content Area -->
+            <div class="admin-content">
+                <!-- Dashboard Section -->
+                <section id="dashboardSection" class="admin-section active">
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-label">Total Users</div>
+                            <div class="stat-card-value" id="totalUsersStr">0</div>
                         </div>
-                        <div class="p-2 border-bottom border-secondary">
-                            <input type="text" id="userSearch" class="form-control bg-dark text-white border-secondary" placeholder="Search by name, email or UID...">
+                        <div class="stat-card">
+                            <div class="stat-card-label">Total Tests Completed</div>
+                            <div class="stat-card-value" id="totalTestsStr">0</div>
                         </div>
-                        <div class="user-list-container p-0">
-                            <div id="usersList" class="list-group list-group-flush">
-                                <!-- Users will be loaded here -->
-                                <div class="text-center p-4 text-white">Loading users...</div>
+                        <div class="stat-card">
+                            <div class="stat-card-label">Active Users (30 Days)</div>
+                            <div class="stat-card-value" id="activeUsersStr">0</div>
+                        </div>
+                    </div>
+
+                    <!-- User Management -->
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+                        <!-- User List -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 text-gold"><i class="fas fa-users"></i> Users</h5>
+                                <button id="refreshBtn" class="btn-outline-gold btn-sm">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <div style="padding: 1rem; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+                                <input type="text" id="userSearch" class="form-control" placeholder="Search by name, email or UID...">
+                            </div>
+                            <div class="user-list-container">
+                                <div id="usersList" class="list-group list-group-flush">
+                                    <div class="text-center p-4 text-light">Loading users...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Details -->
+                        <div id="userDetailPanel" class="detail-panel">
+                            <div class="text-center h-100 d-flex flex-column justify-content-center">
+                                <i class="fas fa-user-circle" style="font-size: 4rem; color: rgba(255,255,255,0.3); margin-bottom: 1rem;"></i>
+                                <h5 class="text-light">Select a user to view details</h5>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <!-- Right: User Details -->
-                <div class="col-lg-8">
-                    <div id="userDetailPanel" class="detail-panel p-4 text-white">
-                        <div class="text-center text-white h-100 d-flex flex-column justify-content-center">
-                            <i class="fas fa-user-circle fa-4x mb-3 text-secondary"></i>
-                            <h5>Select a user to view details</h5>
-                        </div>
-                    </div>
-                </div>
+                <!-- Other Sections (Users, Tests, Results, Settings) -->
+                <section id="usersSection" class="admin-section" style="display: none;">
+                    <h3 class="text-gold mb-4">User Management</h3>
+                    <p class="text-muted">User management interface coming soon...</p>
+                </section>
+
+                <section id="testsSection" class="admin-section" style="display: none;">
+                    <h3 class="text-gold mb-4">Test Management</h3>
+                    <p class="text-muted">Test management interface coming soon...</p>
+                </section>
+
+                <section id="resultsSection" class="admin-section" style="display: none;">
+                    <h3 class="text-gold mb-4">Results & Reports</h3>
+                    <p class="text-muted">Results and reports interface coming soon...</p>
+                </section>
+
+                <section id="settingsSection" class="admin-section" style="display: none;">
+                    <h3 class="text-gold mb-4">Settings</h3>
+                    <p class="text-muted">Settings interface coming soon...</p>
+                </section>
             </div>
-        </div>
+        </main>
     </div>
 
     <!-- Firebase Scripts -->
@@ -151,6 +147,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="../auth-state.js"></script>
+    <script src="../auth-guard.js"></script>
     
     <!-- Admin Logic -->
     <script src="admin.js"></script>

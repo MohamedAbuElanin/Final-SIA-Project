@@ -57,8 +57,14 @@ function init() {
 }
 
 // --- Authentication Check ---
+// FIXED: Now uses centralized auth state to prevent redirect loops
 function checkAuth() {
-    firebase.auth().onAuthStateChanged((user) => {
+    if (typeof window.onAuthStateReady === 'undefined') {
+        setTimeout(checkAuth, 100);
+        return;
+    }
+
+    window.onAuthStateReady((user) => {
         if (!user) {
             console.log("User not logged in, redirecting...");
             window.location.href = "../sign in/signin.html";
@@ -519,7 +525,11 @@ function finishTest() {
     saveTestResult(currentTestType, finalResult, totalTime);
 }
 
-function saveTestResult(testType, resultData, totalTime) {
+/**
+ * Save test result with instant result generation
+ * Shows results immediately after calculation, then saves to Firestore
+ */
+async function saveTestResult(testType, resultData, totalTime) {
     if (state.isSaving) {
         console.log("Already saving test result. Ignoring duplicate call.");
         return;
@@ -527,7 +537,6 @@ function saveTestResult(testType, resultData, totalTime) {
     state.isSaving = true;
 
     const user = firebase.auth().currentUser;
-
     if (!user) {
         state.isSaving = false;
         alert("You must be logged in!");
@@ -537,33 +546,28 @@ function saveTestResult(testType, resultData, totalTime) {
     const finishBtn = elements.finishBtn;
     if (finishBtn) {
         finishBtn.disabled = true;
-        finishBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+        finishBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
     }
 
-    user.getIdToken().then(token => {
+    try {
+        // Show loading animation in result view
+        showResultLoading();
+
+        // Get auth token
+        const token = await user.getIdToken();
+        
+        // Determine endpoint
         let endpoint = '';
         if (testType === 'Big-Five') {
             endpoint = '/api/bigfive';
         } else if (testType === 'Holland' || testType === 'Holland-codes') {
             endpoint = '/api/holland';
         } else {
-            console.error("Unknown test type:", testType);
-            alert("Error: Unknown test type.");
-            state.isSaving = false;
-            if (finishBtn) finishBtn.disabled = false;
-            return;
+            throw new Error("Unknown test type: " + testType);
         }
 
-        // Use CONFIG.API_BASE_URL if available, otherwise relative path
-        const baseUrl = (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) ? CONFIG.API_BASE_URL : '';
-        // If config has /api suffix, avoid double /api? 
-        // My config.js usually has /api. 
-        // Let's assume relative path /api/bigfive works with rewrite.
-        // OR rely on full URL.
-        // Safe bet: fetch('/api/bigfive') works because of firebase.json rewrite.
-        const url = endpoint; 
-
-        fetch(url, {
+        // Send to API for calculation and saving
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -572,25 +576,209 @@ function saveTestResult(testType, resultData, totalTime) {
             body: JSON.stringify({
                 answers: resultData
             })
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok: ' + response.statusText);
-            return response.json();
-        })
-        .then(data => {
-            console.log("Test saved successfully via API:", data);
-            state.isSaving = false;
-            alert("Test completed and saved!");
-            window.location.href = "../profile/profile.html";
-        })
-        .catch(error => {
-            console.error("Error saving test:", error);
-            state.isSaving = false;
-            if (finishBtn) {
-                finishBtn.disabled = false;
-                finishBtn.innerHTML = 'Finish & Save';
-            }
-            alert("Failed to save result. Please check your connection.");
         });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+        }
+
+        const data = await response.json();
+        
+        // Show results immediately
+        displayInstantResults(testType, data.results, data.analysis);
+        
+        // Update result view
+        elements.testView.classList.remove('active');
+        elements.testView.classList.add('hidden');
+        elements.resultView.classList.remove('hidden');
+        setTimeout(() => elements.resultView.classList.add('active'), 50);
+
+        // Save to Firestore under users/{uid}/results/{testType}
+        await saveResultsToFirestore(user.uid, testType, data.results, data.analysis, totalTime);
+
+        state.isSaving = false;
+        
+        // Show success message
+        if (finishBtn) {
+            finishBtn.disabled = false;
+            finishBtn.innerHTML = 'View Profile';
+            finishBtn.onclick = () => {
+                window.location.href = "../profile/profile.html";
+            };
+        }
+
+    } catch (error) {
+        console.error("Error saving test:", error);
+        state.isSaving = false;
+        
+        if (finishBtn) {
+            finishBtn.disabled = false;
+            finishBtn.innerHTML = 'Finish & Save';
+        }
+        
+        alert("Failed to save result: " + error.message);
+        hideResultLoading();
+    }
+}
+
+/**
+ * Show loading animation in result view
+ */
+function showResultLoading() {
+    if (elements.resultView) {
+        elements.resultView.classList.remove('hidden');
+        elements.resultView.innerHTML = `
+            <div class="text-center p-5">
+                <i class="fas fa-spinner fa-spin fa-3x text-gold mb-3"></i>
+                <h4 class="text-gold">Generating Your Results...</h4>
+                <p class="text-muted">This may take a few seconds</p>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Hide loading animation
+ */
+function hideResultLoading() {
+    // Loading will be replaced by results
+}
+
+/**
+ * Display instant results after calculation
+ * Uses inline styles to avoid modifying CSS files
+ */
+function displayInstantResults(testType, results, analysis) {
+    if (!elements.resultView) return;
+
+    // Inline styles for result display (to avoid modifying CSS files)
+    const resultCardStyle = 'background: #0a0a0a; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 16px; padding: 2rem; margin: 2rem 0;';
+    const resultsGridStyle = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0;';
+    const resultItemStyle = 'background: rgba(212, 175, 55, 0.05); padding: 1rem; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.2);';
+    const resultLabelStyle = 'color: #d4af37; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem;';
+    const resultValueStyle = 'color: #fff; font-size: 1.5rem; font-weight: 700; margin: 0.5rem 0;';
+    const resultBarStyle = 'background: rgba(255, 255, 255, 0.1); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 0.5rem;';
+    const resultBarFillStyle = 'background: linear-gradient(90deg, #d4af37, #f4d03f); height: 100%; transition: width 0.5s ease;';
+    const analysisSectionStyle = 'margin-top: 2rem; padding: 1.5rem; background: rgba(212, 175, 55, 0.05); border-radius: 8px; border-left: 3px solid #d4af37;';
+    const btnStyle = 'background: #d4af37; color: #000; border: none; padding: 0.75rem 2rem; border-radius: 8px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; margin-top: 2rem;';
+    const btnHoverStyle = 'background: #b5952f; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);';
+
+    let resultHTML = '';
+    
+    if (testType === 'Big-Five') {
+        const labels = {
+            'O': 'Openness',
+            'C': 'Conscientiousness', 
+            'E': 'Extraversion',
+            'A': 'Agreeableness',
+            'N': 'Neuroticism'
+        };
+        
+        resultHTML = `
+            <div style="${resultCardStyle}">
+                <h3 style="color: #d4af37; margin-bottom: 2rem; text-align: center; font-size: 2rem;">Big Five Personality Results</h3>
+                <div style="${resultsGridStyle}">
+                    ${Object.keys(results).map(key => `
+                        <div style="${resultItemStyle}">
+                            <div style="${resultLabelStyle}">${labels[key] || key}</div>
+                            <div style="${resultValueStyle}">${results[key]}%</div>
+                            <div style="${resultBarStyle}">
+                                <div class="result-bar-fill" style="${resultBarFillStyle} width: ${results[key]}%"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                ${analysis ? `
+                    <div style="${analysisSectionStyle}">
+                        <h4 style="color: #d4af37; margin-bottom: 1rem;">Analysis</h4>
+                        <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.6;">${analysis.personalityAnalysis || 'Analysis generated successfully.'}</p>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    } else if (testType === 'Holland' || testType === 'Holland-codes') {
+        const labels = {
+            'R': 'Realistic',
+            'I': 'Investigative',
+            'A': 'Artistic',
+            'S': 'Social',
+            'E': 'Enterprising',
+            'C': 'Conventional'
+        };
+        
+        resultHTML = `
+            <div style="${resultCardStyle}">
+                <h3 style="color: #d4af37; margin-bottom: 2rem; text-align: center; font-size: 2rem;">Holland Codes Results</h3>
+                <div style="${resultsGridStyle}">
+                    ${Object.keys(results).map(key => `
+                        <div style="${resultItemStyle}">
+                            <div style="${resultLabelStyle}">${labels[key] || key}</div>
+                            <div style="${resultValueStyle}">${results[key]}%</div>
+                            <div style="${resultBarStyle}">
+                                <div class="result-bar-fill" style="${resultBarFillStyle} width: ${results[key]}%"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                ${analysis ? `
+                    <div style="${analysisSectionStyle}">
+                        <h4 style="color: #d4af37; margin-bottom: 1rem;">Analysis</h4>
+                        <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.6;">${analysis.typeExplanation || 'Analysis generated successfully.'}</p>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    elements.resultView.innerHTML = resultHTML + `
+        <div style="text-align: center; margin-top: 2rem;">
+            <button id="viewProfileBtn" style="${btnStyle}" onmouseover="this.style.background='#b5952f'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(212, 175, 55, 0.3)';" onmouseout="this.style.background='#d4af37'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                <i class="fas fa-user" style="margin-right: 0.5rem;"></i>View Full Profile
+            </button>
+        </div>
+    `;
+
+    // Add event listener for profile button
+    const profileBtn = document.getElementById('viewProfileBtn');
+    if (profileBtn) {
+        profileBtn.addEventListener('click', () => {
+            window.location.href = "../profile/profile.html";
+        });
+    }
+}
+
+/**
+ * Save results to Firestore under users/{uid}/results/{testType}
+ */
+async function saveResultsToFirestore(uid, testType, results, analysis, totalTime) {
+    const db = firebase.firestore();
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    
+    // Save to users/{uid}/results/{testType}
+    const resultPath = db.collection('users').doc(uid).collection('results').doc(testType);
+    await resultPath.set({
+        results: results,
+        analysis: analysis,
+        timeSpent: totalTime,
+        completedAt: timestamp,
+        testType: testType
     });
+
+    // Also update TestsResults collection for backward compatibility
+    const testResultsPath = db.collection('TestsResults').doc(uid);
+    const updateData = {
+        lastUpdated: timestamp
+    };
+    
+    if (testType === 'Big-Five') {
+        updateData.bigFive = results;
+        updateData.AI_Analysis = { bigFive: analysis };
+    } else if (testType === 'Holland' || testType === 'Holland-codes') {
+        updateData.hollandCode = results;
+        updateData.AI_Analysis = { ...(updateData.AI_Analysis || {}), holland: analysis };
+    }
+    
+    await testResultsPath.set(updateData, { merge: true });
+    
+    console.log('Results saved to Firestore successfully');
 }

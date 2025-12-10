@@ -42,7 +42,7 @@ const authenticateUser = async (req, res, next) => {
 app.post('/bigfive', authenticateUser, async (req, res) => {
     try {
         const { answers } = req.body;
-        if (!answers) return res.status(400).send('Missing answers');
+        if (!answers) return res.status(400).json({ error: 'Missing answers', code: 'MISSING_ANSWERS' });
         
         const results = await calculateBigFive(answers);
         
@@ -82,7 +82,7 @@ app.post('/bigfive', authenticateUser, async (req, res) => {
         res.json({ results, analysis });
     } catch (error) {
         console.error('Error in BigFive:', error);
-        res.status(500).send(error.message);
+        res.status(500).json({ error: 'Internal server error', code: 'BIGFIVE_ERROR', details: process.env.NODE_ENV === 'production' ? 'An error occurred' : error.message });
     }
 });
 
@@ -90,7 +90,7 @@ app.post('/bigfive', authenticateUser, async (req, res) => {
 app.post('/holland', authenticateUser, async (req, res) => {
     try {
         const { answers } = req.body;
-        if (!answers) return res.status(400).send('Missing answers');
+        if (!answers) return res.status(400).json({ error: 'Missing answers', code: 'MISSING_ANSWERS' });
 
         const results = await calculateHolland(answers);
         
@@ -125,8 +125,8 @@ app.post('/holland', authenticateUser, async (req, res) => {
 
         res.json({ results, analysis });
     } catch (error) {
-         console.error('Error in Holland:', error);
-        res.status(500).send(error.message);
+        console.error('Error in Holland:', error);
+        res.status(500).json({ error: 'Internal server error', code: 'HOLLAND_ERROR', details: process.env.NODE_ENV === 'production' ? 'An error occurred' : error.message });
     }
 });
 
@@ -134,7 +134,7 @@ app.post('/holland', authenticateUser, async (req, res) => {
 app.get('/profile', authenticateUser, async (req, res) => {
     try {
         const userDoc = await admin.firestore().collection('users').doc(req.user.uid).get();
-        if (!userDoc.exists) return res.status(404).send('User not found');
+        if (!userDoc.exists) return res.status(404).json({ error: 'User not found', code: 'USER_NOT_FOUND' });
         
         // Fetch Activity
         const activitySnapshot = await admin.firestore().collection('users').doc(req.user.uid).collection('activityLogs')
@@ -159,7 +159,7 @@ app.get('/profile', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching profile:', error);
-        res.status(500).send(error.message);
+        res.status(500).json({ error: 'Internal server error', code: 'PROFILE_ERROR', details: process.env.NODE_ENV === 'production' ? 'An error occurred' : error.message });
     }
 });
 
@@ -185,7 +185,7 @@ app.post('/analyze-profile', authenticateUser, async (req, res) => {
         res.json(analysis);
     } catch (error) {
         console.error('Error in analyze-profile:', error);
-        res.status(500).send(error.message);
+        res.status(500).json({ error: 'Internal server error', code: 'ANALYZE_ERROR', details: process.env.NODE_ENV === 'production' ? 'An error occurred' : error.message });
     }
 });
 
@@ -198,10 +198,10 @@ app.post('/activity', authenticateUser, async (req, res) => {
             details,
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
-        res.status(200).send('Logged');
+        res.status(200).json({ success: true, message: 'Activity logged' });
     } catch (error) {
         console.error('Error logging activity:', error);
-        res.status(500).send(error.message);
+        res.status(500).json({ error: 'Internal server error', code: 'ACTIVITY_ERROR', details: process.env.NODE_ENV === 'production' ? 'An error occurred' : error.message });
     }
 });
 
@@ -209,11 +209,34 @@ app.post('/activity', authenticateUser, async (req, res) => {
 const adminLogic = require('./admin');
 
 // Middleware: Strict Admin Check
-const requireAdmin = (req, res, next) => {
-    if (req.user.email !== 'mohamedosman@gamil.com') {
+// FIXED: Now uses role-based access control with Firestore fallback
+const requireAdmin = async (req, res, next) => {
+    try {
+        // Check custom claims first (preferred method)
+        if (req.user.admin === true) {
+            return next();
+        }
+
+        // Fallback: Check Firestore users collection for role field
+        const userDoc = await admin.firestore().collection('users').doc(req.user.uid).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            if (userData.role === 'admin') {
+                return next();
+            }
+        }
+
+        // Legacy: Check email (with typo fix) - REMOVE AFTER MIGRATION
+        if (req.user.email === 'mohamedosman@gmail.com' || req.user.email === 'mohamedosman@gamil.com') {
+            console.warn('Using legacy email-based admin check. Please migrate to role-based access.');
+            return next();
+        }
+
         return res.status(403).json({ error: 'Unauthorized: Admin access only' });
+    } catch (error) {
+        console.error('Error checking admin status:', error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
-    next();
 };
 
 // 6. Admin: List Users (Updated)
@@ -230,7 +253,7 @@ app.get('/admin/users', authenticateUser, requireAdmin, async (req, res) => {
         res.json(users);
     } catch (error) {
         console.error('Error listing users:', error);
-        res.status(500).send(error.message);
+        res.status(500).json({ error: 'Internal server error', code: 'LIST_USERS_ERROR', details: process.env.NODE_ENV === 'production' ? 'An error occurred' : error.message });
     }
 });
 
@@ -240,7 +263,8 @@ app.get('/admin/stats', authenticateUser, requireAdmin, async (req, res) => {
         const stats = await adminLogic.getStats();
         res.json(stats);
     } catch (error) {
-        res.status(500).send(error.message);
+        console.error('Error in admin stats:', error);
+        res.status(500).json({ error: 'Internal server error', code: 'ADMIN_STATS_ERROR', details: process.env.NODE_ENV === 'production' ? 'An error occurred' : error.message });
     }
 });
 
@@ -251,7 +275,37 @@ app.get('/admin/user/:uid', authenticateUser, requireAdmin, async (req, res) => 
         const details = await adminLogic.getUserDetails(uid);
         res.json(details);
     } catch (error) {
-        res.status(500).send(error.message);
+        console.error('Error in admin user details:', error);
+        res.status(500).json({ error: 'Internal server error', code: 'ADMIN_USER_ERROR', details: process.env.NODE_ENV === 'production' ? 'An error occurred' : error.message });
+    }
+});
+
+// 9. Admin: Set User Role (Grant/Revoke Admin)
+app.post('/admin/set-role', authenticateUser, requireAdmin, async (req, res) => {
+    try {
+        const { uid, role } = req.body;
+        
+        if (!uid || !role) {
+            return res.status(400).json({ error: 'Missing uid or role', code: 'MISSING_PARAMS' });
+        }
+        
+        if (role !== 'admin' && role !== 'user') {
+            return res.status(400).json({ error: 'Invalid role. Must be "admin" or "user"', code: 'INVALID_ROLE' });
+        }
+        
+        // Prevent self-demotion (safety check)
+        if (uid === req.user.uid && role === 'user') {
+            return res.status(400).json({ error: 'Cannot revoke your own admin privileges', code: 'SELF_DEMOTION' });
+        }
+        
+        const { setAdminClaim } = require('./admin-claims');
+        const isAdmin = role === 'admin';
+        const result = await setAdminClaim(uid, isAdmin);
+        
+        res.json(result);
+    } catch (error) {
+        console.error('Error setting user role:', error);
+        res.status(500).json({ error: 'Internal server error', code: 'SET_ROLE_ERROR', details: process.env.NODE_ENV === 'production' ? 'An error occurred' : error.message });
     }
 });
 
