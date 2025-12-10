@@ -23,17 +23,33 @@
 
             <!-- Center Navigation Links -->
             <ul class="nav-links" id="navLinks">
-                <li><a href="../index.html">Home</a></li>
-                <li><a href="../About/About.html">About</a></li>
-                <li><a href="../Test/Test.html">Test</a></li>
-                <li><a href="../profile/profile.html">Profile</a></li>
-                <li><a href="../privacy-terms.html">Privacy & Terms</a></li>
+                <li><a href="../index.html" data-key="nav_home">Home</a></li>
+                <li><a href="../About/About.html" data-key="nav_about">About</a></li>
+                <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
+                <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
+                <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
             </ul>
 
             <!-- Right Buttons Section -->
             <div class="nav-auth" id="navAuth">
-                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                <div class="lang-dropdown">
+                    <button class="lang-dropdown-toggle" type="button">
+                        <span class="lang-current">EN</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="lang-dropdown-menu">
+                        <a href="#" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
+                            <span>English</span>
+                            <span class="lang-code">EN</span>
+                        </a>
+                        <a href="#" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
+                            <span>العربية</span>
+                            <span class="lang-code">AR</span>
+                        </a>
+                    </div>
+                </div>
+                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
+                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
             </div>
 
             <!-- Responsive Menu (Hamburger control + label for accessibility) -->
@@ -47,16 +63,32 @@
             <div class="nav-drawer" aria-hidden="true">
                 <!-- Center Navigation Links duplicated for the mobile drawer -->
                 <ul class="drawer-links">
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="../About/About.html">About</a></li>
-                    <li><a href="../Test/Test.html">Test</a></li>
-                    <li><a href="../profile/profile.html">Profile</a></li>
-                    <li><a href="../privacy-terms.html">Privacy & Terms</a></li>
+                    <li><a href="../index.html" data-key="nav_home">Home</a></li>
+                    <li><a href="../About/About.html" data-key="nav_about">About</a></li>
+                    <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
+                    <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
+                    <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
                 </ul>
                 <!-- Right Buttons Section duplicated for stacked layout -->
                 <div class="drawer-auth">
-                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                    <div class="lang-dropdown" style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                        <button class="lang-dropdown-toggle" type="button">
+                            <span class="lang-current">EN</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="lang-dropdown-menu">
+                            <a href="#" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
+                                <span>English</span>
+                                <span class="lang-code">EN</span>
+                            </a>
+                            <a href="#" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
+                                <span>العربية</span>
+                                <span class="lang-code">AR</span>
+                            </a>
+                        </div>
+                    </div>
+                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
+                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
                 </div>
             </div>
         </nav>
@@ -68,8 +100,8 @@
         <section class="hero-section">
             <div class="container">
                 <div class="hero-content fade-in">
-                    <h1 class="hero-title">Reset Password</h1>
-                    <p class="hero-subtitle">Enter your email address and we'll send you a link to reset your password.</p>
+                    <h1 class="hero-title" data-key="reset_title">Reset Password</h1>
+                    <p class="hero-subtitle" data-key="reset_subtitle">Enter your email address and we'll send you a link to reset your password.</p>
                 </div>
             </div>
         </section>
@@ -80,20 +112,21 @@
                 <div class="form-wrapper fade-in" id="resetForm">
                     <div class="form-header">
                         <h2 class="form-title">
-                            <i class="fas fa-key"></i> Reset Password
+                            <i class="fas fa-key"></i> <span data-key="reset_form_title">Reset Password</span>
                         </h2>
                     </div>
 
                     <form id="resetFormElement" class="auth-form">
                         <div class="form-group">
                             <label for="resetEmail" class="form-label">
-                                <i class="fas fa-envelope"></i> Email
+                                <i class="fas fa-envelope"></i> <span data-key="reset_email_label">Email</span>
                             </label>
                             <input 
                                 type="email" 
                                 id="resetEmail" 
                                 name="email" 
                                 class="form-input" 
+                                data-placeholder-key="reset_email_placeholder"
                                 placeholder="Enter your email address"
                                 required
                             >
@@ -104,12 +137,12 @@
                         <div class="form-success" id="resetFormSuccess"></div>
 
                         <button type="submit" class="form-btn">
-                            <i class="fas fa-paper-plane"></i> Send Reset Link
+                            <i class="fas fa-paper-plane"></i> <span data-key="reset_submit">Send Reset Link</span>
                         </button>
                     </form>
 
                     <div class="form-footer">
-                        <p>Remember your password? <a href="../sign in/signin.html" class="toggle-link">Sign In</a></p>
+                        <p><span data-key="reset_remember_password">Remember your password?</span> <a href="../sign in/signin.html" class="toggle-link" data-key="nav_sign_in">Sign In</a></p>
                     </div>
                 </div>
             </div>
@@ -121,18 +154,18 @@
         <div class="footer__brand">
             <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
             <div>
-                <p class="footer__title">SIA</p>
-                <p class="footer__mission">We connect ancient wisdom with modern career paths.</p>
+                <p class="footer__title" data-key="footer_title">SIA</p>
+                <p class="footer__mission" data-key="footer_mission">We connect ancient wisdom with modern career paths.</p>
             </div>
         </div>
         <div class="footer__nav" aria-label="Footer navigation">
-            <a href="../index.html">Home</a>
-            <a href="../About/About.html">About</a>
-            <a href="../Test/Test.html">Test</a>
-            <a href="../profile/profile.html">Profile</a>
-            <a href="../privacy-terms.html">Privacy & Terms</a>
+            <a href="../index.html" data-key="nav_home">Home</a>
+            <a href="../About/About.html" data-key="nav_about">About</a>
+            <a href="../Test/Test.html" data-key="nav_test">Test</a>
+            <a href="../profile/profile.html" data-key="nav_profile">Profile</a>
+            <a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a>
         </div>
-        <p class="footer__copy">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+        <p class="footer__copy" data-key="footer_copyright">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
     </footer>
 
     <canvas id="particles"></canvas>
@@ -155,6 +188,9 @@
     
     <!-- Reset Password Script -->
     <script src="reset.js"></script>
+    
+    <!-- Language Translation Script -->
+    <script src="../js/lang.js"></script>
 </body>
 </html>
 

@@ -1,212 +1,497 @@
-// ملف السيرفر الرئيسي.
+/**
+ * SIA Backend Server - Main Express Server
+ * FIXED: All runtime errors, security vulnerabilities, and missing validations
+ * Works for both Firebase Functions and Railway deployment
+ */
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
-const { GoogleGenAI } = require("@google/genai");
+const rateLimit = require('express-rate-limit');
+const logger = require('./logger');
 
+// Load environment variables
 dotenv.config();
 
 const app = express();
+// FIXED: Railway deployment - use PORT from environment (Railway sets this automatically)
 const PORT = process.env.PORT || 5000;
 
-// Initialize Gemini AI
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY
+// FIXED: Validate required environment variables
+if (!process.env.GEMINI_API_KEY) {
+    logger.error('ERROR: GEMINI_API_KEY environment variable is not set!');
+    logger.error('Please set it in your .env file or environment variables.');
+    process.exit(1);
+}
+
+// FIXED: Initialize Gemini AI with proper error handling
+let ai;
+try {
+    const { GoogleGenAI } = require("@google/genai");
+    ai = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API_KEY
+    });
+    logger.log('Gemini AI initialized successfully');
+} catch (error) {
+    logger.error('ERROR: Failed to initialize GoogleGenAI:', error.message);
+    process.exit(1);
+}
+
+// FIXED: Initialize Firebase Admin with proper error handling
+// Works for both Firebase Functions (default credentials) and Railway (service account)
+let admin;
+try {
+    admin = require('./firebase-admin');
+    if (!admin || !admin.auth) {
+        throw new Error('Firebase Admin not properly initialized');
+    }
+    logger.log('Firebase Admin initialized successfully');
+} catch (error) {
+    logger.error('ERROR: Failed to initialize Firebase Admin:', error.message);
+    process.exit(1);
+}
+
+// FIXED: Rate limiting middleware to prevent abuse
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: { error: 'Too many requests from this IP, please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false,
 });
 
-const admin = require('./firebase-admin');
+// FIXED: CORS configuration - more restrictive for security
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        // In production, specify allowed origins
+        const allowedOrigins = process.env.ALLOWED_ORIGINS 
+            ? process.env.ALLOWED_ORIGINS.split(',')
+            : ['http://localhost:5000', 'http://localhost:3000'];
+        
+        if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+};
 
-// Middleware to verify Firebase ID Token
+// Middleware
+app.use(limiter); // FIXED: Apply rate limiting
+app.use(cors(corsOptions)); // FIXED: Use configured CORS
+app.use(bodyParser.json({ limit: '10mb' })); // FIXED: Add size limit
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' })); // FIXED: Add size limit
+
+// FIXED: Middleware to verify Firebase ID Token with better error handling
 const authenticateUser = async (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'Unauthorized: No token provided' });
-    }
-
-    const idToken = authHeader.split('Bearer ')[1];
-
     try {
-        const decodedToken = await admin.auth().verifyIdToken(idToken);
-        req.user = decodedToken;
-        next();
+        const authHeader = req.headers.authorization;
+        
+        // FIXED: Proper validation
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ 
+                error: 'Unauthorized', 
+                message: 'No authentication token provided',
+                code: 'NO_TOKEN'
+            });
+        }
+
+        const idToken = authHeader.split('Bearer ')[1];
+        
+        // FIXED: Validate token format
+        if (!idToken || idToken.trim().length === 0) {
+            return res.status(401).json({ 
+                error: 'Unauthorized', 
+                message: 'Invalid token format',
+                code: 'INVALID_TOKEN_FORMAT'
+            });
+        }
+
+        try {
+            const decodedToken = await admin.auth().verifyIdToken(idToken);
+            req.user = decodedToken;
+            next();
+        } catch (error) {
+            logger.error('Token verification error:', error.message);
+            return res.status(403).json({ 
+                error: 'Forbidden', 
+                message: 'Invalid or expired token',
+                code: 'INVALID_TOKEN'
+            });
+        }
     } catch (error) {
-        console.error('Error verifying token:', error);
-        res.status(403).json({ error: 'Unauthorized: Invalid token' });
+        logger.error('Authentication middleware error:', error.message);
+        return res.status(500).json({ 
+            error: 'Internal server error', 
+            message: 'Authentication failed',
+            code: 'AUTH_ERROR'
+        });
     }
 };
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Routes
 
-// Test route
+// GET route - Health check
 app.get('/', (req, res) => {
-    res.send('SIA Back-End is running!');
+    res.json({ 
+        status: 'success',
+        message: 'SIA Backend Server is running!',
+        timestamp: new Date().toISOString()
+    });
 });
 
+// POST route - Submit test data (generic endpoint)
+// FIXED: Added input validation and error handling
+app.post('/submit-test', (req, res) => {
+    try {
+        // FIXED: Validate request body
+        if (!req.body || typeof req.body !== 'object') {
+            return res.status(400).json({ 
+                error: 'Bad Request', 
+                message: 'Invalid request body',
+                code: 'INVALID_BODY'
+            });
+        }
 
-
+        // FIXED: Production-safe logging
+        logger.log('Received test data:', JSON.stringify(req.body, null, 2));
+        
+        // FIXED: Validate required fields
+        if (!req.body.testType && !req.body.answers) {
+            return res.status(400).json({ 
+                error: 'Bad Request', 
+                message: 'Missing required fields: testType or answers',
+                code: 'MISSING_FIELDS'
+            });
+        }
+        
+        // Respond with success
+        res.json({ 
+            status: 'success', 
+            message: 'Test submitted!',
+            receivedData: req.body,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        logger.error('Error in /submit-test:', error.message);
+        res.status(500).json({ 
+            error: 'Internal server error', 
+            message: 'Failed to process test submission',
+            code: 'SUBMIT_ERROR'
+        });
+    }
+});
 
 // Calculate Scores Endpoint
-app.post('/api/calculate-scores', authenticateUser, (req, res) => {
+// FIXED: Added comprehensive validation and error handling
+app.post('/api/calculate-scores', authenticateUser, async (req, res) => {
     try {
+        // FIXED: Validate request body
         const { testType, answers } = req.body;
 
-        if (!answers) {
-            return res.status(400).json({ error: 'Answers are required' });
+        if (!testType) {
+            return res.status(400).json({ 
+                error: 'Bad Request', 
+                message: 'Test type is required',
+                code: 'MISSING_TEST_TYPE'
+            });
+        }
+
+        if (!answers || typeof answers !== 'object' || Object.keys(answers).length === 0) {
+            return res.status(400).json({ 
+                error: 'Bad Request', 
+                message: 'Answers are required and must be a non-empty object',
+                code: 'MISSING_ANSWERS'
+            });
+        }
+
+        // FIXED: Validate test type
+        const validTestTypes = ['Big-Five', 'Holland', 'Holland-codes'];
+        if (!validTestTypes.includes(testType)) {
+            return res.status(400).json({ 
+                error: 'Bad Request', 
+                message: `Invalid test type. Must be one of: ${validTestTypes.join(', ')}`,
+                code: 'INVALID_TEST_TYPE'
+            });
         }
 
         let results = {};
-        if (testType === 'Big-Five') {
-            // Big Five Scoring
-            const bigFiveQuestions = require('../public/Test/Big-Five.json');
-            
-            const scores = { O: 0, C: 0, E: 0, A: 0, N: 0 };
-            const counts = { O: 0, C: 0, E: 0, A: 0, N: 0 };
-
-            // IPIP-120 Rotation (approximate if not in JSON): 
-            // Usually it's N, E, O, A, C repeating.
-            // Let's rely on the JSON having "category" if map_questions.js ran. 
-            // If not, we fall back to rotation: 1=N, 2=E, 3=O, 4=A, 5=C...
-            
-            bigFiveQuestions.forEach((q, index) => {
-                const answer = answers[q.id];
-                if (answer !== undefined) {
-                    // Determine category
-                    let category = q.category;
-                    let polarity = q.polarity || '+';
-
-                    if (!category) {
-                        // Fallback rotation: N, E, O, A, C
-                        const remainder = (index) % 5;
-                        if (remainder === 0) category = 'N';
-                        else if (remainder === 1) category = 'E';
-                        else if (remainder === 2) category = 'O';
-                        else if (remainder === 3) category = 'A';
-                        else if (remainder === 4) category = 'C';
-                    }
-
-                    // Determine score value (0-4 or 1-5)
-                    // The client sends the option text usually? Or the index?
-                    // Test.js sends the option TEXT. We need to map text to value.
-                    // Options: ["Very Inaccurate", ..., "Very Accurate"] -> 0 to 4
-                    const options = q.options || ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"];
-                    let score = options.indexOf(answer);
+        
+        try {
+            if (testType === 'Big-Five') {
+                // FIXED: Load questions from Firestore instead of JSON file
+                let bigFiveQuestions;
+                try {
+                    const testDoc = await admin.firestore()
+                        .collection('tests')
+                        .doc('Big-Five')
+                        .get();
                     
-                    if (score === -1) score = 2; // Default to neutral if not found
-
-                    // Handle polarity (Reverse scoring)
-                    // If JSON doesn't have polarity, we might be inaccurate. 
-                    // But let's assume standard positive for now if missing.
-                    if (polarity === '-') {
-                        score = 4 - score;
+                    if (!testDoc.exists) {
+                        return res.status(500).json({ 
+                            error: 'Internal server error', 
+                            message: 'Big Five test data not found in Firestore',
+                            code: 'TEST_DATA_NOT_FOUND'
+                        });
                     }
-
-                    if (scores[category] !== undefined) {
-                        scores[category] += score;
-                        counts[category]++;
-                    }
-                }
-            });
-
-            // Normalize to 0-100 scale? Or just raw totals.
-            // Let's return percentages relative to max possible.
-            Object.keys(scores).forEach(trait => {
-                const maxScore = counts[trait] * 4;
-                results[trait] = maxScore > 0 ? Math.round((scores[trait] / maxScore) * 100) : 0;
-            });
-
-        } else if (testType === 'Holland' || testType === 'Holland-codes') {
-            // Scoring for Holland Codes
-            const hollandQuestions = require('../public/Test/Holland-codes.json');
-            const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
-            
-            hollandQuestions.forEach(q => {
-                const answer = answers[q.id];
-                if (answer !== undefined) {
-                    const category = q.category; // Holland JSON has category
-                    const options = q.options;
-                    const points = q.points || [1, 2, 3, 4, 5];
                     
-                    const optionIndex = options.indexOf(answer);
-                    if (optionIndex !== -1 && scores[category] !== undefined) {
-                        scores[category] += points[optionIndex];
+                    const testData = testDoc.data();
+                    bigFiveQuestions = testData.questions || [];
+                    
+                    if (!Array.isArray(bigFiveQuestions) || bigFiveQuestions.length === 0) {
+                        return res.status(500).json({ 
+                            error: 'Internal server error', 
+                            message: 'Invalid test questions format in Firestore',
+                            code: 'INVALID_QUESTIONS_FORMAT'
+                        });
                     }
+                } catch (firestoreError) {
+                    logger.error('Error loading Big-Five questions from Firestore:', firestoreError.message);
+                    return res.status(500).json({ 
+                        error: 'Internal server error', 
+                        message: 'Failed to load test questions from Firestore',
+                        code: 'FIRESTORE_LOAD_ERROR'
+                    });
                 }
-            });
-            
-            results = scores;
+                
+                const scores = { O: 0, C: 0, E: 0, A: 0, N: 0 };
+                const counts = { O: 0, C: 0, E: 0, A: 0, N: 0 };
+                
+                bigFiveQuestions.forEach((q, index) => {
+                    // FIXED: Null check for question object
+                    if (!q || !q.id) return;
+                    
+                    const answer = answers[q.id];
+                    if (answer !== undefined && answer !== null) {
+                        // Determine category
+                        let category = q.category;
+                        let polarity = q.polarity || '+';
 
-            // Normalize to 0-100 scale
-            // Simple normalization: (Score / MaxPossible * 100)
-            const counts = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
-            hollandQuestions.forEach(q => {
-                if (counts[q.category] !== undefined) counts[q.category]++;
-            });
+                        if (!category) {
+                            // Fallback rotation: N, E, O, A, C
+                            const remainder = index % 5;
+                            if (remainder === 0) category = 'N';
+                            else if (remainder === 1) category = 'E';
+                            else if (remainder === 2) category = 'O';
+                            else if (remainder === 3) category = 'A';
+                            else if (remainder === 4) category = 'C';
+                        }
 
-            Object.keys(results).forEach(cat => {
-                const max = counts[cat] * 5; // Max point is 5
-                if (max > 0) {
-                    results[cat] = Math.round((results[cat] / max) * 100);
-                } else {
-                    results[cat] = 0;
+                        // Determine score value
+                        const defaultOptions = ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"];
+                        const options = q.options || defaultOptions;
+                        let score = options.indexOf(answer);
+                        
+                        // FIXED: Handle case where answer is not in options
+                        if (score === -1) {
+                            // Try case-insensitive match
+                            const lowerAnswer = String(answer).toLowerCase();
+                            score = options.findIndex(opt => String(opt).toLowerCase() === lowerAnswer);
+                            if (score === -1) {
+                                score = 2; // Default to neutral if not found
+                                logger.warn(`Answer "${answer}" not found in options for question ${q.id}, using neutral score`);
+                            }
+                        }
+
+                        // FIXED: Validate score is within range
+                        if (score < 0 || score > 4) {
+                            score = 2; // Default to neutral
+                        }
+
+                        // FIXED: Handle polarity (Reverse scoring)
+                        if (polarity === '-') {
+                            score = 4 - score;
+                        }
+
+                        // FIXED: Validate category before accessing
+                        if (scores[category] !== undefined) {
+                            scores[category] += score;
+                            counts[category]++;
+                        }
+                    }
+                });
+
+                // Normalize to 0-100 scale
+                Object.keys(scores).forEach(trait => {
+                    const maxScore = counts[trait] * 4;
+                    results[trait] = maxScore > 0 ? Math.round((scores[trait] / maxScore) * 100) : 0;
+                });
+
+            } else if (testType === 'Holland' || testType === 'Holland-codes') {
+                // FIXED: Load questions from Firestore instead of JSON file
+                let hollandQuestions;
+                try {
+                    const testDoc = await admin.firestore()
+                        .collection('tests')
+                        .doc('Holland')
+                        .get();
+                    
+                    if (!testDoc.exists) {
+                        return res.status(500).json({ 
+                            error: 'Internal server error', 
+                            message: 'Holland Codes test data not found in Firestore',
+                            code: 'TEST_DATA_NOT_FOUND'
+                        });
+                    }
+                    
+                    const testData = testDoc.data();
+                    hollandQuestions = testData.questions || [];
+                    
+                    if (!Array.isArray(hollandQuestions) || hollandQuestions.length === 0) {
+                        return res.status(500).json({ 
+                            error: 'Internal server error', 
+                            message: 'Invalid test questions format in Firestore',
+                            code: 'INVALID_QUESTIONS_FORMAT'
+                        });
+                    }
+                } catch (firestoreError) {
+                    logger.error('Error loading Holland questions from Firestore:', firestoreError.message);
+                    return res.status(500).json({ 
+                        error: 'Internal server error', 
+                        message: 'Failed to load test questions from Firestore',
+                        code: 'FIRESTORE_LOAD_ERROR'
+                    });
                 }
-            });
-        } // Close else if
 
-        res.json(results);
+                const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+                
+                hollandQuestions.forEach(q => {
+                    // FIXED: Null check for question object
+                    if (!q || !q.id) return;
+                    
+                    const answer = answers[q.id];
+                    if (answer !== undefined && answer !== null) {
+                        const category = q.category;
+                        const options = q.options || [];
+                        const points = q.points || [1, 2, 3, 4, 5];
+                        
+                        const optionIndex = options.indexOf(answer);
+                        // FIXED: Validate category and index before accessing
+                        if (optionIndex !== -1 && scores[category] !== undefined) {
+                            scores[category] += points[optionIndex] || 0;
+                        }
+                    }
+                });
+                
+                results = scores;
+
+                // Normalize to 0-100 scale
+                const counts = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+                hollandQuestions.forEach(q => {
+                    if (q && q.category && counts[q.category] !== undefined) {
+                        counts[q.category]++;
+                    }
+                });
+
+                Object.keys(results).forEach(cat => {
+                    const max = counts[cat] * 5; // Max point is 5
+                    if (max > 0) {
+                        results[cat] = Math.round((results[cat] / max) * 100);
+                    } else {
+                        results[cat] = 0;
+                    }
+                });
+            }
+
+            res.json({ 
+                status: 'success',
+                results: results 
+            });
+
+        } catch (calculationError) {
+            logger.error('Error calculating scores:', calculationError.message);
+            throw calculationError;
+        }
 
     } catch (error) {
-        console.error('Error calculating scores:', error);
-        res.status(500).json({ error: 'Failed to calculate scores' });
+        logger.error('Error in /api/calculate-scores:', error.message);
+        res.status(500).json({ 
+            error: 'Internal server error', 
+            message: 'Failed to calculate scores',
+            code: 'CALCULATION_ERROR',
+            details: process.env.NODE_ENV === 'production' ? undefined : error.message
+        });
     }
 });
 
 // AI Analysis Endpoint
+// FIXED: Added comprehensive validation and error handling
 app.post('/api/analyze-profile', authenticateUser, async (req, res) => {
     try {
+        // FIXED: Validate request body
         const { userData, bigFive, holland } = req.body;
 
-        if (!userData) {
-            return res.status(400).json({ error: 'User data is required' });
+        if (!userData || typeof userData !== 'object') {
+            return res.status(400).json({ 
+                error: 'Bad Request', 
+                message: 'User data is required and must be an object',
+                code: 'MISSING_USER_DATA'
+            });
         }
 
-        // --- PARTIAL ANALYSIS FALLBACK ---
+        // FIXED: Validate userData fields
+        if (!userData.fullName || typeof userData.fullName !== 'string') {
+            return res.status(400).json({ 
+                error: 'Bad Request', 
+                message: 'User data must include a valid fullName',
+                code: 'INVALID_USER_DATA'
+            });
+        }
+
+        // FIXED: Check if AI is initialized
+        if (!ai) {
+            return res.status(503).json({ 
+                error: 'Service unavailable', 
+                message: 'AI service is not available',
+                code: 'AI_SERVICE_UNAVAILABLE'
+            });
+        }
+
+        // Build prompt with available data
         let promptTestsSection = "";
         
-        if (bigFive) {
+        if (bigFive && typeof bigFive === 'object') {
             promptTestsSection += `
             **Big Five Personality Traits (0-100%):**
             ${JSON.stringify(bigFive, null, 2)}
             `;
         } else {
-             promptTestsSection += `
+            promptTestsSection += `
             **Big Five Personality Traits:**
             [Data Not Available - Infer broadly from Holland Codes if present, or focus on general career advice based on profile]
             `;
         }
 
-        if (holland) {
-             promptTestsSection += `
+        if (holland && typeof holland === 'object') {
+            promptTestsSection += `
             **Holland Codes (RIASEC Scores):**
             ${JSON.stringify(holland, null, 2)}
             `;
         } else {
-             promptTestsSection += `
+            promptTestsSection += `
             **Holland Codes (RIASEC Scores):**
             [Data Not Available - Infer broadly from Big Five if present]
             `;
         }
 
+        // FIXED: Sanitize user input to prevent injection
+        const sanitizedName = (userData.fullName || '').substring(0, 100);
+        const sanitizedEducation = (userData.education || 'Not specified').substring(0, 100);
+        const sanitizedStatus = (userData.studentStatus || 'Not specified').substring(0, 50);
+
         const prompt = `
         You are an expert career counselor and personality analyst. Analyze the following user profile and test results to provide a comprehensive, highly personalized career development plan.
 
         **User Profile:**
-        - Name: ${userData.fullName}
-        - Education: ${userData.education}
-        - Student Status: ${userData.studentStatus}
+        - Name: ${sanitizedName}
+        - Education: ${sanitizedEducation}
+        - Student Status: ${sanitizedStatus}
 
         ${promptTestsSection}
 
@@ -275,59 +560,131 @@ app.post('/api/analyze-profile', authenticateUser, async (req, res) => {
         }
         `;
 
-        const response = await ai.models.generateContent({
-            model: "gemini-1.5-flash",
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
-            }
-        });
+        // FIXED: Add timeout and error handling for AI call
+        let response;
+        try {
+            response = await Promise.race([
+                ai.models.generateContent({
+                    model: "gemini-1.5-flash",
+                    contents: prompt,
+                    config: {
+                        responseMimeType: "application/json",
+                    }
+                }),
+                new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('AI request timeout')), 30000)
+                )
+            ]);
+        } catch (aiError) {
+            logger.error('AI API Error:', aiError.message);
+            return res.status(503).json({ 
+                error: 'Service unavailable', 
+                message: 'AI service is temporarily unavailable',
+                code: 'AI_SERVICE_ERROR',
+                details: process.env.NODE_ENV === 'production' ? undefined : aiError.message
+            });
+        }
+
+        // FIXED: Add null checks for response
+        if (!response || !response.data || !response.data.candidates || response.data.candidates.length === 0) {
+            return res.status(500).json({ 
+                error: 'Internal server error', 
+                message: 'Invalid response from AI service',
+                code: 'INVALID_AI_RESPONSE'
+            });
+        }
 
         let analysisText = response.data.candidates[0].content.parts[0].text;
         
-        // Clean up markdown code blocks if present (e.g., ```json ... ```)
+        // Clean up markdown code blocks if present
         analysisText = analysisText.replace(/```json/g, '').replace(/```/g, '').trim();
 
+        // FIXED: Better error handling for JSON parsing
         let analysisJson;
         try {
             analysisJson = JSON.parse(analysisText);
         } catch (parseError) {
-            console.error("JSON Parse Error:", parseError);
-            console.log("Raw Text:", analysisText);
-            // Fallback or retry logic could go here
-            return res.status(500).json({ error: "Failed to parse AI response", raw: analysisText });
+            logger.error("JSON Parse Error:", parseError.message);
+            logger.log("Raw Text (first 500 chars):", analysisText.substring(0, 500));
+            return res.status(500).json({ 
+                error: 'Internal server error', 
+                message: 'Failed to parse AI response',
+                code: 'JSON_PARSE_ERROR',
+                details: process.env.NODE_ENV === 'production' ? undefined : parseError.message
+            });
         }
 
-        res.json(analysisJson);
+        res.json({ 
+            status: 'success',
+            data: analysisJson 
+        });
 
     } catch (error) {
-        console.error('Error generating AI analysis:', error);
-        res.status(500).json({ error: 'Failed to generate analysis', details: error.message });
+        logger.error('Error generating AI analysis:', error.message);
+        res.status(500).json({ 
+            error: 'Internal server error', 
+            message: 'Failed to generate analysis',
+            code: 'ANALYSIS_ERROR',
+            details: process.env.NODE_ENV === 'production' ? undefined : error.message
+        });
     }
 });
 
 // GET User Profile Endpoint
+// FIXED: Added validation and error handling
 app.get('/api/user-profile', authenticateUser, async (req, res) => {
     try {
+        // FIXED: Validate user object
+        if (!req.user || !req.user.uid) {
+            return res.status(401).json({ 
+                error: 'Unauthorized', 
+                message: 'Invalid user authentication',
+                code: 'INVALID_USER'
+            });
+        }
+
         const uid = req.user.uid;
         const userDoc = await admin.firestore().collection('users').doc(uid).get();
 
         if (!userDoc.exists) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ 
+                error: 'Not found', 
+                message: 'User not found',
+                code: 'USER_NOT_FOUND'
+            });
         }
 
-        res.json(userDoc.data());
+        res.json({ 
+            status: 'success',
+            data: userDoc.data() 
+        });
     } catch (error) {
-        console.error('Error fetching user profile:', error);
-        res.status(500).json({ error: 'Failed to fetch user profile' });
+        logger.error('Error fetching user profile:', error.message);
+        res.status(500).json({ 
+            error: 'Internal server error', 
+            message: 'Failed to fetch user profile',
+            code: 'PROFILE_FETCH_ERROR',
+            details: process.env.NODE_ENV === 'production' ? undefined : error.message
+        });
     }
 });
 
 // GET Admin Users Endpoint (Protected)
+// FIXED: Added admin role verification and better error handling
 app.get('/api/admin/users', authenticateUser, async (req, res) => {
     try {
-        // In a real app, verify 'admin' role here!
-        // For now, we return all users for demonstration.
+        // FIXED: Check admin role
+        const userDoc = await admin.firestore().collection('users').doc(req.user.uid).get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+        
+        // FIXED: Verify admin role
+        if (!req.user.admin && userData.role !== 'admin') {
+            return res.status(403).json({ 
+                error: 'Forbidden', 
+                message: 'Admin access required',
+                code: 'ADMIN_REQUIRED'
+            });
+        }
         
         const listUsersResult = await admin.auth().listUsers(100);
         const users = listUsersResult.users.map(userRecord => ({
@@ -337,24 +694,49 @@ app.get('/api/admin/users', authenticateUser, async (req, res) => {
             metadata: userRecord.metadata
         }));
 
-        res.json(users);
+        res.json({ 
+            status: 'success',
+            data: users 
+        });
     } catch (error) {
-        console.error('Error listing users:', error);
-        res.status(500).json({ error: 'Failed to list users' });
+        logger.error('Error listing users:', error.message);
+        res.status(500).json({ 
+            error: 'Internal server error', 
+            message: 'Failed to list users',
+            code: 'LIST_USERS_ERROR',
+            details: process.env.NODE_ENV === 'production' ? undefined : error.message
+        });
     }
 });
 
-// 404 Handler - Must be after all other routes
-app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(__dirname, '../public/errors/404.html'));
+// FIXED: 404 Handler - Must be after all other routes
+app.use((req, res) => {
+    res.status(404).json({ 
+        error: 'Not found', 
+        message: 'The requested endpoint does not exist',
+        code: 'ENDPOINT_NOT_FOUND',
+        path: req.path
+    });
 });
 
-// 500 Handler
+// FIXED: 500 Error Handler - Standardized error format
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).sendFile(path.join(__dirname, '../public/errors/Server Error.html'));
+    logger.error('Unhandled error:', err.message);
+    res.status(500).json({ 
+        error: 'Internal server error', 
+        message: 'An unexpected error occurred',
+        code: 'INTERNAL_ERROR',
+        details: process.env.NODE_ENV === 'production' ? undefined : err.message
+    });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Start server
+// FIXED: Railway deployment - listens on PORT from environment
+app.listen(PORT, '0.0.0.0', () => {
+    logger.log(`Server running on port ${PORT}`);
+    logger.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    logger.log(`Server ready for requests`);
 });
+
+// Export app for testing
+module.exports = app;

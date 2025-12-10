@@ -341,7 +341,7 @@ function setupGoogleSignIn() {
                     case 'auth/unauthorized-domain':
                         errorMessage = 'This domain is not authorized. Please add ' + window.location.hostname + ' to Firebase Console → Authentication → Authorized domains.';
                         console.error('Domain authorization error. Current domain:', window.location.hostname);
-                        console.error('Expected domains: sia-993a7.firebaseapp.com, sia-993a7.web.app');
+                        console.error('Expected domains: sia-project-2458a.web.app, sia-project-2458a.firebaseapp.com, sia-993a7.web.app, sia-993a7.firebaseapp.com');
                         break;
                     case 'auth/network-request-failed':
                         errorMessage = 'Network error. Please check your connection.';

@@ -62,7 +62,24 @@
         </ul>
 
         <!-- Right Buttons Section -->
-        <div class="nav-auth" id="navAuth" style="display: none"></div>
+        <div class="nav-auth" id="navAuth" style="display: flex; align-items: center;">
+          <div class="lang-dropdown">
+            <button class="lang-dropdown-toggle" type="button">
+              <span class="lang-current">EN</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="lang-dropdown-menu">
+              <a href="#" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
+                <span>English</span>
+                <span class="lang-code">EN</span>
+              </a>
+              <a href="#" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
+                <span>العربية</span>
+                <span class="lang-code">AR</span>
+              </a>
+            </div>
+          </div>
+        </div>
 
         <!-- Responsive Menu (Hamburger control + label for accessibility) -->
         <label
@@ -86,7 +103,23 @@
             <li><a href="../privacy-terms.html">Privacy & Terms</a></li>
           </ul>
           <!-- Right Buttons Section duplicated for stacked layout -->
-          <div class="drawer-auth" style="display: none">
+          <div class="drawer-auth" style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+            <div class="lang-dropdown">
+              <button class="lang-dropdown-toggle" type="button">
+                <span class="lang-current">EN</span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="lang-dropdown-menu">
+                <a href="#" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
+                  <span>English</span>
+                  <span class="lang-code">EN</span>
+                </a>
+                <a href="#" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
+                  <span>العربية</span>
+                  <span class="lang-code">AR</span>
+                </a>
+              </div>
+            </div>
             <a href="../sign in/signin.html" class="btn-nav btn-nav--signin"
               >Sign In</a
             >
@@ -612,5 +645,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+    <!-- Language Translation Script -->
+    <script src="../js/lang.js"></script>
   </body>
 </html>

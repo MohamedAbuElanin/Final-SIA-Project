@@ -24,17 +24,33 @@
 
             <!-- Center Navigation Links -->
             <ul class="nav-links" id="navLinks">
-                <li><a href="../index.html">Home</a></li>
-                <li><a href="../About/About.html">About</a></li>
-                <li><a href="../Test/Test.html">Test</a></li>
-                <li><a href="../profile/profile.html">Profile</a></li>
-                <li><a href="../privacy-terms.html">Privacy & Terms</a></li>
+                <li><a href="../index.html" data-key="nav_home">Home</a></li>
+                <li><a href="../About/About.html" data-key="nav_about">About</a></li>
+                <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
+                <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
+                <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
             </ul>
 
             <!-- Right Buttons Section -->
             <div class="nav-auth" id="navAuth">
-                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-                <a href="./signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                <div class="lang-dropdown">
+                    <button class="lang-dropdown-toggle" type="button">
+                        <span class="lang-current">EN</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="lang-dropdown-menu">
+                        <a href="#" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
+                            <span>English</span>
+                            <span class="lang-code">EN</span>
+                        </a>
+                        <a href="#" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
+                            <span>العربية</span>
+                            <span class="lang-code">AR</span>
+                        </a>
+                    </div>
+                </div>
+                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
+                <a href="./signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
             </div>
 
             <!-- Responsive Menu (Hamburger control + label for accessibility) -->
@@ -48,16 +64,32 @@
             <div class="nav-drawer" aria-hidden="true">
                 <!-- Center Navigation Links duplicated for the mobile drawer -->
                 <ul class="drawer-links">
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="../About/About.html">About</a></li>
-                    <li><a href="../Test/Test.html">Test</a></li>
-                    <li><a href="../profile/profile.html">Profile</a></li>
-                    <li><a href="../privacy-terms.html">Privacy & Terms</a></li>
+                    <li><a href="../index.html" data-key="nav_home">Home</a></li>
+                    <li><a href="../About/About.html" data-key="nav_about">About</a></li>
+                    <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
+                    <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
+                    <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
                 </ul>
                 <!-- Right Buttons Section duplicated for stacked layout -->
                 <div class="drawer-auth">
-                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-                    <a href="./signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                    <div class="lang-dropdown" style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                        <button class="lang-dropdown-toggle" type="button">
+                            <span class="lang-current">EN</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="lang-dropdown-menu">
+                            <a href="#" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
+                                <span>English</span>
+                                <span class="lang-code">EN</span>
+                            </a>
+                            <a href="#" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
+                                <span>العربية</span>
+                                <span class="lang-code">AR</span>
+                            </a>
+                        </div>
+                    </div>
+                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
+                    <a href="./signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
                 </div>
             </div>
         </nav>
@@ -69,8 +101,8 @@
         <section class="hero-section">
             <div class="container">
                 <div class="hero-content fade-in">
-                    <h1 class="hero-title">Welcome!</h1>
-                    <p class="hero-subtitle">Please sign in or create an account to continue your journey with SIA.</p>
+                    <h1 class="hero-title" data-key="signup_title">Welcome!</h1>
+                    <p class="hero-subtitle" data-key="signup_subtitle">Please sign in or create an account to continue your journey with SIA.</p>
                 </div>
             </div>
         </section>
@@ -81,20 +113,21 @@
                 <div class="form-wrapper fade-in" id="signUpForm">
                     <div class="form-header">
                         <h2 class="form-title">
-                            <i class="fas fa-user-plus"></i> Sign Up
+                            <i class="fas fa-user-plus"></i> <span data-key="signup_form_title">Sign Up</span>
                         </h2>
                     </div>
 
                     <form id="signUpFormElement" class="auth-form">
                         <div class="form-group">
                             <label for="fullName" class="form-label">
-                                <i class="fas fa-user"></i> Full Name
+                                <i class="fas fa-user"></i> <span data-key="signup_fullname_label">Full Name</span>
                             </label>
                             <input 
                                 type="text" 
                                 id="fullName" 
                                 name="fullName" 
                                 class="form-input" 
+                                data-placeholder-key="signup_fullname_placeholder"
                                 placeholder="Enter your full name"
                                 required
                             >
@@ -103,13 +136,14 @@
 
                         <div class="form-group">
                             <label for="email" class="form-label">
-                                <i class="fas fa-envelope"></i> Email
+                                <i class="fas fa-envelope"></i> <span data-key="signup_email_label">Email</span>
                             </label>
                             <input 
                                 type="email" 
                                 id="email" 
                                 name="email" 
                                 class="form-input" 
+                                data-placeholder-key="signup_email_placeholder"
                                 placeholder="Enter your email address"
                                 required
                             >
@@ -118,7 +152,7 @@
 
                         <div class="form-group">
                             <label for="password" class="form-label">
-                                <i class="fas fa-lock"></i> Password
+                                <i class="fas fa-lock"></i> <span data-key="signup_password_label">Password</span>
                             </label>
                             <div class="password-wrapper">
                                 <input 
@@ -126,6 +160,7 @@
                                     id="password" 
                                     name="password" 
                                     class="form-input" 
+                                    data-placeholder-key="signup_password_placeholder"
                                     placeholder="Create a password"
                                     required
                                 >
@@ -138,7 +173,7 @@
 
                         <div class="form-group">
                             <label for="confirmPassword" class="form-label">
-                                <i class="fas fa-lock"></i> Confirm Password
+                                <i class="fas fa-lock"></i> <span data-key="signup_confirm_password_label">Confirm Password</span>
                             </label>
                             <div class="password-wrapper">
                                 <input 
@@ -146,6 +181,7 @@
                                     id="confirmPassword" 
                                     name="confirmPassword" 
                                     class="form-input" 
+                                    data-placeholder-key="signup_confirm_password_placeholder"
                                     placeholder="Confirm your password"
                                     required
                                 >
@@ -158,7 +194,7 @@
 
                         <div class="form-group">
                             <label for="dateOfBirth" class="form-label">
-                                <i class="fas fa-calendar"></i> Date of Birth
+                                <i class="fas fa-calendar"></i> <span data-key="signup_dob_label">Date of Birth</span>
                             </label>
                             <input 
                                 type="date" 
@@ -172,28 +208,28 @@
 
                         <div class="form-group">
                             <label for="gender" class="form-label">
-                                <i class="fas fa-venus-mars"></i> Gender
+                                <i class="fas fa-venus-mars"></i> <span data-key="signup_gender_label">Gender</span>
                             </label>
                             <select id="gender" name="gender" class="form-select" required>
-                                <option value="">Select gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
+                                <option value="" data-key="signup_gender_select">Select gender</option>
+                                <option value="male" data-key="signup_gender_male">Male</option>
+                                <option value="female" data-key="signup_gender_female">Female</option>
                             </select>
                             <span class="error-message" id="genderError"></span>
                         </div>
 
                         <div class="form-group">
                             <label for="education" class="form-label">
-                                <i class="fas fa-graduation-cap"></i> Education
+                                <i class="fas fa-graduation-cap"></i> <span data-key="signup_education_label">Education</span>
                             </label>
                             <select id="education" name="education" class="form-select" required>
-                                <option value="">Select education level</option>
-                                <option value="high-school">High School</option>
-                                <option value="diploma">Diploma</option>
-                                <option value="bachelor">Bachelor's Degree</option>
-                                <option value="master">Master's Degree</option>
-                                <option value="phd">PhD</option>
-                                <option value="other">Other</option>
+                                <option value="" data-key="signup_education_select">Select education level</option>
+                                <option value="high-school" data-key="signup_education_high_school">High School</option>
+                                <option value="diploma" data-key="signup_education_diploma">Diploma</option>
+                                <option value="bachelor" data-key="signup_education_bachelor">Bachelor's Degree</option>
+                                <option value="master" data-key="signup_education_master">Master's Degree</option>
+                                <option value="phd" data-key="signup_education_phd">PhD</option>
+                                <option value="other" data-key="signup_education_other">Other</option>
                             </select>
                             <div class="education-other-wrapper" id="educationOtherWrapper" style="display: none;">
                                 <input 
@@ -201,6 +237,7 @@
                                     id="educationOther" 
                                     name="educationOther" 
                                     class="form-input" 
+                                    data-placeholder-key="signup_education_other_placeholder"
                                     placeholder="Please specify"
                                     style="margin-top: 1rem;"
                                 >
@@ -210,19 +247,19 @@
 
                         <div class="form-group">
                             <label for="studentStatus" class="form-label">
-                                <i class="fas fa-user-graduate"></i> Student Status
+                                <i class="fas fa-user-graduate"></i> <span data-key="signup_student_status_label">Student Status</span>
                             </label>
                             <select id="studentStatus" name="studentStatus" class="form-select" required>
-                                <option value="">Select status</option>
-                                <option value="student">Student</option>
-                                <option value="graduate">Graduate</option>
+                                <option value="" data-key="signup_student_status_select">Select status</option>
+                                <option value="student" data-key="signup_student_status_student">Student</option>
+                                <option value="graduate" data-key="signup_student_status_graduate">Graduate</option>
                             </select>
                             <span class="error-message" id="studentStatusError"></span>
                         </div>
 
                         <div class="form-group">
                             <label for="avatarUpload" class="form-label">
-                                <i class="fas fa-image"></i> Profile Photo
+                                <i class="fas fa-image"></i> <span data-key="signup_avatar_label">Profile Photo</span>
                             </label>
                             <input 
                                 type="file" 
@@ -231,14 +268,14 @@
                                 class="form-input" 
                                 accept="image/*"
                             >
-                            <small class="text-muted d-block mt-1">Upload your profile photo (optional)</small>
+                            <small class="text-muted d-block mt-1" data-key="signup_avatar_optional">Upload your profile photo (optional)</small>
                             <span class="error-message" id="avatarError"></span>
                         </div>
 
                         <div class="form-group">
                             <label class="checkbox-label">
                                 <input type="checkbox" id="agreeTerms" required>
-                                <span>I agree to <a href="../privacy-terms.html" target="_blank" class="terms-link">Privacy Policy and Terms of Use</a></span>
+                                <span><span data-key="signup_agree_terms">I agree to</span> <a href="../privacy-terms.html" target="_blank" class="terms-link" data-key="signup_privacy_terms_link">Privacy Policy and Terms of Use</a></span>
                             </label>
                             <span class="error-message" id="agreeTermsError"></span>
                         </div>
@@ -246,23 +283,23 @@
                         <div class="form-error" id="signUpFormError"></div>
 
                         <button type="submit" class="form-btn">
-                            <i class="fas fa-user-plus"></i> Sign Up
+                            <i class="fas fa-user-plus"></i> <span data-key="signup_submit">Sign Up</span>
                         </button>
 
                         <!-- Social Login -->
                         <div class="social-divider">
-                            <span>or</span>
+                            <span data-key="signin_or">or</span>
                         </div>
 
                         <div class="social-buttons">
                             <button type="button" class="social-btn google-btn">
-                                <i class="fab fa-google"></i> Sign up with Google
+                                <i class="fab fa-google"></i> <span data-key="signup_google">Sign up with Google</span>
                             </button>
                         </div>
                     </form>
 
                     <div class="form-footer">
-                        <p>Already have an account? <a href="../sign in/signin.html" class="toggle-link">Sign In</a></p>
+                        <p><span data-key="signup_has_account">Already have an account?</span> <a href="../sign in/signin.html" class="toggle-link" data-key="nav_sign_in">Sign In</a></p>
                     </div>
                 </div>
             </div>
@@ -274,18 +311,18 @@
         <div class="footer__brand">
             <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
             <div>
-                <p class="footer__title">SIA</p>
-                <p class="footer__mission">We connect ancient wisdom with modern career paths.</p>
+                <p class="footer__title" data-key="footer_title">SIA</p>
+                <p class="footer__mission" data-key="footer_mission">We connect ancient wisdom with modern career paths.</p>
             </div>
         </div>
         <div class="footer__nav" aria-label="Footer navigation">
-            <a href="../index.html">Home</a>
-            <a href="../About/About.html">About</a>
-            <a href="../Test/Test.html">Test</a>
-            <a href="../profile/profile.html">Profile</a>
-            <a href="../privacy-terms.html">Privacy & Terms</a>
+            <a href="../index.html" data-key="nav_home">Home</a>
+            <a href="../About/About.html" data-key="nav_about">About</a>
+            <a href="../Test/Test.html" data-key="nav_test">Test</a>
+            <a href="../profile/profile.html" data-key="nav_profile">Profile</a>
+            <a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a>
         </div>
-        <p class="footer__copy">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+        <p class="footer__copy" data-key="footer_copyright">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
     </footer>
     
     <canvas id="particles"></canvas>
@@ -309,6 +346,9 @@
     
     <!-- Sign Up Script -->
     <script src="signup.js"></script>
+    
+    <!-- Language Translation Script -->
+    <script src="../js/lang.js"></script>
 
 </body>
 </html>

@@ -5,7 +5,7 @@
 
 const firebaseConfig = {
   apiKey: "AIzaSyBbcUi02rCzwZOVY3uRloGKk21-fC7IFDk",
-  authDomain: "sia-993a7.firebaseapp.com",
+  authDomain: "sia-project-2458a.web.app",
   projectId: "sia-993a7",
   storageBucket: "sia-993a7.firebasestorage.app",
   messagingSenderId: "415064406442",
@@ -17,8 +17,10 @@ const firebaseConfig = {
 function checkFirebaseDomain() {
     const currentHostname = window.location.hostname;
     const expectedDomains = [
-        'sia-993a7.firebaseapp.com',
+        'sia-project-2458a.web.app',
+        'sia-project-2458a.firebaseapp.com',
         'sia-993a7.web.app',
+        'sia-993a7.firebaseapp.com',
         'localhost',
         '127.0.0.1'
     ];

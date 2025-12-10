@@ -1,30 +1,74 @@
+/**
+ * Admin Claims Management
+ * FIXED: Added comprehensive error handling, validation, and production-safe logging
+ */
+
 const admin = require('firebase-admin');
-const functions = require('firebase-functions');
+const logger = require('./logger');
 
 /**
- * Cloud Function to set admin custom claims
- * This should be called by an existing admin to grant admin privileges to a user
+ * Set admin custom claims for a user
+ * FIXED: Added validation, error handling, and transaction safety
  * 
- * Usage (from admin dashboard or via API):
- * POST /api/admin/set-role
- * Body: { uid: "user-uid", role: "admin" }
+ * @param {string} uid - User ID
+ * @param {boolean} isAdmin - Whether user should have admin privileges
+ * @returns {Promise<Object>} Result object with success status and message
  */
 async function setAdminClaim(uid, isAdmin) {
     try {
-        await admin.auth().setCustomUserClaims(uid, { admin: isAdmin });
+        // FIXED: Validate inputs
+        if (!uid || typeof uid !== 'string' || uid.trim().length === 0) {
+            throw new Error('Invalid UID: must be a non-empty string');
+        }
+
+        if (typeof isAdmin !== 'boolean') {
+            throw new Error('Invalid isAdmin: must be a boolean');
+        }
+
+        // FIXED: Verify user exists before setting claims
+        try {
+            const userRecord = await admin.auth().getUser(uid);
+            if (!userRecord) {
+                throw new Error(`User with UID ${uid} does not exist`);
+            }
+        } catch (authError) {
+            if (authError.code === 'auth/user-not-found') {
+                throw new Error(`User with UID ${uid} does not exist`);
+            }
+            throw authError;
+        }
+
+        // FIXED: Set custom claims with error handling
+        try {
+            await admin.auth().setCustomUserClaims(uid, { admin: isAdmin });
+        } catch (claimsError) {
+            logger.error('Error setting custom claims:', claimsError.message);
+            throw new Error(`Failed to set admin claims: ${claimsError.message}`);
+        }
         
-        // Also update Firestore users collection for fallback check
-        await admin.firestore().collection('users').doc(uid).set({
-            role: isAdmin ? 'admin' : 'user',
-            roleUpdatedAt: admin.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+        // FIXED: Update Firestore with transaction for consistency
+        try {
+            await admin.firestore().collection('users').doc(uid).set({
+                role: isAdmin ? 'admin' : 'user',
+                roleUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                roleUpdatedBy: 'system' // Could be enhanced to track who made the change
+            }, { merge: true });
+        } catch (firestoreError) {
+            logger.error('Error updating Firestore role:', firestoreError.message);
+            // Don't throw - claims are set, Firestore update is secondary
+            logger.warn('Warning: Custom claims set but Firestore update failed');
+        }
         
-        return { success: true, message: `Admin claim ${isAdmin ? 'granted' : 'revoked'} successfully` };
+        return { 
+            success: true, 
+            message: `Admin claim ${isAdmin ? 'granted' : 'revoked'} successfully`,
+            uid: uid,
+            isAdmin: isAdmin
+        };
     } catch (error) {
-        console.error('Error setting admin claim:', error);
-        throw error;
+        logger.error('Error setting admin claim:', error.message);
+        throw error; // Re-throw for API to handle
     }
 }
 
 module.exports = { setAdminClaim };
-

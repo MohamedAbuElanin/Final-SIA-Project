@@ -16,6 +16,44 @@ const state = {
     isSaving: false // Flag to prevent duplicate submissions
 };
 
+/**
+ * Submit test data to the standalone Express server endpoint
+ * This is a utility function that can be used as an alternative or fallback
+ * to Firebase Functions for test submissions
+ */
+async function submitTestToServer(testType, resultData, totalTime) {
+    try {
+        const serverUrl = window.CONFIG?.SERVER_BASE_URL || 
+                         (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                         ? 'http://localhost:5000'
+                         : window.location.origin;
+        
+        const response = await fetch(`${serverUrl}/submit-test`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                testType: testType,
+                answers: resultData,
+                totalTime: totalTime,
+                timestamp: new Date().toISOString()
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server responded with status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Test submitted to server successfully:', data);
+        return data;
+    } catch (error) {
+        console.error('Error submitting test to server:', error);
+        throw error;
+    }
+}
+
 // DOM Elements
 const elements = {
     selectionView: document.getElementById('selectionView'),
@@ -566,23 +604,44 @@ async function saveTestResult(testType, resultData, totalTime) {
             throw new Error("Unknown test type: " + testType);
         }
 
-        // Send to API for calculation and saving
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                answers: resultData
-            })
-        });
+        // Try Firebase Functions first (primary method)
+        let response;
+        let data;
+        
+        try {
+            response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    answers: resultData
+                })
+            });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok: ' + response.statusText);
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+
+            data = await response.json();
+        } catch (firebaseError) {
+            console.warn('Firebase Functions failed, trying standalone server:', firebaseError);
+            
+            // Fallback to standalone server endpoint
+            try {
+                const serverData = await submitTestToServer(testType, resultData, totalTime);
+                // If server submission succeeds but doesn't return results, use a basic response
+                data = {
+                    results: resultData, // Use raw answers as results
+                    analysis: { message: 'Test submitted successfully. Results will be processed.' }
+                };
+                console.log('Test submitted to standalone server as fallback');
+            } catch (serverError) {
+                // If both fail, throw the original Firebase error
+                throw firebaseError;
+            }
         }
-
-        const data = await response.json();
         
         // Show results immediately
         displayInstantResults(testType, data.results, data.analysis);

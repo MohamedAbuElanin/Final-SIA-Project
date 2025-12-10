@@ -61,6 +61,22 @@
                     <h5 class="mb-0 text-gold">Admin Console</h5>
                 </div>
                 <div class="admin-header-right">
+                    <div class="lang-dropdown">
+                        <button class="lang-dropdown-toggle" type="button">
+                            <span class="lang-current">EN</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="lang-dropdown-menu">
+                            <a href="#" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
+                                <span>English</span>
+                                <span class="lang-code">EN</span>
+                            </a>
+                            <a href="#" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
+                                <span>العربية</span>
+                                <span class="lang-code">AR</span>
+                            </a>
+                        </div>
+                    </div>
                     <span id="adminEmailDisplay" class="admin-header-email">Loading...</span>
                     <button id="logoutBtn" class="btn-outline-gold">
                         <i class="fas fa-sign-out-alt"></i> Logout
@@ -152,5 +168,7 @@
     
     <!-- Admin Logic -->
     <script src="admin.js"></script>
+    <!-- Language Translation Script -->
+    <script src="../js/lang.js"></script>
 </body>
 </html>
