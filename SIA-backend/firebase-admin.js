@@ -1,70 +1,52 @@
 /**
  * Firebase Admin SDK Initialization
- * FIXED: Proper error handling, environment variable support, and Railway deployment readiness
- * Works for both Firebase Functions (default credentials) and Railway (service account)
+ * UPDATED: Reads Firebase service account from environment variable (FIREBASE_SERVICE_ACCOUNT)
+ * Works for Render, Railway, and other cloud platforms
+ * Falls back to application default credentials for Firebase Functions
  */
 
 const admin = require('firebase-admin');
-const dotenv = require('dotenv');
 const logger = require('./logger');
 
-dotenv.config();
-
-// FIXED: Initialize Firebase Admin SDK with proper error handling
-// Railway deployment: Use FIREBASE_SERVICE_ACCOUNT environment variable (JSON string)
-// Firebase Functions: Uses application default credentials
+// UPDATED: Initialize Firebase Admin SDK from environment variable
+// Priority: FIREBASE_SERVICE_ACCOUNT (JSON string) > Application Default Credentials
 try {
-    // FIXED: Check for service account key file first
-    if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-        // Use service account key file if provided
-        const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-        logger.log('Firebase Admin initialized with service account key file');
-    } else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-        // FIXED: Railway deployment - JSON string from environment variable
+    // Check if FIREBASE_SERVICE_ACCOUNT environment variable is set
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        // Parse JSON string from environment variable
+        let serviceAccount;
         try {
-            const serviceAccount = typeof process.env.FIREBASE_SERVICE_ACCOUNT === 'string'
+            serviceAccount = typeof process.env.FIREBASE_SERVICE_ACCOUNT === 'string'
                 ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
                 : process.env.FIREBASE_SERVICE_ACCOUNT;
+            
+            // Validate that serviceAccount has required fields
+            if (!serviceAccount.project_id || !serviceAccount.private_key || !serviceAccount.client_email) {
+                throw new Error('Invalid service account: missing required fields (project_id, private_key, client_email)');
+            }
+            
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount)
             });
-            logger.log('Firebase Admin initialized with service account from environment (Railway)');
+            logger.log('Firebase Admin initialized with service account from FIREBASE_SERVICE_ACCOUNT environment variable');
         } catch (parseError) {
             logger.error('Error parsing FIREBASE_SERVICE_ACCOUNT:', parseError.message);
-            // Fallback to application default credentials
-            admin.initializeApp({
-                credential: admin.credential.applicationDefault()
-            });
-            logger.log('Firebase Admin initialized with application default credentials (fallback)');
-        }
-    } else if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-        // FIXED: Support for base64 encoded service account key
-        try {
-            const serviceAccount = JSON.parse(Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_KEY, 'base64').toString());
-            admin.initializeApp({
-                credential: admin.credential.cert(serviceAccount)
-            });
-            logger.log('Firebase Admin initialized with base64 encoded service account key');
-        } catch (parseError) {
-            logger.error('Error parsing base64 service account key:', parseError.message);
-            // Fallback to application default credentials
-            admin.initializeApp({
-                credential: admin.credential.applicationDefault()
-            });
-            logger.log('Firebase Admin initialized with application default credentials (fallback)');
+            throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT: ${parseError.message}`);
         }
     } else {
-        // FIXED: Fallback to application default credentials (Firebase Functions)
-        admin.initializeApp({
-            credential: admin.credential.applicationDefault()
-        });
-        logger.log('Firebase Admin initialized with application default credentials');
+        // Fallback to application default credentials (for Firebase Functions)
+        try {
+            admin.initializeApp({
+                credential: admin.credential.applicationDefault()
+            });
+            logger.log('Firebase Admin initialized with application default credentials (Firebase Functions)');
+        } catch (defaultError) {
+            logger.error('Failed to initialize with application default credentials:', defaultError.message);
+            throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is required for cloud deployment');
+        }
     }
     
-    // FIXED: Verify initialization
+    // Verify initialization
     if (!admin.apps || admin.apps.length === 0) {
         throw new Error('Firebase Admin failed to initialize - no apps found');
     }
@@ -72,11 +54,8 @@ try {
     logger.log('Firebase Admin initialized successfully');
 } catch (error) {
     logger.error('ERROR: Failed to initialize Firebase Admin:', error.message);
-    logger.error('Please ensure one of the following is set:');
-    logger.error('1. GOOGLE_APPLICATION_CREDENTIALS environment variable pointing to service account key file');
-    logger.error('2. FIREBASE_SERVICE_ACCOUNT environment variable with JSON string (Railway)');
-    logger.error('3. FIREBASE_SERVICE_ACCOUNT_KEY environment variable with base64 encoded key');
-    logger.error('4. Application default credentials configured (Firebase Functions)');
+    logger.error('Please ensure FIREBASE_SERVICE_ACCOUNT environment variable is set with a valid JSON string.');
+    logger.error('The JSON should contain: project_id, private_key, client_email, and other Firebase service account fields.');
     throw error; // Re-throw to prevent server from starting with invalid config
 }
 

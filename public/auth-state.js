@@ -1,7 +1,12 @@
 /**
  * Centralized Auth State Management
+ * FIXED: Uses modular SDK for proper Firebase initialization
  * Provides a single source of truth for authentication state with proper initialization gating
  */
+
+// Import Firebase services from firebase-config.js
+import { auth } from './firebase-config.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
 // Global auth state
 window.authState = {
@@ -11,14 +16,17 @@ window.authState = {
 };
 
 // Initialize auth state listener (single instance)
+// FIXED: Uses modular SDK auth instance
 function initAuthState() {
-    if (!window.firebase || !window.firebase.auth) {
+    // Wait for Firebase to be initialized
+    if (!window.firebaseApp || !auth) {
         console.warn('Firebase not initialized yet, retrying...');
         setTimeout(initAuthState, 100);
         return;
     }
 
-    firebase.auth().onAuthStateChanged((user) => {
+    // FIXED: Use modular SDK onAuthStateChanged
+    onAuthStateChanged(auth, (user) => {
         window.authState.user = user;
         window.authState.ready = true;
         
@@ -56,4 +64,3 @@ if (document.readyState === 'loading') {
 } else {
     setTimeout(initAuthState, 100);
 }
-

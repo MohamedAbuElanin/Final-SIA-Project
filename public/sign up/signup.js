@@ -1,3 +1,23 @@
+// FIXED: Import Firebase modular SDK
+import { auth, db, storage } from '../firebase-config.js';
+import { 
+    createUserWithEmailAndPassword,
+    signInWithPopup,
+    GoogleAuthProvider 
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import { 
+    collection, 
+    doc, 
+    getDoc, 
+    setDoc, 
+    serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { 
+    ref as storageRef, 
+    uploadBytes, 
+    getDownloadURL 
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
+
 // Console easter egg
 console.log("Welcome to SIA — Ancient Wisdom for Modern Careers");
 
@@ -430,18 +450,18 @@ if (signUpForm) {
             ? '../assets/female.svg'
             : '../assets/male.svg'; // Default to male if gender missing
 
-        // Create user in Firebase Authentication
-        firebase.auth().createUserWithEmailAndPassword(formData.email, formData.password)
+        // FIXED: Create user in Firebase Authentication using modular SDK
+        createUserWithEmailAndPassword(auth, formData.email, formData.password)
             .then((userCredential) => {
                 const user = userCredential.user;
                 
-                // If avatar file is uploaded, upload to Firebase Storage
+                // FIXED: If avatar file is uploaded, upload to Firebase Storage using modular SDK
                 if (formData.avatarFile) {
-                    const storageRef = firebase.storage().ref(`avatars/${user.uid}.jpg`);
-                    return storageRef.put(formData.avatarFile)
+                    const avatarRef = storageRef(storage, `avatars/${user.uid}.jpg`);
+                    return uploadBytes(avatarRef, formData.avatarFile)
                         .then((snapshot) => {
                             // Get download URL
-                            return snapshot.ref.getDownloadURL();
+                            return getDownloadURL(snapshot.ref);
                         })
                         .then((downloadURL) => {
                             // Return both user and downloadURL
@@ -463,11 +483,13 @@ if (signUpForm) {
                     education: formData.education === 'other' ? formData.educationOther : formData.education,
                     studentStatus: formData.studentStatus,
                     avatar: avatarURL,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
                 };
 
-                return firebase.firestore().collection('users').doc(user.uid).set(userProfile);
+                // FIXED: Save user profile using modular SDK
+                const userProfileRef = doc(db, 'users', user.uid);
+                return setDoc(userProfileRef, userProfile);
             })
             .then(() => {
                 // Show success message
@@ -483,8 +505,8 @@ if (signUpForm) {
                 }, 1500);
             })
             .catch((error) => {
-                // Rollback: Delete user from Auth if Firestore/Storage failed
-                const currentUser = firebase.auth().currentUser;
+                // FIXED: Rollback: Delete user from Auth if Firestore/Storage failed
+                const currentUser = auth.currentUser;
                 if (currentUser) {
                     currentUser.delete().catch(err => console.error("Rollback failed:", err));
                 }
@@ -527,12 +549,12 @@ function setupGoogleSignUp() {
     const googleBtn = document.querySelector('.google-btn');
     if (!googleBtn) return;
 
-    // Wait for Firebase to be initialized
+    // FIXED: Wait for Firebase to be initialized
     function waitForFirebase(callback, maxAttempts = 50) {
         let attempts = 0;
         const checkInterval = setInterval(() => {
             attempts++;
-            if (typeof firebase !== 'undefined' && firebase.auth) {
+            if (typeof window.auth !== 'undefined' && window.auth) {
                 clearInterval(checkInterval);
                 callback();
             } else if (attempts >= maxAttempts) {
@@ -553,22 +575,23 @@ function setupGoogleSignUp() {
             let googleBtnElement = googleBtn; // Store reference
             
             try {
-                // Check if Firebase is properly initialized
-                if (!firebase.auth) {
+                // FIXED: Check if Firebase is properly initialized
+                if (!auth) {
                     throw new Error('Firebase Auth not available');
                 }
 
                 googleBtnElement.disabled = true;
                 googleBtnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing up...';
 
-                const provider = new firebase.auth.GoogleAuthProvider();
+                // FIXED: Use modular SDK GoogleAuthProvider
+                const provider = new GoogleAuthProvider();
                 
                 // Add scopes if needed
                 provider.addScope('profile');
                 provider.addScope('email');
 
-                // Use signInWithPopup with better error handling
-                const result = await firebase.auth().signInWithPopup(provider);
+                // FIXED: Use signInWithPopup with modular SDK
+                const result = await signInWithPopup(auth, provider);
                 const user = result.user;
                 
                 // Get ID token and save to localStorage
@@ -576,10 +599,11 @@ function setupGoogleSignUp() {
                 localStorage.setItem("authToken", token);
                 localStorage.setItem("uid", user.uid);
                 
-                // Check if user document exists in Firestore
-                const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                // FIXED: Check if user document exists in Firestore using modular SDK
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
                 
-                if (!userDoc.exists) {
+                if (!userDoc.exists()) {
                     // Create user profile with Google data
                     const defaultAvatar = '../assets/male.svg';
                     
@@ -592,11 +616,13 @@ function setupGoogleSignUp() {
                         education: '',
                         studentStatus: '',
                         avatar: user.photoURL || defaultAvatar, // Use Google photo if available
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
                     };
                     
-                    await firebase.firestore().collection('users').doc(user.uid).set(userProfile);
+                    // FIXED: Save user profile using modular SDK
+                    const userProfileRef = doc(db, 'users', user.uid);
+                    await setDoc(userProfileRef, userProfile);
                     
                     // Redirect to profile with edit mode for new users to complete profile
                     window.location.href = '../profile/profile.html?edit=true';
@@ -622,7 +648,7 @@ function setupGoogleSignUp() {
                     case 'auth/unauthorized-domain':
                         errorMessage = 'This domain is not authorized. Please add ' + window.location.hostname + ' to Firebase Console → Authentication → Authorized domains.';
                         console.error('Domain authorization error. Current domain:', window.location.hostname);
-                        console.error('Expected domains: sia-project-2458a.web.app, sia-project-2458a.firebaseapp.com, sia-993a7.web.app, sia-993a7.firebaseapp.com');
+                        console.error('Expected domains: sia-993a7.web.app, sia-993a7.firebaseapp.com');
                         break;
                     case 'auth/network-request-failed':
                         errorMessage = 'Network error. Please check your connection.';

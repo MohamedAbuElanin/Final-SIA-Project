@@ -39,8 +39,10 @@ try {
     process.exit(1);
 }
 
-// FIXED: Initialize Firebase Admin with proper error handling
-// Works for both Firebase Functions (default credentials) and Railway (service account)
+// UPDATED: Initialize Firebase Admin from environment variable
+// Reads FIREBASE_SERVICE_ACCOUNT environment variable (JSON string)
+// Falls back to application default credentials for Firebase Functions
+// For Render/Railway: Set FIREBASE_SERVICE_ACCOUNT in dashboard environment variables
 let admin;
 try {
     admin = require('./firebase-admin');
@@ -50,6 +52,7 @@ try {
     logger.log('Firebase Admin initialized successfully');
 } catch (error) {
     logger.error('ERROR: Failed to initialize Firebase Admin:', error.message);
+    logger.error('Make sure FIREBASE_SERVICE_ACCOUNT environment variable is set with valid JSON.');
     process.exit(1);
 }
 
@@ -143,6 +146,15 @@ app.get('/', (req, res) => {
         status: 'success',
         message: 'SIA Backend Server is running!',
         timestamp: new Date().toISOString()
+    });
+});
+
+// Health check endpoint for Render/Railway
+app.get('/healthz', (req, res) => {
+    res.status(200).json({ 
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
     });
 });
 

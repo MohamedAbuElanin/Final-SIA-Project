@@ -1,8 +1,12 @@
 /**
  * Global Firebase Auth Listener
+ * FIXED: Uses modular SDK for proper Firebase initialization
  * Handles UI updates based on authentication state across the entire website.
- * FIXED: Removed duplicate code (lines 69-136 were identical to 1-68)
  */
+
+// Import Firebase services from firebase-config.js
+import { auth } from './firebase-config.js';
+import { signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     // Wait for auth state to be ready (from auth-state.js)
@@ -55,8 +59,9 @@ function getPathPrefix() {
     return './';
 }
 
+// FIXED: Use modular SDK signOut
 window.handleGlobalLogout = function() {
-    firebase.auth().signOut().then(() => {
+    signOut(auth).then(() => {
         // Redirect to home or sign in page after logout
         window.location.href = getPathPrefix() + 'index.html';
     }).catch((error) => {

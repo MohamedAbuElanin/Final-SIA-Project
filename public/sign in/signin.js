@@ -1,3 +1,19 @@
+// FIXED: Import Firebase modular SDK
+import { auth } from '../firebase-config.js';
+import { 
+    signInWithEmailAndPassword, 
+    signInWithPopup,
+    GoogleAuthProvider 
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import { 
+    collection, 
+    doc, 
+    getDoc, 
+    setDoc, 
+    serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { db } from '../firebase-config.js';
+
 // Console easter egg
 console.log("Welcome to SIA — Ancient Wisdom for Modern Careers");
 
@@ -172,8 +188,8 @@ if (signInForm) {
         const email = signInEmail.value.trim();
         const password = signInPasswordInput.value;
 
-        // Sign in with email and password
-        firebase.auth().signInWithEmailAndPassword(email, password)
+        // FIXED: Sign in with email and password using modular SDK
+        signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // User signed in successfully
                 const user = userCredential.user;
@@ -243,12 +259,12 @@ function setupGoogleSignIn() {
     const googleBtn = document.querySelector('.google-btn');
     if (!googleBtn) return;
 
-    // Wait for Firebase to be initialized
+    // FIXED: Wait for Firebase to be initialized
     function waitForFirebase(callback, maxAttempts = 50) {
         let attempts = 0;
         const checkInterval = setInterval(() => {
             attempts++;
-            if (typeof firebase !== 'undefined' && firebase.auth) {
+            if (typeof window.auth !== 'undefined' && window.auth) {
                 clearInterval(checkInterval);
                 callback();
             } else if (attempts >= maxAttempts) {
@@ -269,22 +285,23 @@ function setupGoogleSignIn() {
             let googleBtnElement = googleBtn; // Store reference
             
             try {
-                // Check if Firebase is properly initialized
-                if (!firebase.auth) {
+                // FIXED: Check if Firebase is properly initialized
+                if (!auth) {
                     throw new Error('Firebase Auth not available');
                 }
 
                 googleBtnElement.disabled = true;
                 googleBtnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
 
-                const provider = new firebase.auth.GoogleAuthProvider();
+                // FIXED: Use modular SDK GoogleAuthProvider
+                const provider = new GoogleAuthProvider();
                 
                 // Add scopes if needed
                 provider.addScope('profile');
                 provider.addScope('email');
 
-                // Use signInWithPopup with better error handling
-                const result = await firebase.auth().signInWithPopup(provider);
+                // FIXED: Use signInWithPopup with modular SDK
+                const result = await signInWithPopup(auth, provider);
                 const user = result.user;
                 
                 // Get ID token and save to localStorage
@@ -292,11 +309,12 @@ function setupGoogleSignIn() {
                 localStorage.setItem("authToken", token);
                 localStorage.setItem("uid", user.uid);
                 
-                // Check if user document exists in Firestore
-                const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                // FIXED: Check if user document exists in Firestore using modular SDK
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
                 let isNewUser = false;
                 
-                if (!userDoc.exists) {
+                if (!userDoc.exists()) {
                     // Create user profile with minimal data
                     const defaultAvatar = '../assets/male.svg';
                     
@@ -309,11 +327,13 @@ function setupGoogleSignIn() {
                         education: '',
                         studentStatus: '',
                         avatar: user.photoURL || defaultAvatar, // Use Google photo if available
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
                     };
                     
-                    await firebase.firestore().collection('users').doc(user.uid).set(userProfile);
+                    // FIXED: Save user profile using modular SDK
+                    const userProfileRef = doc(db, 'users', user.uid);
+                    await setDoc(userProfileRef, userProfile);
                     isNewUser = true;
                 }
 
@@ -341,7 +361,7 @@ function setupGoogleSignIn() {
                     case 'auth/unauthorized-domain':
                         errorMessage = 'This domain is not authorized. Please add ' + window.location.hostname + ' to Firebase Console → Authentication → Authorized domains.';
                         console.error('Domain authorization error. Current domain:', window.location.hostname);
-                        console.error('Expected domains: sia-project-2458a.web.app, sia-project-2458a.firebaseapp.com, sia-993a7.web.app, sia-993a7.firebaseapp.com');
+                        console.error('Expected domains: sia-993a7.web.app, sia-993a7.firebaseapp.com');
                         break;
                     case 'auth/network-request-failed':
                         errorMessage = 'Network error. Please check your connection.';

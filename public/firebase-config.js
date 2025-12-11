@@ -1,24 +1,49 @@
-// Firebase Configuration - v9 Compat Mode
+// Firebase Configuration - Modular SDK (v9+)
+// Optimized for efficient data storage and performance
 // Note: Firebase API keys are safe to expose in client-side code (publicly visible).
 // They identify your project, but security is handled via Firebase Security Rules (Firestore/Storage) and App Check.
-// Do not commit service account keys (private keys) which are for backend only.
 
+// Import the functions you need from the SDKs you need
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-analytics.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import { getFirestore, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
+import { 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword,
+    signInWithPopup,
+    GoogleAuthProvider,
+    onAuthStateChanged,
+    signOut as firebaseSignOut,
+    sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import {
+    collection,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBbcUi02rCzwZOVY3uRloGKk21-fC7IFDk",
-  authDomain: "sia-project-2458a.web.app",
+  apiKey: "AIzaSyA0sCsF4FFX1KkLC70RcAdDiBnoat8hlRM",
+  authDomain: "sia-993a7.firebaseapp.com",
   projectId: "sia-993a7",
   storageBucket: "sia-993a7.firebasestorage.app",
-  messagingSenderId: "415064406442",
-  appId: "1:415064406442:web:c1550b2aad4d331b8b53d3",
-  measurementId: "G-4F3VZ10MX1",
+  messagingSenderId: "720888967656",
+  appId: "1:720888967656:web:2f35bbf9fcff6c5a00745d",
+  measurementId: "G-LBSJLPNDV9"
 };
 
 // Defensive check: Verify domain authorization
 function checkFirebaseDomain() {
     const currentHostname = window.location.hostname;
     const expectedDomains = [
-        'sia-project-2458a.web.app',
-        'sia-project-2458a.firebaseapp.com',
         'sia-993a7.web.app',
         'sia-993a7.firebaseapp.com',
         'localhost',
@@ -38,42 +63,170 @@ function checkFirebaseDomain() {
     }
 }
 
-// Check for emulator settings that might override production
-function checkEmulatorSettings() {
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        // Allow emulator in development
-        return;
-    }
+// Initialize Firebase App - prevent duplicate initialization
+let app;
+try {
+    checkFirebaseDomain();
     
-    // Ensure no emulator settings are active in production
-    if (typeof firebase !== 'undefined' && firebase.firestore) {
-        const firestoreSettings = firebase.firestore().settings;
-        if (firestoreSettings && firestoreSettings.host && firestoreSettings.host.includes('localhost')) {
-            console.error('❌ Emulator settings detected in production! Disabling emulator.');
-            firebase.firestore().settings({ host: undefined });
-        }
+    // Check if Firebase app is already initialized
+    const existingApps = getApps();
+    if (existingApps.length > 0) {
+        app = existingApps[0];
+        console.log('✅ Firebase app already initialized, reusing existing instance');
+    } else {
+        app = initializeApp(firebaseConfig);
+        console.log('✅ Firebase initialized successfully');
     }
+} catch (error) {
+    console.error('❌ Error initializing Firebase:', error);
+    throw error;
 }
 
-// Initialize Firebase (v9 compat mode)
-if (!firebase.apps.length) {
-    checkFirebaseDomain();
-    checkEmulatorSettings();
-    firebase.initializeApp(firebaseConfig);
+// Initialize Firebase services using the app instance
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+// Enable offline persistence for Firestore (improves performance and offline support)
+// This allows the app to work offline and cache data locally
+try {
+    enableIndexedDbPersistence(db).catch((err) => {
+        if (err.code === 'failed-precondition') {
+            // Multiple tabs open, persistence can only be enabled in one tab at a time
+            console.warn('⚠️ Firestore persistence already enabled in another tab');
+        } else if (err.code === 'unimplemented') {
+            // The current browser does not support all of the features required
+            console.warn('⚠️ Firestore persistence not supported in this browser');
+        } else {
+            console.warn('⚠️ Firestore persistence error:', err);
+        }
+    });
+} catch (error) {
+    // Persistence may not be available in all environments
+    console.warn('⚠️ Could not enable Firestore persistence:', error);
+}
+
+// Initialize Analytics (only in production, not on localhost)
+// Analytics helps track user engagement and app performance
+let analytics = null;
+if (typeof window !== 'undefined' && 
+    window.location.hostname !== 'localhost' && 
+    window.location.hostname !== '127.0.0.1') {
+    try {
+        // Check if analytics is supported before initializing
+        isSupported().then((supported) => {
+            if (supported) {
+                analytics = getAnalytics(app);
+                console.log('✅ Analytics initialized');
+            } else {
+                console.log('ℹ️ Analytics not supported in this environment');
+            }
+        }).catch(() => {
+            // Analytics not supported, continue without it
+            console.log('ℹ️ Analytics initialization skipped');
+        });
+    } catch (error) {
+        console.warn('⚠️ Analytics initialization failed:', error);
+    }
 } else {
-    // Already initialized, but check domain anyway
-    checkFirebaseDomain();
+    console.log('ℹ️ Analytics disabled on localhost');
 }
 
-// Initialize Firebase services
-const auth = firebase.auth();
-const db = firebase.firestore();
-const storage = firebase.storage();
+// FIXED: Create compatibility layer for existing code
+// This provides firebase.auth(), firebase.firestore(), firebase.storage() APIs
+const firebaseCompat = {
+    app: app,
+    apps: [app],
+    initializeApp: () => app,
+    
+    auth: () => ({
+        currentUser: auth.currentUser,
+        createUserWithEmailAndPassword: (email, password) => 
+            createUserWithEmailAndPassword(auth, email, password),
+        signInWithEmailAndPassword: (email, password) => 
+            signInWithEmailAndPassword(auth, email, password),
+        signInWithPopup: (provider) => 
+            signInWithPopup(auth, provider),
+        signOut: () => firebaseSignOut(auth),
+        sendPasswordResetEmail: (email) => 
+            sendPasswordResetEmail(auth, email),
+        onAuthStateChanged: (callback) => 
+            onAuthStateChanged(auth, callback),
+        GoogleAuthProvider: GoogleAuthProvider
+    }),
+    
+    firestore: () => {
+        const firestoreInstance = {
+            collection: (collectionPath) => {
+                const collectionRef = collection(db, collectionPath);
+                return {
+                    doc: (docPath) => {
+                        const docRef = doc(collectionRef, docPath);
+                        return {
+                            get: () => getDoc(docRef),
+                            set: (data) => {
+                                // Convert FieldValue.serverTimestamp() to actual serverTimestamp()
+                                const processedData = {};
+                                for (const key in data) {
+                                    if (data[key] && typeof data[key] === 'object' && data[key]._methodName === 'serverTimestamp') {
+                                        processedData[key] = serverTimestamp();
+                                    } else {
+                                        processedData[key] = data[key];
+                                    }
+                                }
+                                return setDoc(docRef, processedData);
+                            },
+                            update: (data) => updateDoc(docRef, data)
+                        };
+                    },
+                    add: (data) => {
+                        const newDocRef = doc(collectionRef);
+                        const processedData = {};
+                        for (const key in data) {
+                            if (data[key] && typeof data[key] === 'object' && data[key]._methodName === 'serverTimestamp') {
+                                processedData[key] = serverTimestamp();
+                            } else {
+                                processedData[key] = data[key];
+                            }
+                        }
+                        return setDoc(newDocRef, processedData).then(() => ({ id: newDocRef.id }));
+                    }
+                };
+            },
+            FieldValue: {
+                serverTimestamp: () => ({ _methodName: 'serverTimestamp' })
+            }
+        };
+        return firestoreInstance;
+    },
+    
+    storage: () => ({
+        ref: (path) => {
+            const ref = storageRef(storage, path);
+            return {
+                put: (file) => {
+                    return uploadBytes(ref, file).then((snapshot) => ({
+                        ref: {
+                            getDownloadURL: () => getDownloadURL(snapshot.ref)
+                        }
+                    }));
+                },
+                getDownloadURL: () => getDownloadURL(ref)
+            };
+        }
+    })
+};
 
-// Make services available globally
+// FIXED: Make services available globally for backward compatibility
 window.db = db;
 window.auth = auth;
 window.storage = storage;
+window.firebaseApp = app;
+window.firebaseAnalytics = analytics;
+window.firebase = firebaseCompat; // Compatibility layer
+
+// FIXED: Export config and services for modular use
+export { app, auth, db, storage, analytics, firebaseConfig };
 
 // Export config for defensive checks
 window.firebaseConfig = firebaseConfig;
