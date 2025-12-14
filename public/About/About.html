@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-Mm4N2zg4s46HoPazTA/gkGEXLMaLLq5yRvCNrI6VsgGAaHo9dZYkTfGZNVVRhk1FdYyqS/fWznuaCG2l9VmO3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./About.css">
     <link rel="stylesheet" href="../template.css">
     <link rel="icon" type="../Images/ICO/favicon.ico" href="../Images/ICO/favicon.ico">
@@ -32,11 +32,11 @@
 
             <!-- Center Navigation Links -->
             <ul class="nav-links" id="navLinks">
-                <li><a href="../index.html">Home</a></li>
-                <li><a href="./About.html" aria-current="page">About</a></li>
-                <li><a href="../Test/Test.html">Test</a></li>
-                <li><a href="../profile/profile.html">Profile</a></li>
-                <li><a href="../privacy-terms.html">Privacy & Terms</a></li>
+                <li><a href="../index.html" data-key="nav_home">Home</a></li>
+                <li><a href="./About.html" aria-current="page" data-key="nav_about">About</a></li>
+                <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
+                <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
+                <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
             </ul>
 
             <!-- Right Buttons Section -->
@@ -57,8 +57,8 @@
                         </a>
                     </div>
                 </div>
-                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
+                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
             </div>
 
             <!-- Responsive Menu (Hamburger control + label for accessibility) -->
@@ -72,11 +72,11 @@
             <div class="nav-drawer" aria-hidden="true">
                 <!-- Center Navigation Links duplicated for the mobile drawer -->
                 <ul class="drawer-links">
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="./About.html" aria-current="page">About</a></li>
-                    <li><a href="../Test/Test.html">Test</a></li>
-                    <li><a href="../profile/profile.html">Profile</a></li>
-                    <li><a href="../privacy-terms.html">Privacy & Terms</a></li>
+                    <li><a href="../index.html" data-key="nav_home">Home</a></li>
+                    <li><a href="./About.html" aria-current="page" data-key="nav_about">About</a></li>
+                    <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
+                    <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
+                    <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
                 </ul>
                 <!-- Right Buttons Section duplicated for stacked layout -->
                 <div class="drawer-auth">
@@ -96,8 +96,8 @@
                             </a>
                         </div>
                     </div>
-                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
+                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
                 </div>
             </div>
         </nav>
@@ -106,83 +106,83 @@
     <main>
         <section class="hero" id="hero">
             <div class="hero__content">
-                <p class="eyebrow"><i class="fa-solid fa-eye"></i> Ancient guidance | Modern data</p>
-                <h1>SIA — Ancient Wisdom for Modern Careers</h1>
-                <p class="hero__lead">
+                <p class="eyebrow" data-key="about_eyebrow"><i class="fa-solid fa-eye"></i> Ancient guidance | Modern data</p>
+                <h1 data-key="about_hero_title">SIA — Ancient Wisdom for Modern Careers</h1>
+                <p class="hero__lead" data-key="about_hero_lead">
                     In a fast-changing world, choosing a career path can be hard. SIA blends ancient wisdom with modern analytics to help you discover your strengths and choose the right path.
                 </p>
                 <div class="hero__cta">
-                    <a href="#test-anchor" class="btn btn--gold" data-scroll>Take the Test</a>
-                    <a href="#roadmap-anchor" class="btn btn--outline" data-scroll>Explore Roadmap</a>
+                    <a href="#test-anchor" class="btn btn--gold" data-scroll data-key="about_take_test">Take the Test</a>
+                    <a href="#roadmap-anchor" class="btn btn--outline" data-scroll data-key="about_explore_roadmap">Explore Roadmap</a>
                 </div>
             </div>
         </section>
 
         <section class="overview" aria-labelledby="overview-title">
             <div class="section-heading">
-                <p class="eyebrow">Project Snapshot</p>
-                <h2 id="overview-title">Why SIA Matters</h2>
+                <p class="eyebrow" data-key="about_overview_eyebrow">Project Snapshot</p>
+                <h2 id="overview-title" data-key="about_overview_title">Why SIA Matters</h2>
             </div>
-            <p class="overview__text">
+            <p class="overview__text" data-key="about_overview_text">
                 SIA uses Big Five + Holland Codes, links results to job market data, and gives personalized learning recommendations.
             </p>
             <div class="overview__grid">
                 <article class="info-card">
-                    <h3><i class="fa-solid fa-chart-line"></i> What We Do</h3>
+                    <h3 data-key="about_what_we_do"><i class="fa-solid fa-chart-line"></i> What We Do</h3>
                     <ul>
-                        <li>Psychometric analysis models tuned for emerging talent.</li>
-                        <li>Research-driven knowledge base aligned to Egypt & MENA trends.</li>
-                        <li>Guidance platform that connects insights to action.</li>
+                        <li data-key="about_what_we_do_1">Psychometric analysis models tuned for emerging talent.</li>
+                        <li data-key="about_what_we_do_2">Research-driven knowledge base aligned to Egypt & MENA trends.</li>
+                        <li data-key="about_what_we_do_3">Guidance platform that connects insights to action.</li>
                     </ul>
                 </article>
                 <article class="info-card">
-                    <h3 id="test-anchor"><i class="fa-solid fa-compass"></i> How SIA Works</h3>
+                    <h3 id="test-anchor" data-key="about_how_it_works"><i class="fa-solid fa-compass"></i> How SIA Works</h3>
                     <ol>
-                        <li>Assessments: Big Five + Holland Codes with contextual prompts.</li>
-                        <li>Insight Engine: Maps scores to live job data and talent needs.</li>
-                        <li>Action Plan: Personalized learning paths and roadmap guidance.</li>
+                        <li data-key="about_how_it_works_1">Assessments: Big Five + Holland Codes with contextual prompts.</li>
+                        <li data-key="about_how_it_works_2">Insight Engine: Maps scores to live job data and talent needs.</li>
+                        <li data-key="about_how_it_works_3">Action Plan: Personalized learning paths and roadmap guidance.</li>
                     </ol>
                 </article>
                 <article class="info-card">
-                    <h3><i class="fa-solid fa-bullseye"></i> Vision & Mission</h3>
-                    <p><strong>Vision:</strong> Make career clarity accessible through timeless wisdom plus modern intelligence.</p>
-                    <p><strong>Mission:</strong> Equip every learner with culturally-aware guidance, actionable data, and inspiring storytelling.</p>
+                    <h3 data-key="about_vision_mission"><i class="fa-solid fa-bullseye"></i> Vision & Mission</h3>
+                    <p><strong data-key="about_vision">Vision:</strong> <span data-key="about_vision_text">Make career clarity accessible through timeless wisdom plus modern intelligence.</span></p>
+                    <p><strong data-key="about_mission">Mission:</strong> <span data-key="about_mission_text">Equip every learner with culturally-aware guidance, actionable data, and inspiring storytelling.</span></p>
                 </article>
             </div>
         </section>
 
         <section class="roadmap" id="roadmap-anchor" aria-labelledby="roadmap-title">
             <div class="section-heading">
-                <p class="eyebrow">From Insight to Action</p>
-                <h2 id="roadmap-title">SIA Roadmap</h2>
+                <p class="eyebrow" data-key="about_roadmap_eyebrow">From Insight to Action</p>
+                <h2 id="roadmap-title" data-key="about_roadmap_title">SIA Roadmap</h2>
             </div>
             <div class="roadmap__content">
-                <p>
+                <p data-key="about_roadmap_intro">
                     Your journey with SIA begins with self-discovery and leads to actionable career guidance. Here's how we transform insights into your personalized career path:
                 </p>
                 <div class="overview__grid">
                     <article class="info-card">
-                        <h3><i class="fa-solid fa-clipboard-question"></i> Step 1: Assessment</h3>
-                        <p>Take our comprehensive psychometric tests combining Big Five personality traits and Holland Codes to understand your unique profile.</p>
+                        <h3 data-key="about_step_1_title"><i class="fa-solid fa-clipboard-question"></i> Step 1: Assessment</h3>
+                        <p data-key="about_step_1_desc">Take our comprehensive psychometric tests combining Big Five personality traits and Holland Codes to understand your unique profile.</p>
                     </article>
                     <article class="info-card">
-                        <h3><i class="fa-solid fa-chart-bar"></i> Step 2: Analysis</h3>
-                        <p>Our insight engine maps your results to real job market data, identifying careers that align with your personality and interests.</p>
+                        <h3 data-key="about_step_2_title"><i class="fa-solid fa-chart-bar"></i> Step 2: Analysis</h3>
+                        <p data-key="about_step_2_desc">Our insight engine maps your results to real job market data, identifying careers that align with your personality and interests.</p>
                     </article>
                     <article class="info-card">
-                        <h3><i class="fa-solid fa-route"></i> Step 3: Roadmap</h3>
-                        <p>Receive a personalized learning path with recommended courses, skills to develop, and resources tailored to your career goals.</p>
+                        <h3 data-key="about_step_3_title"><i class="fa-solid fa-route"></i> Step 3: Roadmap</h3>
+                        <p data-key="about_step_3_desc">Receive a personalized learning path with recommended courses, skills to develop, and resources tailored to your career goals.</p>
                     </article>
                     <article class="info-card">
-                        <h3><i class="fa-solid fa-rocket"></i> Step 4: Action</h3>
-                        <p>Start your journey with curated YouTube channels, books, articles, and courses designed to help you succeed in your chosen field.</p>
+                        <h3 data-key="about_step_4_title"><i class="fa-solid fa-rocket"></i> Step 4: Action</h3>
+                        <p data-key="about_step_4_desc">Start your journey with curated YouTube channels, books, articles, and courses designed to help you succeed in your chosen field.</p>
                     </article>
                 </div>
                 <div class="roadmap__cta">
-                    <a href="../Test/Test.html" class="link-pill">
+                    <a href="../Test/Test.html" class="link-pill" data-key="about_start_journey">
                         <i class="fa-solid fa-play"></i> Start Your Journey
                     </a>
-                    <a href="../profile/profile.html" class="link-pill">
+                    <a href="../profile/profile.html" class="link-pill" data-key="about_view_profile">
                         <i class="fa-solid fa-user"></i> View Your Profile
                     </a>
                 </div>
@@ -191,14 +191,14 @@
 
         <section class="team" id="team" aria-labelledby="team-title">
             <div class="section-heading">
-                <p class="eyebrow">Meet the Team</p>
-                <h2 id="team-title">Human intelligence behind SIA</h2>
-                <p class="section-heading__lead">Our mosaic layout mirrors the collaboration between research, design, engineering, and storytelling.</p>
+                <p class="eyebrow" data-key="about_team_eyebrow">Meet the Team</p>
+                <h2 id="team-title" data-key="about_team_title">Human intelligence behind SIA</h2>
+                <p class="section-heading__lead" data-key="about_team_lead">Our mosaic layout mirrors the collaboration between research, design, engineering, and storytelling.</p>
             </div>
             <div class="mosaic-toolbar">
                 <button type="button" class="mosaic-toggle" aria-pressed="false">
                     <i class="fa-solid fa-layer-group"></i>
-                    <span>Switch to stacked view</span>
+                    <span data-key="about_switch_view">Switch to stacked view</span>
                 </button>
             </div>
             <div class="mosaic" role="list">
@@ -238,7 +238,7 @@
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Mahmoud Saif.jpg" alt="Photo of Mahmoud Saif" data-initials="MS" />
+                        <img src="../Images/Team/Mahmoud Saif.jpeg" alt="Photo of Mahmoud Saif" data-initials="MS" />
                     </div>
                     <div class="team-info">
                         <p class="team-role">Back-End</p>
@@ -253,7 +253,7 @@
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Riham Mohamed.jpg" alt="Photo of Riham Mohamed" data-initials="RM" />
+                        <img src="../Images/Team/Riham Mohamed.jpeg" alt="Photo of Riham Mohamed" data-initials="RM" />
                     </div>
                     <div class="team-info">
                         <p class="team-role">Research &amp; Data</p>
@@ -346,7 +346,7 @@
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Esraa.jpg" alt="Photo of Esraa" data-initials="E" />
+                        <img src="../Images/Team/Esraa.jpeg" alt="Photo of Esraa" data-initials="E" />
                     </div>
                     <div class="team-info">
                         <p class="team-role">Knowledge Systems</p>
@@ -388,11 +388,11 @@
 
         <section class="contact" id="contact" aria-labelledby="contact-title">
             <div class="section-heading">
-                <p class="eyebrow">Stay Connected</p>
-                <h2 id="contact-title">Contact the SIA Team</h2>
+                <p class="eyebrow" data-key="about_contact_eyebrow">Stay Connected</p>
+                <h2 id="contact-title" data-key="about_contact_title">Contact the SIA Team</h2>
             </div>
             <div class="contact__card">
-                <p>
+                <p data-key="about_contact_text">
                     Have a partnership idea or want early access to the roadmap? Email us and we will respond within two business days.
                 </p>
                 <a href="mailto:SIA@gmail.com" class="contact__email">
@@ -407,8 +407,8 @@
         <div class="footer__brand">
             <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
             <div>
-                <p class="footer__title">SIA</p>
-                <p class="footer__mission">We connect ancient wisdom with modern career paths.</p>
+                <p class="footer__title" data-key="footer_title">SIA</p>
+                <p class="footer__mission" data-key="footer_mission">We connect ancient wisdom with modern career paths.</p>
             </div>
         </div>
         <div class="footer__nav" aria-label="Footer navigation">
@@ -418,10 +418,13 @@
             <a href="../profile/profile.html">Profile</a>
             <a href="../privacy-terms.html">Privacy & Terms</a>
         </div>
-        <p class="footer__copy">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+        <p class="footer__copy" data-key="footer_copyright">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
     </footer>
 
-    <script src="../auth.js"></script>
+    <!-- Firebase SDK - Modular SDK (v9+) -->
+    <script type="module" src="../firebase-config.js"></script>
+    <script type="module" src="../auth-state.js"></script>
+    <script type="module" src="../auth.js"></script>
     <script src="./About.js" defer></script>
     <!-- Language Translation Script -->
     <script src="../js/lang.js"></script>

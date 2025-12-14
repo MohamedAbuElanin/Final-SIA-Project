@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="Privacy-Terms.css">
     <link rel="stylesheet" href="./template.css">
-    <link rel="icon" type="../Images/ICO/favicon.ico" href="../public/Images/ICO/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="./Images/ICO/favicon.ico">
 </head>
 <body>
     <!-- Navbar Start -->
@@ -24,11 +24,11 @@
 
             <!-- Center Navigation Links -->
             <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="./About/About.html">About</a></li>
-                <li><a href="./Test/Test.html">Test</a></li>
-                <li><a href="./profile/profile.html">Profile</a></li>
-                <li><a href="../public/privacy-terms.html" aria-current="page">Privacy & Terms</a></li>
+                <li><a href="index.html" data-key="nav_home">Home</a></li>
+                <li><a href="./About/About.html" data-key="nav_about">About</a></li>
+                <li><a href="./Test/Test.html" data-key="nav_test">Test</a></li>
+                <li><a href="./profile/profile.html" data-key="nav_profile">Profile</a></li>
+                <li><a href="./privacy-terms.html" aria-current="page" data-key="nav_privacy_terms">Privacy & Terms</a></li>
             </ul>
 
             <!-- Right Buttons Section -->
@@ -49,8 +49,8 @@
                         </a>
                     </div>
                 </div>
-                <a href="./sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-                <a href="./sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                <a href="./sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
+                <a href="./sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
             </div>
 
             <!-- Responsive Menu (Hamburger control + label for accessibility) -->
@@ -64,11 +64,11 @@
             <div class="nav-drawer" aria-hidden="true">
                 <!-- Center Navigation Links duplicated for the mobile drawer -->
                 <ul class="drawer-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="./About/About.html">About</a></li>
-                    <li><a href="./Test/Test.html">Test</a></li>
-                    <li><a href="./profile/profile.html">Profile</a></li>
-                    <li><a href="../public/privacy-terms.html" aria-current="page">Privacy & Terms</a></li>
+                <li><a href="index.html" data-key="nav_home">Home</a></li>
+                <li><a href="./About/About.html" data-key="nav_about">About</a></li>
+                <li><a href="./Test/Test.html" data-key="nav_test">Test</a></li>
+                <li><a href="./profile/profile.html" data-key="nav_profile">Profile</a></li>
+                <li><a href="./privacy-terms.html" aria-current="page" data-key="nav_privacy_terms">Privacy & Terms</a></li>
                 </ul>
                 <!-- Right Buttons Section duplicated for stacked layout -->
                 <div class="drawer-auth">
@@ -88,8 +88,8 @@
                             </a>
                         </div>
                     </div>
-                    <a href="./sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-                    <a href="./sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+                    <a href="./sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
+                    <a href="./sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
                 </div>
             </div>
         </nav>
@@ -101,10 +101,10 @@
         <section class="privacy-hero">
             <div class="container">
                 <div class="hero-content fade-in">
-                    <h1 class="page-title">
+                    <h1 class="page-title" data-key="privacy_title">
                         <i class="fas fa-shield-alt"></i> Privacy & Terms
                     </h1>
-                    <p class="page-subtitle">Your privacy and our terms of service</p>
+                    <p class="page-subtitle" data-key="privacy_subtitle">Your privacy and our terms of service</p>
                 </div>
             </div>
         </section>
@@ -114,13 +114,13 @@
             <div class="container">
                 <div class="section-content fade-in">
                     <div class="section-header">
-                        <h2 class="section-title">
+                        <h2 class="section-title" data-key="privacy_policy_title">
                             <i class="fas fa-lock"></i> Privacy Policy
                         </h2>
                         <div class="title-underline"></div>
                     </div>
                     <div class="text-content">
-                        <p>
+                        <p data-key="privacy_policy_text">
                             At SIA, we respect your privacy and are committed to protecting your personal information. We collect basic data such as your name, email, and assessment results to ensure a personalized and secure experience. This information is used to provide tailored learning recommendations, manage accounts, and continuously improve the platform. All data is stored securely and will not be shared with third parties without your consent.
                         </p>
                     </div>
@@ -133,33 +133,33 @@
             <div class="container">
                 <div class="section-content fade-in">
                     <div class="section-header">
-                        <h2 class="section-title">
+                        <h2 class="section-title" data-key="privacy_terms_title">
                             <i class="fas fa-file-contract"></i> Terms of Use
                         </h2>
                         <div class="title-underline"></div>
                     </div>
                     <div class="text-content">
-                        <p class="intro-text">By using the SIA platform, you agree to the following terms:</p>
+                        <p class="intro-text" data-key="privacy_terms_intro">By using the SIA platform, you agree to the following terms:</p>
                         <ul class="terms-list">
                             <li>
                                 <i class="fas fa-check-circle"></i>
-                                <span>The content provided is for educational and guidance purposes only and does not constitute professional or medical advice.</span>
+                                <span data-key="privacy_terms_1">The content provided is for educational and guidance purposes only and does not constitute professional or medical advice.</span>
                             </li>
                             <li>
                                 <i class="fas fa-check-circle"></i>
-                                <span>You must use your personal account and not share your login credentials with others.</span>
+                                <span data-key="privacy_terms_2">You must use your personal account and not share your login credentials with others.</span>
                             </li>
                             <li>
                                 <i class="fas fa-check-circle"></i>
-                                <span>SIA reserves the right to modify the platform and its content at any time without prior notice.</span>
+                                <span data-key="privacy_terms_3">SIA reserves the right to modify the platform and its content at any time without prior notice.</span>
                             </li>
                             <li>
                                 <i class="fas fa-check-circle"></i>
-                                <span>Any attempt to misuse the platform or disrupt its services may result in account suspension.</span>
+                                <span data-key="privacy_terms_4">Any attempt to misuse the platform or disrupt its services may result in account suspension.</span>
                             </li>
                             <li>
                                 <i class="fas fa-check-circle"></i>
-                                <span>All rights reserved by SIA – Ancient Wisdom for Modern Careers.</span>
+                                <span data-key="privacy_terms_5">All rights reserved by SIA – Ancient Wisdom for Modern Careers.</span>
                             </li>
                         </ul>
                     </div>
@@ -172,13 +172,13 @@
             <div class="container">
                 <div class="section-content fade-in">
                     <div class="section-header">
-                        <h2 class="section-title">
+                        <h2 class="section-title" data-key="privacy_contact_title">
                             <i class="fas fa-envelope"></i> Contact
                         </h2>
                         <div class="title-underline"></div>
                     </div>
                     <div class="text-content">
-                        <p>
+                        <p data-key="privacy_contact_text">
                             For any questions or requests regarding privacy or terms of use, please contact us via the official platform email.
                         </p>
                     </div>
@@ -192,23 +192,23 @@
         <div class="footer__brand">
             <img src="./Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
             <div>
-                <p class="footer__title">SIA</p>
-                <p class="footer__mission">We connect ancient wisdom with modern career paths.</p>
+                <p class="footer__title" data-key="footer_title">SIA</p>
+                <p class="footer__mission" data-key="footer_mission">We connect ancient wisdom with modern career paths.</p>
             </div>
         </div>
         <div class="footer__nav" aria-label="Footer navigation">
-            <a href="index.html">Home</a>
-            <a href="./About/About.html">About</a>
-            <a href="./Test/Test.html">Test</a>
-            <a href="./profile/profile.html">Profile</a>
-            <a href="./Privacy & Terms/Privacy-Terms.html">Privacy & Terms</a>
+            <a href="index.html" data-key="nav_home">Home</a>
+            <a href="./About/About.html" data-key="nav_about">About</a>
+            <a href="./Test/Test.html" data-key="nav_test">Test</a>
+            <a href="./profile/profile.html" data-key="nav_profile">Profile</a>
+            <a href="./privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a>
         </div>
-        <p class="footer__copy">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+        <p class="footer__copy" data-key="footer_copyright">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
     </footer>
 
     <canvas id="particles"></canvas>
     <script src="Privacy-Terms.js"></script>
     <!-- Language Translation Script -->
-    <script src="./js/lang.js"></script>
+    <script src="../js/lang.js"></script>
 </body>
 </html>

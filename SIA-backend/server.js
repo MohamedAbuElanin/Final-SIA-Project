@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
 const rateLimit = require('express-rate-limit');
 const logger = require('./logger');
 
@@ -65,24 +66,57 @@ const limiter = rateLimit({
     legacyHeaders: false,
 });
 
-// FIXED: CORS configuration - more restrictive for security
+// FIXED: CORS configuration - allow frontend requests
+// Explicitly allow Firebase hosting domains and localhost for development
 const corsOptions = {
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
         
-        // In production, specify allowed origins
-        const allowedOrigins = process.env.ALLOWED_ORIGINS 
-            ? process.env.ALLOWED_ORIGINS.split(',')
-            : ['http://localhost:5000', 'http://localhost:3000'];
+        // Firebase hosting domains (production)
+        const firebaseDomains = [
+            'https://sia-993a7.firebaseapp.com',
+            'https://sia-project-2458a.web.app',
+            'https://sia-993a7.web.app' // Additional Firebase domain
+        ];
         
-        if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+        // Local development origins
+        const localOrigins = [
+            'http://localhost:5000', 
+            'http://localhost:3000',
+            'http://localhost:8080',
+            'http://localhost:5506',  // Live Server default port
+            'http://127.0.0.1:5000',
+            'http://127.0.0.1:3000',
+            'http://127.0.0.1:8080',
+            'http://127.0.0.1:5506'   // Live Server default port
+        ];
+        
+        // Combine all allowed origins
+        const allowedOrigins = process.env.ALLOWED_ORIGINS 
+            ? [...process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()), ...firebaseDomains, ...localOrigins]
+            : [...firebaseDomains, ...localOrigins];
+        
+        // Check if origin is in allowed list
+        if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
+        } else if (process.env.NODE_ENV !== 'production') {
+            // In development, allow any localhost/127.0.0.1
+            if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+                callback(null, true);
+            } else {
+                logger.warn(`CORS blocked origin in development: ${origin}`);
+                callback(new Error('Not allowed by CORS'));
+            }
         } else {
+            // In production, only allow explicit domains
+            logger.warn(`CORS blocked origin: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 // Middleware
@@ -156,6 +190,543 @@ app.get('/healthz', (req, res) => {
         timestamp: new Date().toISOString(),
         uptime: process.uptime()
     });
+});
+
+// POST route - Save Test Results to Firestore
+// Saves test results to users/{userId}/tests/{testName}
+// FIXED: Added comprehensive error handling and validation
+app.post('/api/save-test', async (req, res) => {
+    try {
+        // Validate request body exists
+        if (!req.body || typeof req.body !== 'object') {
+            logger.error('Invalid request body in save-test');
+            return res.status(400).json({ 
+                error: 'Bad Request',
+                message: 'Request body is required and must be a JSON object',
+                code: 'INVALID_BODY'
+            });
+        }
+
+        const { userId, testName, resultData } = req.body;
+
+        // Validate required fields with detailed logging
+        if (!userId) {
+            logger.error('Missing userId in save-test request');
+            return res.status(400).json({ 
+                error: 'Missing fields',
+                message: 'userId is required',
+                code: 'MISSING_USER_ID'
+            });
+        }
+
+        if (!testName) {
+            logger.error('Missing testName in save-test request');
+            return res.status(400).json({ 
+                error: 'Missing fields',
+                message: 'testName is required',
+                code: 'MISSING_TEST_NAME'
+            });
+        }
+
+        if (!resultData) {
+            logger.error('Missing resultData in save-test request');
+            return res.status(400).json({ 
+                error: 'Missing fields',
+                message: 'resultData is required',
+                code: 'MISSING_RESULT_DATA'
+            });
+        }
+
+        // Validate userId format (should be a string)
+        if (typeof userId !== 'string' || userId.trim().length === 0) {
+            logger.error('Invalid userId format:', typeof userId, userId);
+            return res.status(400).json({ 
+                error: 'Invalid userId',
+                message: 'userId must be a non-empty string',
+                code: 'INVALID_USER_ID'
+            });
+        }
+
+        // Validate testName format
+        if (typeof testName !== 'string' || testName.trim().length === 0) {
+            logger.error('Invalid testName format:', typeof testName, testName);
+            return res.status(400).json({ 
+                error: 'Invalid testName',
+                message: 'testName must be a non-empty string',
+                code: 'INVALID_TEST_NAME'
+            });
+        }
+
+        // Validate resultData is an object (but allow arrays for answers)
+        if (!resultData || typeof resultData !== 'object') {
+            logger.error('Invalid resultData type:', typeof resultData);
+            return res.status(400).json({ 
+                error: 'Invalid resultData',
+                message: 'resultData must be an object',
+                code: 'INVALID_RESULT_DATA'
+            });
+        }
+
+        // Normalize test name (handle variations)
+        const normalizedTestName = testName.trim();
+        const validTestNames = ['Big-Five', 'Holland', 'Holland-codes'];
+        if (!validTestNames.includes(normalizedTestName)) {
+            logger.warn(`Test name "${normalizedTestName}" not in standard list, proceeding anyway`);
+        }
+
+        logger.log(`[Save-Test] Saving test result for user ${userId}, test: ${normalizedTestName}`);
+        logger.log(`[Save-Test] Result data structure:`, {
+            hasAnswers: !!resultData.answers,
+            hasResult: !!resultData.result,
+            hasAnalysis: !!resultData.analysis,
+            keys: Object.keys(resultData)
+        });
+
+        // Validate Firestore admin is initialized
+        if (!admin || !admin.firestore) {
+            logger.error('Firebase Admin not initialized');
+            return res.status(500).json({ 
+                error: 'Internal server error',
+                message: 'Database service not available',
+                code: 'DATABASE_UNAVAILABLE'
+            });
+        }
+
+        // Save to Firestore: users/{userId}/tests/{testName}
+        const db = admin.firestore();
+        const docRef = db
+            .collection('users')
+            .doc(userId.trim())
+            .collection('tests')
+            .doc(normalizedTestName);
+
+        // Prepare document data with proper timestamps
+        const documentData = {
+            ...resultData,
+            testType: normalizedTestName,
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            savedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+
+        // Save to Firestore with error handling
+        try {
+            await docRef.set(documentData, { merge: true });
+            logger.log(`[Save-Test] ✅ Test result saved successfully for user ${userId}, test: ${normalizedTestName}`);
+        } catch (firestoreError) {
+            logger.error('[Save-Test] Firestore error:', firestoreError.message);
+            logger.error('[Save-Test] Firestore error stack:', firestoreError.stack);
+            
+            // Check for specific Firestore errors
+            if (firestoreError.code === 'permission-denied') {
+                return res.status(403).json({ 
+                    error: 'Permission denied',
+                    message: 'Firestore security rules denied this operation',
+                    code: 'FIRESTORE_PERMISSION_DENIED'
+                });
+            } else if (firestoreError.code === 'unavailable') {
+                return res.status(503).json({ 
+                    error: 'Service unavailable',
+                    message: 'Firestore service is temporarily unavailable',
+                    code: 'FIRESTORE_UNAVAILABLE'
+                });
+            } else {
+                throw firestoreError; // Re-throw to be caught by outer catch
+            }
+        }
+
+        res.json({ 
+            success: true,
+            message: 'Test result saved successfully',
+            path: `users/${userId}/tests/${normalizedTestName}`,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (err) {
+        // Comprehensive error logging
+        logger.error('[Save-Test] ❌ Error saving test result:', err.message);
+        logger.error('[Save-Test] Error code:', err.code);
+        logger.error('[Save-Test] Error stack:', err.stack);
+        
+        // Determine appropriate status code
+        let statusCode = 500;
+        if (err.code === 'permission-denied') {
+            statusCode = 403;
+        } else if (err.code === 'unavailable' || err.code === 'deadline-exceeded') {
+            statusCode = 503;
+        } else if (err.message && err.message.includes('validation')) {
+            statusCode = 400;
+        }
+        
+        res.status(statusCode).json({ 
+            error: 'Failed to save test result',
+            message: err.message || 'An unexpected error occurred',
+            code: err.code || 'SAVE_ERROR',
+            details: process.env.NODE_ENV === 'production' ? undefined : err.stack
+        });
+    }
+});
+
+// POST route - Analyze with Gemini (new endpoint for combined test results)
+// Accepts: { userId, combinedResults } or { testResults: { bigfive: {...}, holland: {...} } }
+app.post('/api/analyze-with-gemini', async (req, res) => {
+    try {
+        const { userId, combinedResults, testResults } = req.body;
+
+        // Validate required fields
+        if (!userId || (!combinedResults && !testResults)) {
+            return res.status(400).json({ 
+                error: 'Missing fields',
+                message: 'userId and either combinedResults or testResults are required',
+                code: 'MISSING_FIELDS'
+            });
+        }
+
+        // Extract test results
+        let bigFiveResults = null;
+        let hollandResults = null;
+
+        if (combinedResults) {
+            bigFiveResults = combinedResults.bigfive || combinedResults.bigFive || null;
+            hollandResults = combinedResults.holland || null;
+        } else if (testResults) {
+            bigFiveResults = testResults.bigfive || testResults.bigFive || null;
+            hollandResults = testResults.holland || null;
+        }
+
+        // Validate that at least one test result is provided
+        if (!bigFiveResults && !hollandResults) {
+            return res.status(400).json({ 
+                error: 'Invalid data',
+                message: 'At least one test result (bigfive or holland) must be provided',
+                code: 'INVALID_DATA'
+            });
+        }
+
+        // Check if AI is initialized
+        if (!ai) {
+            return res.status(503).json({ 
+                error: 'Service unavailable', 
+                message: 'AI service is not available',
+                code: 'AI_SERVICE_UNAVAILABLE'
+            });
+        }
+
+        logger.log(`[Gemini] Analyzing combined results for user ${userId}`);
+
+        // Build prompt for Gemini
+        let promptTestsSection = "";
+        
+        if (bigFiveResults && typeof bigFiveResults === 'object') {
+            promptTestsSection += `
+            **Big Five Personality Traits:**
+            ${JSON.stringify(bigFiveResults, null, 2)}
+            `;
+        } else {
+            promptTestsSection += `
+            **Big Five Personality Traits:**
+            [Data Not Available]
+            `;
+        }
+
+        if (hollandResults && typeof hollandResults === 'object') {
+            promptTestsSection += `
+            **Holland Codes (RIASEC Scores):**
+            ${JSON.stringify(hollandResults, null, 2)}
+            `;
+        } else {
+            promptTestsSection += `
+            **Holland Codes (RIASEC Scores):**
+            [Data Not Available]
+            `;
+        }
+
+        const prompt = `
+        You are an expert career counselor and personality analyst. Analyze the following test results to provide personalized career recommendations.
+
+        ${promptTestsSection}
+
+        **Task:**
+        Generate a detailed JSON object with exactly 3 career recommendations. The JSON must follow this exact schema:
+
+        {
+            "personalityAnalysis": "A deep analysis (approx 150 words) explaining how their personality traits and interests align with career paths.",
+            "top3Careers": [
+                { 
+                    "title": "Specific Job Title 1 (Most Compatible)", 
+                    "fit": "95%", 
+                    "reason": "2-3 sentences explaining WHY this fits their specific trait combination.",
+                    "skills": ["Key Skill 1", "Key Skill 2", "Key Skill 3"],
+                    "roadmap": [
+                        { "step": "Phase 1: Foundation (Months 1-2)", "description": "Specific, actionable steps" },
+                        { "step": "Phase 2: Skill Building (Months 3-6)", "description": "Specific, actionable steps" },
+                        { "step": "Phase 3: Application (Months 7-12)", "description": "Specific, actionable steps" }
+                    ],
+                    "resources": {
+                        "books": [
+                            { "title": "Recommended Book", "author": "Author Name", "link": "https://amazon.com/..." }
+                        ],
+                        "youtubeCourses": [
+                            { "title": "Course Title", "channel": "Channel Name", "link": "https://youtube.com/..." }
+                        ],
+                        "platforms": [
+                            { "title": "Course Name", "platform": "Coursera/Udemy/edX", "link": "https://platform.com/..." }
+                        ]
+                    }
+                },
+                { 
+                    "title": "Specific Job Title 2 (Second Most Compatible)", 
+                    "fit": "90%", 
+                    "reason": "...",
+                    "skills": ["..."],
+                    "roadmap": [
+                        { "step": "Phase 1: Foundation", "description": "..." },
+                        { "step": "Phase 2: Skill Building", "description": "..." },
+                        { "step": "Phase 3: Application", "description": "..." }
+                    ],
+                    "resources": {
+                        "books": [{ "title": "...", "author": "...", "link": "https://..." }],
+                        "youtubeCourses": [{ "title": "...", "channel": "...", "link": "https://..." }],
+                        "platforms": [{ "title": "...", "platform": "...", "link": "https://..." }]
+                    }
+                },
+                { 
+                    "title": "Specific Job Title 3 (Third Most Compatible)", 
+                    "fit": "85%", 
+                    "reason": "...",
+                    "skills": ["..."],
+                    "roadmap": [
+                        { "step": "Phase 1: Foundation", "description": "..." },
+                        { "step": "Phase 2: Skill Building", "description": "..." },
+                        { "step": "Phase 3: Application", "description": "..." }
+                    ],
+                    "resources": {
+                        "books": [{ "title": "...", "author": "...", "link": "https://..." }],
+                        "youtubeCourses": [{ "title": "...", "channel": "...", "link": "https://..." }],
+                        "platforms": [{ "title": "...", "platform": "...", "link": "https://..." }]
+                    }
+                }
+            ]
+        }
+        `;
+
+        // Get Gemini model from env var or use default
+        const geminiModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+
+        // Call Gemini API with timeout
+        let response;
+        try {
+            response = await Promise.race([
+                ai.models.generateContent({
+                    model: geminiModel,
+                    contents: prompt,
+                    config: {
+                        responseMimeType: "application/json",
+                    }
+                }),
+                new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('AI request timeout')), 60000)
+                )
+            ]);
+        } catch (aiError) {
+            logger.error('Error calling Gemini API:', aiError.message);
+            return res.status(500).json({ 
+                error: 'AI service error',
+                message: 'Failed to generate analysis',
+                code: 'AI_ERROR',
+                details: process.env.NODE_ENV === 'production' ? undefined : aiError.message
+            });
+        }
+
+        // Parse Gemini response
+        let analysis;
+        try {
+            const responseText = response.text || JSON.stringify(response);
+            analysis = typeof responseText === 'string' ? JSON.parse(responseText) : responseText;
+        } catch (parseError) {
+            logger.error('Error parsing Gemini response:', parseError.message);
+            return res.status(500).json({ 
+                error: 'Invalid AI response',
+                message: 'Failed to parse analysis',
+                code: 'PARSE_ERROR'
+            });
+        }
+
+        // Save analysis to Firestore
+        const timestamp = admin.firestore.FieldValue.serverTimestamp();
+        const analysisRef = admin.firestore()
+            .collection('users')
+            .doc(userId)
+            .collection('analysis')
+            .doc();
+
+        await analysisRef.set({
+            ...analysis,
+            timestamp: timestamp,
+            createdAt: timestamp,
+            testResults: {
+                bigfive: bigFiveResults,
+                holland: hollandResults
+            }
+        });
+
+        logger.log(`[Gemini] Analysis saved to Firestore for user ${userId}`);
+
+        // Return analysis
+        res.json({
+            success: true,
+            analysis: analysis,
+            savedAt: analysisRef.id
+        });
+
+    } catch (err) {
+        logger.error('Error in analyze-with-gemini:', err.message);
+        logger.error('Error stack:', err.stack);
+        res.status(500).json({ 
+            error: 'Failed to analyze with Gemini',
+            message: err.message,
+            code: 'ANALYSIS_ERROR',
+            details: process.env.NODE_ENV === 'production' ? undefined : err.stack
+        });
+    }
+});
+
+// GET route - Big Five Test Questions from JSON file
+// FIXED: Loads from local JSON file instead of Firestore
+app.get('/api/bigfive', (req, res) => {
+    try {
+        logger.log('Fetching Big-Five questions from JSON file...');
+        
+        const filePath = path.join(__dirname, 'tests', 'Big-Five', 'BigFive.json');
+        
+        // Check if file exists
+        if (!fs.existsSync(filePath)) {
+            logger.error('Big-Five JSON file not found:', filePath);
+            return res.status(404).json({ 
+                error: 'Not found', 
+                message: 'Big-Five test questions file not found',
+                code: 'QUESTIONS_NOT_FOUND'
+            });
+        }
+        
+        // Read and parse JSON file
+        const fileData = fs.readFileSync(filePath, 'utf8');
+        const questions = JSON.parse(fileData);
+        
+        logger.log(`Big-Five questions loaded: ${questions.length} questions`);
+        
+        // Return as { questions: [...] } format for compatibility
+        res.json({ questions: questions });
+        
+    } catch (error) {
+        logger.error('Error loading Big-Five questions from JSON:', error.message);
+        res.status(500).json({ 
+            error: 'Internal server error', 
+            message: 'Failed to load Big-Five test questions',
+            code: 'LOAD_ERROR',
+            details: process.env.NODE_ENV === 'production' ? undefined : error.message
+        });
+    }
+});
+
+// GET route - Holland Test Questions from JSON file
+// FIXED: Loads from local JSON file instead of Firestore
+// Support both /api/holland and /api/tests/holland for compatibility
+app.get('/api/holland', (req, res) => {
+    try {
+        logger.log('Fetching Holland questions from JSON file...');
+        
+        const filePath = path.join(__dirname, 'tests', 'Holland', 'Holland.json');
+        
+        // Check if file exists
+        if (!fs.existsSync(filePath)) {
+            logger.error('Holland JSON file not found:', filePath);
+            return res.status(404).json({ 
+                error: 'Not found', 
+                message: 'Holland test questions file not found',
+                code: 'QUESTIONS_NOT_FOUND'
+            });
+        }
+        
+        // Read and parse JSON file
+        const fileData = fs.readFileSync(filePath, 'utf8');
+        const questions = JSON.parse(fileData);
+        
+        logger.log(`Holland questions loaded: ${questions.length} questions`);
+        
+        // Return as { questions: [...] } format for compatibility
+        res.json({ questions: questions });
+        
+    } catch (error) {
+        logger.error('Error loading Holland questions from JSON:', error.message);
+        res.status(500).json({ 
+            error: 'Internal server error', 
+            message: 'Failed to load Holland test questions',
+            code: 'LOAD_ERROR',
+            details: process.env.NODE_ENV === 'production' ? undefined : error.message
+        });
+    }
+});
+
+// Additional routes for /api/tests/* pattern (alias routes)
+app.get('/api/tests/bigfive', (req, res) => {
+    try {
+        logger.log('Fetching Big-Five questions from JSON file via /api/tests/bigfive...');
+        
+        const filePath = path.join(__dirname, 'tests', 'Big-Five', 'BigFive.json');
+        
+        if (!fs.existsSync(filePath)) {
+            logger.error('Big-Five JSON file not found:', filePath);
+            return res.status(404).json({ 
+                error: 'Not found', 
+                message: 'Big-Five test questions file not found',
+                code: 'QUESTIONS_NOT_FOUND'
+            });
+        }
+        
+        const fileData = fs.readFileSync(filePath, 'utf8');
+        const questions = JSON.parse(fileData);
+        logger.log(`Big-Five questions loaded via /api/tests/bigfive: ${questions.length} questions`);
+        res.json({ questions: questions });
+    } catch (error) {
+        logger.error('Error loading Big-Five questions from JSON:', error.message);
+        res.status(500).json({ 
+            error: 'Internal server error', 
+            message: 'Failed to load Big-Five test questions',
+            code: 'LOAD_ERROR',
+            details: process.env.NODE_ENV === 'production' ? undefined : error.message
+        });
+    }
+});
+
+app.get('/api/tests/holland', (req, res) => {
+    try {
+        logger.log('Fetching Holland questions from JSON file via /api/tests/holland...');
+        
+        const filePath = path.join(__dirname, 'tests', 'Holland', 'Holland.json');
+        
+        if (!fs.existsSync(filePath)) {
+            logger.error('Holland JSON file not found:', filePath);
+            return res.status(404).json({ 
+                error: 'Not found', 
+                message: 'Holland test questions file not found',
+                code: 'QUESTIONS_NOT_FOUND'
+            });
+        }
+        
+        const fileData = fs.readFileSync(filePath, 'utf8');
+        const questions = JSON.parse(fileData);
+        logger.log(`Holland questions loaded via /api/tests/holland: ${questions.length} questions`);
+        res.json({ questions: questions });
+    } catch (error) {
+        logger.error('Error loading Holland questions from JSON:', error.message);
+        res.status(500).json({ 
+            error: 'Internal server error', 
+            message: 'Failed to load Holland test questions',
+            code: 'LOAD_ERROR',
+            details: process.env.NODE_ENV === 'production' ? undefined : error.message
+        });
+    }
 });
 
 // POST route - Submit test data (generic endpoint)

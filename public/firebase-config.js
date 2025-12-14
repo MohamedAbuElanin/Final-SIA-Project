@@ -89,21 +89,32 @@ const storage = getStorage(app);
 
 // Enable offline persistence for Firestore (improves performance and offline support)
 // This allows the app to work offline and cache data locally
-try {
-    enableIndexedDbPersistence(db).catch((err) => {
-        if (err.code === 'failed-precondition') {
-            // Multiple tabs open, persistence can only be enabled in one tab at a time
-            console.warn('⚠️ Firestore persistence already enabled in another tab');
-        } else if (err.code === 'unimplemented') {
-            // The current browser does not support all of the features required
-            console.warn('⚠️ Firestore persistence not supported in this browser');
-        } else {
-            console.warn('⚠️ Firestore persistence error:', err);
-        }
-    });
-} catch (error) {
-    // Persistence may not be available in all environments
-    console.warn('⚠️ Could not enable Firestore persistence:', error);
+// Only enable on production, disable on localhost to avoid conflicts
+const isLocalhost = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' ||
+                    window.location.hostname === '';
+
+if (!isLocalhost) {
+    try {
+        enableIndexedDbPersistence(db).catch((err) => {
+            if (err.code === 'failed-precondition') {
+                // Multiple tabs open, persistence can only be enabled in one tab at a time
+                // This is expected behavior, not an error - silently handle it
+                console.log('ℹ️ Firestore persistence already enabled in another tab (this is normal)');
+            } else if (err.code === 'unimplemented') {
+                // The current browser does not support all of the features required
+                console.log('ℹ️ Firestore persistence not supported in this browser');
+            } else {
+                // Only log actual errors, not expected conditions
+                console.warn('⚠️ Firestore persistence error:', err);
+            }
+        });
+    } catch (error) {
+        // Persistence may not be available in all environments
+        console.log('ℹ️ Firestore persistence not available:', error.message);
+    }
+} else {
+    console.log('ℹ️ Firestore persistence disabled on localhost to avoid conflicts');
 }
 
 // Initialize Analytics (only in production, not on localhost)

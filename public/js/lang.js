@@ -3,22 +3,90 @@ let translations = {};
 
 async function loadLanguage(lang) {
   try {
-    const response = await fetch(`/assets/i18n/${lang}.json`);
-    if (!response.ok) {
-      throw new Error(`Failed to load language: ${lang}`);
+    // Determine the correct path based on current page location
+    // This avoids trying absolute paths that fail on localhost
+    const currentPath = window.location.pathname;
+    let basePath = '../assets/i18n/';
+    
+    // Calculate relative path to assets/i18n based on current page depth
+    // Root pages (index.html) -> ./assets/i18n/
+    // One level deep (profile/profile.html) -> ../assets/i18n/
+    // Two levels deep -> ../../assets/i18n/
+    if (currentPath === '/' || currentPath.endsWith('/index.html') || currentPath.endsWith('/')) {
+      // Root level
+      basePath = './assets/i18n/';
+    } else {
+      // Count directory depth (excluding filename)
+      const pathParts = currentPath.split('/').filter(p => p && !p.endsWith('.html'));
+      const depth = pathParts.length;
+      basePath = '../'.repeat(depth) + 'assets/i18n/';
     }
+    
+    // Try the calculated path first (most reliable)
+    const primaryPath = `${basePath}${lang}.json`;
+    
+    let response = null;
+    let successfulPath = null;
+    
+    // Try primary path first
+    try {
+      response = await fetch(primaryPath);
+      if (response.ok) {
+        successfulPath = primaryPath;
+        console.log(`[i18n] ✅ Found language file at: ${successfulPath}`);
+      }
+    } catch (err) {
+      // Primary path failed, try fallback
+      console.log(`[i18n] Primary path failed: ${primaryPath}, trying fallback...`);
+    }
+    
+    // Fallback: try one level up if primary failed
+    if (!response || !response.ok) {
+      const fallbackPath = `../assets/i18n/${lang}.json`;
+      try {
+        response = await fetch(fallbackPath);
+        if (response.ok) {
+          successfulPath = fallbackPath;
+          console.log(`[i18n] ✅ Found language file at: ${successfulPath}`);
+        }
+      } catch (err) {
+        // Fallback also failed
+      }
+    }
+    
+    if (!response || !response.ok) {
+      throw new Error(`Failed to load language: ${lang} from ${primaryPath}`);
+    }
+    
     translations = await response.json();
     applyTranslations();
     applyDirection(lang);
     localStorage.setItem('lang', lang);
     currentLang = lang;
+    
+    // Update all language dropdowns to show current language
+    updateAllLanguageDisplays();
+    console.log(`[i18n] ✅ Language loaded successfully: ${lang} from ${successfulPath}`);
   } catch (error) {
     console.error('Error loading language:', error);
-    // Fallback to English if language file fails to load
+    // Fallback: Use empty translations object to prevent crashes
+    translations = {};
+    // Try to load English as fallback
     if (lang !== 'en') {
+      console.log(`[i18n] Attempting fallback to English...`);
       loadLanguage('en');
+    } else {
+      // Even English failed, but we continue with empty translations
+      console.warn('[i18n] ⚠️ Language files not found, continuing without translations');
+      console.warn('[i18n] Expected location: ./assets/i18n/en.json or ../assets/i18n/en.json');
     }
   }
+}
+
+function updateAllLanguageDisplays() {
+  document.querySelectorAll('.lang-current').forEach(el => {
+    el.textContent = currentLang.toUpperCase();
+  });
 }
 
 function applyTranslations() {
@@ -120,6 +188,8 @@ function setLanguage(lang) {
     updateLanguageDisplay(dropdown);
     dropdown.classList.remove('active');
   });
+  // Update all language displays
+  updateAllLanguageDisplays();
 }
 
 // Initialize on page load
@@ -148,4 +218,7 @@ window.i18n = {
   setLanguage: setLanguage,
   getCurrentLang: () => currentLang
 };
+
+// Make setLanguage available globally for onclick handlers
+window.setLanguage = setLanguage;
 

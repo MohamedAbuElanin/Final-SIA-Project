@@ -19,7 +19,6 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-      integrity="sha512-Mm4N2zg4s46HoPazTA/gkGEXLMaLLq5yRvCNrI6VsgGAaHo9dZYkTfGZNVVRhk1FdYyqS/fWznuaCG2l9VmO3g=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
@@ -54,11 +53,11 @@
 
         <!-- Center Navigation Links -->
         <ul class="nav-links" id="navLinks">
-          <li><a href="../index.html">Home</a></li>
-          <li><a href="../About/About.html">About</a></li>
-          <li><a href="../Test/Test.html">Test</a></li>
-          <li><a href="./profile.html" aria-current="page">Profile</a></li>
-          <li><a href="../privacy-terms.html">Privacy & Terms</a></li>
+          <li><a href="../index.html" data-key="nav_home">Home</a></li>
+          <li><a href="../About/About.html" data-key="nav_about">About</a></li>
+          <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
+          <li><a href="./profile.html" aria-current="page" data-key="nav_profile">Profile</a></li>
+          <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
         </ul>
 
         <!-- Right Buttons Section -->
@@ -96,11 +95,11 @@
         <div class="nav-drawer" aria-hidden="true">
           <!-- Center Navigation Links duplicated for the mobile drawer -->
           <ul class="drawer-links">
-            <li><a href="../index.html">Home</a></li>
-            <li><a href="../About/About.html">About</a></li>
-            <li><a href="../Test/Test.html">Test</a></li>
-            <li><a href="./profile.html" aria-current="page">Profile</a></li>
-            <li><a href="../privacy-terms.html">Privacy & Terms</a></li>
+            <li><a href="../index.html" data-key="nav_home">Home</a></li>
+            <li><a href="../About/About.html" data-key="nav_about">About</a></li>
+            <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
+            <li><a href="./profile.html" aria-current="page" data-key="nav_profile">Profile</a></li>
+            <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
           </ul>
           <!-- Right Buttons Section duplicated for stacked layout -->
           <div class="drawer-auth" style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
@@ -610,11 +609,11 @@
     ></script>
 
     <!-- Firebase SDK - Modular SDK (v9+) -->
+    <!-- Load Firebase config first, then auth-state, then auth (all as modules) -->
     <script type="module" src="../firebase-config.js"></script>
-    <script src="../auth-state.js"></script>
+    <script type="module" src="../auth-state.js"></script>
+    <script type="module" src="../auth.js"></script>
     <script src="../auth-guard.js"></script>
-    <script src="../auth-guard.js"></script>
-    <script src="../auth.js"></script>
 
     <!-- Config -->
     <script src="../config.js"></script>

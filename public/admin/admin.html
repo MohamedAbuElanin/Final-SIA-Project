@@ -27,25 +27,25 @@
                 <h4>Admin</h4>
             </div>
             <nav class="admin-nav">
-                <a href="#" class="admin-nav-item active" data-section="dashboard">
+                <a href="#" class="admin-nav-item active" data-section="dashboard" data-key="admin_dashboard">
                     <i class="fas fa-chart-line"></i>
-                    Dashboard
+                    <span data-key="admin_dashboard">Dashboard</span>
                 </a>
-                <a href="#" class="admin-nav-item" data-section="users">
+                <a href="#" class="admin-nav-item" data-section="users" data-key="admin_users">
                     <i class="fas fa-users"></i>
-                    Users
+                    <span data-key="admin_users">Users</span>
                 </a>
-                <a href="#" class="admin-nav-item" data-section="tests">
+                <a href="#" class="admin-nav-item" data-section="tests" data-key="admin_tests">
                     <i class="fas fa-clipboard-list"></i>
-                    Tests
+                    <span data-key="admin_tests">Tests</span>
                 </a>
-                <a href="#" class="admin-nav-item" data-section="results">
+                <a href="#" class="admin-nav-item" data-section="results" data-key="admin_results">
                     <i class="fas fa-chart-bar"></i>
-                    Results
+                    <span data-key="admin_results">Results</span>
                 </a>
-                <a href="#" class="admin-nav-item" data-section="settings">
+                <a href="#" class="admin-nav-item" data-section="settings" data-key="admin_settings">
                     <i class="fas fa-cog"></i>
-                    Settings
+                    <span data-key="admin_settings">Settings</span>
                 </a>
             </nav>
         </aside>
@@ -58,7 +58,7 @@
                     <button class="mobile-menu-toggle" id="mobileMenuToggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h5 class="mb-0 text-gold">Admin Console</h5>
+                    <h5 class="mb-0 text-gold" data-key="admin_console">Admin Console</h5>
                 </div>
                 <div class="admin-header-right">
                     <div class="lang-dropdown">
@@ -160,7 +160,7 @@
 
     <!-- Firebase SDK - Modular SDK (v9+) -->
     <script type="module" src="../firebase-config.js"></script>
-    <script src="../auth-state.js"></script>
+    <script type="module" src="../auth-state.js"></script>
     <script src="../auth-guard.js"></script>
     
     <!-- Admin Logic -->
