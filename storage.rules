@@ -1,10 +1,24 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    match /users/{userId}/{allPaths=**} {
-      // FIXED: Restrict read access to authenticated users only
+    // Profile photos: Only owner can upload/update, authenticated users can read
+    match /profile-photos/{userId}/{allPaths=**} {
+      // Allow read for authenticated users
       allow read: if request.auth != null;
-      // FIXED: Enforce file size and type validation
+      
+      // Allow write only for owner with size and type validation
+      allow write: if request.auth != null 
+                   && request.auth.uid == userId
+                   && request.resource.size < 5 * 1024 * 1024 // 5MB limit
+                   && request.resource.contentType.matches('image/.*'); // Image only
+    }
+    
+    // Legacy path support
+    match /users/{userId}/{allPaths=**} {
+      // Allow read for authenticated users
+      allow read: if request.auth != null;
+      
+      // Allow write only for owner with size and type validation
       allow write: if request.auth != null 
                    && request.auth.uid == userId
                    && request.resource.size < 5 * 1024 * 1024 // 5MB limit

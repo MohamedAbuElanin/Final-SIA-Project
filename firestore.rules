@@ -34,8 +34,15 @@ service cloud.firestore {
       }
     }
 
-    // TestsResults Collection: Users can read/write their own results
+    // TestsResults Collection: Users can read/write their own results (legacy)
     match /TestsResults/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create, update: if isOwner(userId) || isAdmin();
+      allow delete: if false; // Prevent accidental deletion
+    }
+
+    // tests_results Collection: New structure - Users can read/write their own results
+    match /tests_results/{userId} {
       allow read: if isOwner(userId) || isAdmin();
       allow create, update: if isOwner(userId) || isAdmin();
       allow delete: if false; // Prevent accidental deletion

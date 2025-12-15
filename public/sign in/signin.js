@@ -9,7 +9,8 @@ import {
     collection, 
     doc, 
     getDoc, 
-    setDoc, 
+    setDoc,
+    updateDoc,
     serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import { db } from '../firebase-config.js';
@@ -315,26 +316,73 @@ function setupGoogleSignIn() {
                 let isNewUser = false;
                 
                 if (!userDoc.exists()) {
-                    // Create user profile with minimal data
+                    // Create user profile with Google data
                     const defaultAvatar = '../assets/male.svg';
+                    
+                    // Extract name parts from displayName if available
+                    const displayName = user.displayName || '';
+                    const nameParts = displayName.split(' ');
+                    const firstName = nameParts[0] || '';
+                    const lastName = nameParts.slice(1).join(' ') || '';
                     
                     const userProfile = {
                         uid: user.uid,
-                        fullName: user.displayName || '', // Use Google display name if available
-                        email: user.email || '',
-                        dateOfBirth: '',
-                        gender: 'male', // Default
+                        fullName: displayName || '', // Use Google display name
+                        displayName: displayName || '', // Also save as displayName for compatibility
+                        email: user.email || '', // Use Google email
+                        dateOfBirth: '', // Will be collected when user edits profile
+                        gender: 'male', // Default, user can update
                         education: '',
                         studentStatus: '',
                         avatar: user.photoURL || defaultAvatar, // Use Google photo if available
+                        photoURL: user.photoURL || defaultAvatar, // Also save as photoURL
                         createdAt: serverTimestamp(),
-                        updatedAt: serverTimestamp()
+                        updatedAt: serverTimestamp(),
+                        lastLogin: serverTimestamp(),
+                        provider: 'google' // Track sign-in method
                     };
                     
                     // FIXED: Save user profile using modular SDK
                     const userProfileRef = doc(db, 'users', user.uid);
                     await setDoc(userProfileRef, userProfile);
+                    
+                    // Log activity
+                    try {
+                        const activityRef = doc(collection(db, 'users', user.uid, 'activityLogs'));
+                        await setDoc(activityRef, {
+                            action: 'Account Created via Google Sign-In',
+                            timestamp: serverTimestamp(),
+                            details: { email: user.email }
+                        });
+                    } catch (activityError) {
+                        console.warn('Could not log activity:', activityError);
+                    }
+                    
                     isNewUser = true;
+                } else {
+                    // Update last login for existing users
+                    const userProfileRef = doc(db, 'users', user.uid);
+                    await updateDoc(userProfileRef, {
+                        lastLogin: serverTimestamp(),
+                        // Update Google data if it changed
+                        email: user.email || userDoc.data().email,
+                        fullName: user.displayName || userDoc.data().fullName,
+                        displayName: user.displayName || userDoc.data().displayName,
+                        photoURL: user.photoURL || userDoc.data().photoURL,
+                        avatar: user.photoURL || userDoc.data().avatar
+                    });
+                    
+                    // Log activity
+                    try {
+                        const activityRef = doc(collection(db, 'users', user.uid, 'activityLogs'));
+                        await setDoc(activityRef, {
+                            action: 'Signed In via Google',
+                            timestamp: serverTimestamp(),
+                            details: {}
+                        });
+                    } catch (activityError) {
+                        console.warn('Could not log activity:', activityError);
+                    }
                 }
 
                 // Redirect based on user status

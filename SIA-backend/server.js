@@ -119,7 +119,31 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization']
 };
 
-// Middleware
+// ==========================================
+// MIDDLEWARE STACK
+// ==========================================
+
+// Request logging middleware - CRITICAL for debugging 404s
+app.use((req, res, next) => {
+    const requestId = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    req.requestId = requestId;
+    
+    // Log all incoming requests
+    logger.log(`[Request] [${requestId}] ${req.method} ${req.path}`);
+    logger.log(`[Request] [${requestId}] Origin: ${req.get('origin') || 'none'}`);
+    logger.log(`[Request] [${requestId}] IP: ${req.ip}`);
+    
+    // Log response when finished
+    const originalSend = res.send;
+    res.send = function(data) {
+        logger.log(`[Response] [${requestId}] ${req.method} ${req.path} → ${res.statusCode}`);
+        return originalSend.call(this, data);
+    };
+    
+    next();
+});
+
+// Standard middleware
 app.use(limiter); // FIXED: Apply rate limiting
 app.use(cors(corsOptions)); // FIXED: Use configured CORS
 app.use(bodyParser.json({ limit: '10mb' })); // FIXED: Add size limit
@@ -174,22 +198,98 @@ const authenticateUser = async (req, res, next) => {
 
 // Routes
 
-// GET route - Health check
+// ==========================================
+// ROOT & HEALTH CHECK ENDPOINTS
+// ==========================================
+
+// GET route - Root endpoint
 app.get('/', (req, res) => {
     res.json({ 
         status: 'success',
         message: 'SIA Backend Server is running!',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        endpoints: {
+            health: '/api/health',
+            profile: '/api/profile'
+        }
     });
 });
 
-// Health check endpoint for Render/Railway
+// Health check endpoint for Render/Railway (legacy)
 app.get('/healthz', (req, res) => {
     res.status(200).json({ 
         status: 'healthy',
         timestamp: new Date().toISOString(),
         uptime: process.uptime()
     });
+});
+
+// ==========================================
+// HEALTH CHECK ENDPOINT
+// ==========================================
+// GET /api/health - Server health and availability check
+// Must be before other /api routes for quick availability check
+// No authentication required
+// CRITICAL: Always returns 200 if server is running (even if services are down)
+app.get('/api/health', (req, res) => {
+    const requestId = req.requestId || `health_${Date.now()}`;
+    
+    // Log health check request
+    logger.log(`[Health Check] 📥 [${requestId}] GET /api/health from ${req.ip}`);
+    
+    try {
+        // Get package version
+        const packageJson = require('./package.json');
+        const version = packageJson.version || '1.0.0';
+        
+        // Get registered routes for response
+        const registeredRoutes = {
+            profile: '/api/profile',
+            health: '/api/health',
+            saveTest: '/api/save-test',
+            analyze: '/api/analyze-with-gemini',
+            userProfile: '/api/user-profile',
+            bigfive: '/api/bigfive',
+            holland: '/api/holland'
+        };
+        
+        // Check service status (non-blocking)
+        const firebaseStatus = admin && admin.firestore ? 'connected' : 'disconnected';
+        const aiStatus = ai ? 'available' : 'unavailable';
+        
+        const healthData = {
+            status: 'healthy', // Always healthy if server is running
+            uptime: Math.floor(process.uptime()), // Integer seconds
+            environment: process.env.NODE_ENV || 'development',
+            version: version,
+            port: PORT,
+            routes: registeredRoutes,
+            timestamp: new Date().toISOString(),
+            services: {
+                firebase: firebaseStatus,
+                ai: aiStatus
+            },
+            requestId: requestId
+        };
+        
+        logger.log(`[Health Check] ✅ [${requestId}] Health check successful - Uptime: ${healthData.uptime}s`);
+        
+        // ALWAYS return 200 - server is running
+        res.status(200).json(healthData);
+    } catch (error) {
+        // Even on error, return 200 with unhealthy status
+        logger.error(`[Health Check] ⚠️ [${requestId}] Error in health check:`, error.message);
+        res.status(200).json({
+            status: 'unhealthy',
+            uptime: Math.floor(process.uptime()),
+            environment: process.env.NODE_ENV || 'development',
+            version: 'unknown',
+            port: PORT,
+            error: error.message,
+            timestamp: new Date().toISOString(),
+            requestId: requestId
+        });
+    }
 });
 
 // POST route - Save Test Results to Firestore
@@ -313,6 +413,14 @@ app.post('/api/save-test', async (req, res) => {
         try {
             await docRef.set(documentData, { merge: true });
             logger.log(`[Save-Test] ✅ Test result saved successfully for user ${userId}, test: ${normalizedTestName}`);
+            
+            // ALSO save to new tests_results collection structure
+            try {
+                await saveToNewTestResultsStructure(userId, normalizedTestName, resultData);
+            } catch (newStructError) {
+                // Log but don't fail the request if new structure save fails
+                logger.warn('[Save-Test] Failed to save to new structure:', newStructError.message);
+            }
         } catch (firestoreError) {
             logger.error('[Save-Test] Firestore error:', firestoreError.message);
             logger.error('[Save-Test] Firestore error stack:', firestoreError.stack);
@@ -367,20 +475,91 @@ app.post('/api/save-test', async (req, res) => {
     }
 });
 
-// POST route - Analyze with Gemini (new endpoint for combined test results)
+// ==========================================
+// AI ANALYSIS ENDPOINT
+// ==========================================
+// POST /api/analyze-with-gemini - Analyze test results with Gemini AI
 // Accepts: { userId, combinedResults } or { testResults: { bigfive: {...}, holland: {...} } }
-app.post('/api/analyze-with-gemini', async (req, res) => {
+// CRITICAL: Prevents duplicate analysis execution
+app.post('/api/analyze-with-gemini', authenticateUser, async (req, res) => {
+    const requestId = req.requestId || `analyze_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const userId = req.user?.uid || req.body.userId;
+    
+    // Structured logging
+    logger.log(`[Gemini API] 📥 [${requestId}] POST /api/analyze-with-gemini`);
+    logger.log(`[Gemini API] 📥 [${requestId}] User: ${userId}`);
+    logger.log(`[Gemini API] 📥 [${requestId}] IP: ${req.ip}`);
+    
     try {
-        const { userId, combinedResults, testResults } = req.body;
-
-        // Validate required fields
-        if (!userId || (!combinedResults && !testResults)) {
-            return res.status(400).json({ 
+        // Validate authentication (if using middleware)
+        if (!userId) {
+            logger.warn(`[Gemini API] ⚠️ [${requestId}] Missing userId`);
+            return res.status(400).json({
+                status: 'error',
                 error: 'Missing fields',
-                message: 'userId and either combinedResults or testResults are required',
-                code: 'MISSING_FIELDS'
+                message: 'userId is required',
+                code: 'MISSING_USER_ID',
+                requestId: requestId
             });
         }
+
+        // CRITICAL: Check if analysis already exists or is in progress to prevent duplicates
+        const db = admin.firestore();
+        const userRef = db.collection('users').doc(userId);
+        const userDoc = await userRef.get();
+        
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+
+            // If AI is already processing or completed, return existing analysis
+            if (userData.aiStatus === 'processing') {
+                logger.log(`[Gemini API] ℹ️ [${requestId}] AI analysis already processing for user ${userId}, skipping duplicate trigger`);
+                return res.status(200).json({
+                    status: 'success',
+                    message: 'AI analysis already processing',
+                    code: 'AI_ALREADY_PROCESSING',
+                    requestId: requestId
+                });
+            }
+
+            if (userData.aiStatus === 'completed' && userData.aiAnalysis) {
+                logger.log(`[Gemini API] ℹ️ [${requestId}] AI analysis already completed for user ${userId}, returning cached result`);
+                return res.status(200).json({
+                    status: 'success',
+                    message: 'Analysis already exists',
+                    analysis: userData.aiAnalysis,
+                    cached: true,
+                    requestId: requestId
+                });
+            }
+
+            // Backwards compatibility: if legacy fields exist, respect 1-hour cache window
+            if (userData.aiSummary && userData.recommendedCareers && userData.recommendedCareers.length > 0) {
+                const lastAnalysisTime = userData.aiAnalysisUpdatedAt?.toDate?.() || 
+                                       (userData.aiAnalysisUpdatedAt ? new Date(userData.aiAnalysisUpdatedAt) : null);
+                
+                if (lastAnalysisTime) {
+                    const hoursSinceAnalysis = (new Date() - lastAnalysisTime) / (1000 * 60 * 60);
+                    
+                    // If analysis exists and is less than 1 hour old, return existing
+                    if (hoursSinceAnalysis < 1) {
+                        logger.log(`[Gemini API] ℹ️ [${requestId}] Legacy analysis exists (${Math.round(hoursSinceAnalysis * 60)} minutes ago), returning existing`);
+                        return res.status(200).json({
+                            status: 'success',
+                            message: 'Analysis already exists',
+                            analysis: {
+                                personalityAnalysis: userData.aiSummary,
+                                top3Careers: userData.recommendedCareers
+                            },
+                            cached: true,
+                            requestId: requestId
+                        });
+                    }
+                }
+            }
+        }
+
+        const { combinedResults, testResults: testResultsBody } = req.body;
 
         // Extract test results
         let bigFiveResults = null;
@@ -389,30 +568,78 @@ app.post('/api/analyze-with-gemini', async (req, res) => {
         if (combinedResults) {
             bigFiveResults = combinedResults.bigfive || combinedResults.bigFive || null;
             hollandResults = combinedResults.holland || null;
-        } else if (testResults) {
-            bigFiveResults = testResults.bigfive || testResults.bigFive || null;
-            hollandResults = testResults.holland || null;
+        } else if (testResultsBody) {
+            bigFiveResults = testResultsBody.bigfive || testResultsBody.bigFive || null;
+            hollandResults = testResultsBody.holland || null;
+        } else {
+            // Try to fetch from Firestore if not provided
+            logger.log(`[Gemini API] ℹ️ [${requestId}] Test results not in request, fetching from Firestore`);
+            const testResultsDoc = await db.collection('tests_results').doc(userId).get();
+            if (testResultsDoc.exists) {
+                const testData = testResultsDoc.data();
+                bigFiveResults = testData.bigFive || null;
+                hollandResults = testData.holland || null;
+            }
         }
 
         // Validate that at least one test result is provided
         if (!bigFiveResults && !hollandResults) {
+            logger.warn(`[Gemini API] ⚠️ [${requestId}] No test results provided or found`);
             return res.status(400).json({ 
+                status: 'error',
                 error: 'Invalid data',
                 message: 'At least one test result (bigfive or holland) must be provided',
-                code: 'INVALID_DATA'
+                code: 'INVALID_DATA',
+                requestId: requestId
+            });
+        }
+
+        // CRITICAL: Validate both tests are complete before analysis
+        const hasBigFive = bigFiveResults && typeof bigFiveResults === 'object' &&
+            ['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'neuroticism'].every(trait => 
+                typeof bigFiveResults[trait] === 'number'
+            );
+        const hasHolland = hollandResults && typeof hollandResults === 'object' &&
+            ['R', 'I', 'A', 'S', 'E', 'C'].every(code => 
+                typeof hollandResults[code] === 'number'
+            );
+
+        if (!hasBigFive || !hasHolland) {
+            logger.warn(`[Gemini API] ⚠️ [${requestId}] Tests incomplete - Big Five: ${hasBigFive}, Holland: ${hasHolland}`);
+            return res.status(400).json({
+                status: 'error',
+                error: 'Tests incomplete',
+                message: 'Both Big Five and Holland tests must be completed before AI analysis',
+                code: 'TESTS_INCOMPLETE',
+                requestId: requestId,
+                testsStatus: {
+                    bigFive: hasBigFive,
+                    holland: hasHolland
+                }
             });
         }
 
         // Check if AI is initialized
         if (!ai) {
+            logger.error(`[Gemini API] ❌ [${requestId}] AI service not available`);
             return res.status(503).json({ 
+                status: 'error',
                 error: 'Service unavailable', 
                 message: 'AI service is not available',
-                code: 'AI_SERVICE_UNAVAILABLE'
+                code: 'AI_SERVICE_UNAVAILABLE',
+                requestId: requestId
             });
         }
 
-        logger.log(`[Gemini] Analyzing combined results for user ${userId}`);
+        // CRITICAL: Set AI status to "processing" before calling Gemini (Firestore lock)
+        await userRef.update({
+            aiStatus: 'processing',
+            aiTriggeredAt: admin.firestore.FieldValue.serverTimestamp(),
+            lastAIAnalysisRequestId: requestId
+        });
+
+        logger.log(`[Gemini API] 🔄 [${requestId}] Starting AI analysis for user ${userId}`);
+        logger.log(`[Gemini API] 🔄 [${requestId}] Big Five: ${hasBigFive ? 'Complete' : 'Incomplete'}, Holland: ${hasHolland ? 'Complete' : 'Incomplete'}`);
 
         // Build prompt for Gemini
         let promptTestsSection = "";
@@ -552,40 +779,72 @@ app.post('/api/analyze-with-gemini', async (req, res) => {
             });
         }
 
-        // Save analysis to Firestore
+        // CRITICAL: Save analysis directly in user profile document
         const timestamp = admin.firestore.FieldValue.serverTimestamp();
-        const analysisRef = admin.firestore()
-            .collection('users')
-            .doc(userId)
-            .collection('analysis')
-            .doc();
 
-        await analysisRef.set({
-            ...analysis,
-            timestamp: timestamp,
-            createdAt: timestamp,
-            testResults: {
-                bigfive: bigFiveResults,
-                holland: hollandResults
-            }
+        // Normalize careers for profile usage
+        const careers = (analysis.top3Careers || []).map(career => ({
+            title: career.title || '',
+            fit: career.fit || 'N/A',
+            reason: career.reason || '',
+            skills: career.skills || [],
+            roadmap: career.roadmap || [],
+            resources: career.resources || {}
+        }));
+
+        // Unified aiAnalysis object saved in profile document
+        const aiAnalysis = {
+            personalityAnalysis: analysis.personalityAnalysis || analysis.personalitySummary || '',
+            top3Careers: careers,
+            overallStrengths: analysis.overallStrengths || [],
+            overallWeaknesses: analysis.overallWeaknesses || [],
+            learningRecommendations: analysis.learningRecommendations || [],
+            generatedAt: timestamp
+        };
+
+        await userRef.update({
+            // Legacy fields for backward compatibility
+            aiSummary: analysis.personalityAnalysis || analysis.personalitySummary || '',
+            recommendedCareers: careers,
+            skillsProfile: {
+                strengths: analysis.overallStrengths || [],
+                weaknesses: analysis.overallWeaknesses || [],
+                learningRecommendations: analysis.learningRecommendations || []
+            },
+            // New unified AI fields
+            aiStatus: 'completed',
+            aiAnalysis: aiAnalysis,
+            aiAnalysisUpdatedAt: timestamp,
+            lastAIAnalysisRequestId: requestId
         });
 
-        logger.log(`[Gemini] Analysis saved to Firestore for user ${userId}`);
+        logger.log(`[Gemini API] ✅ [${requestId}] Analysis saved to Firestore for user ${userId}`);
 
-        // Return analysis
-        res.json({
-            success: true,
-            analysis: analysis,
-            savedAt: analysisRef.id
+        // Return structured response
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json({
+            status: 'success',
+            message: 'AI analysis completed successfully',
+            analysis: aiAnalysis,
+            requestId: requestId,
+            timestamp: new Date().toISOString()
         });
 
     } catch (err) {
-        logger.error('Error in analyze-with-gemini:', err.message);
-        logger.error('Error stack:', err.stack);
+        const requestId = req.requestId || `analyze_error_${Date.now()}`;
+        logger.error(`[Gemini API] ❌ [${requestId}] Error in analyze-with-gemini:`, err.message);
+        logger.error(`[Gemini API] ❌ [${requestId}] Error stack:`, err.stack);
+        logger.error(`[Gemini API] ❌ [${requestId}] User ID: ${userId || 'unknown'}`);
+        
+        // Structured error response - NEVER return HTML
+        res.setHeader('Content-Type', 'application/json');
         res.status(500).json({ 
+            status: 'error',
             error: 'Failed to analyze with Gemini',
             message: err.message,
             code: 'ANALYSIS_ERROR',
+            requestId: requestId,
+            timestamp: new Date().toISOString(),
             details: process.env.NODE_ENV === 'production' ? undefined : err.stack
         });
     }
@@ -1213,11 +1472,412 @@ app.post('/api/analyze-profile', authenticateUser, async (req, res) => {
     }
 });
 
-// GET User Profile Endpoint
-// FIXED: Added validation and error handling
+// ==========================================
+// PROFILE API ENDPOINT
+// ==========================================
+// GET /api/profile - Get user profile with test results and AI analysis
+// Structure: users/{userId} and tests_results/{userId}
+// FIXED: Added comprehensive logging and error handling
+app.get('/api/profile', authenticateUser, async (req, res) => {
+    // CRITICAL: Use requestId from middleware (already set)
+    const requestId = req.requestId || `profile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const userId = req.user?.uid || 'unknown';
+    
+    // Structured logging
+    logger.log(`[Profile API] 📥 [${requestId}] GET /api/profile`);
+    logger.log(`[Profile API] 📥 [${requestId}] User: ${userId}`);
+    logger.log(`[Profile API] 📥 [${requestId}] IP: ${req.ip}`);
+    logger.log(`[Profile API] 📥 [${requestId}] Origin: ${req.get('origin') || 'none'}`);
+    logger.log(`[Profile API] 📥 [${requestId}] User-Agent: ${req.get('user-agent') || 'unknown'}`);
+    
+    try {
+        // Validate user authentication (should already be validated by middleware, but double-check)
+        if (!req.user || !req.user.uid) {
+            logger.warn(`[Profile API] ⚠️ [${requestId}] Unauthorized: Missing user in request`);
+            return res.status(401).json({ 
+                status: 'error',
+                error: 'Unauthorized', 
+                message: 'Invalid user authentication',
+                code: 'INVALID_USER',
+                requestId: requestId
+            });
+        }
+
+        const uid = req.user.uid;
+        const db = admin.firestore();
+        
+        // 1. Fetch user document from users collection
+        const userDoc = await db.collection('users').doc(uid).get();
+        
+        if (!userDoc.exists) {
+            // Create user document from Auth data if it doesn't exist
+            const authUser = await admin.auth().getUser(uid);
+            const newUserData = {
+                name: authUser.displayName || '',
+                email: authUser.email || '',
+                age: null,
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                completedTests: false,
+                aiSummary: null,
+                recommendedCareers: [],
+                skillsProfile: []
+            };
+            
+            await db.collection('users').doc(uid).set(newUserData, { merge: true });
+            
+            return res.json({
+                status: 'success',
+                data: {
+                    user: newUserData,
+                    testResults: null,
+                    testsComplete: false
+                }
+            });
+        }
+
+        const userData = userDoc.data();
+        
+        // 2. Fetch test results from tests_results collection
+        let testResults = null;
+        let testsComplete = false;
+        
+        try {
+            const testResultsDoc = await db.collection('tests_results').doc(uid).get();
+            
+            if (testResultsDoc.exists) {
+                const resultsData = testResultsDoc.data();
+                
+                // Validate test completeness
+                const hasHolland = resultsData.holland && 
+                    typeof resultsData.holland === 'object' &&
+                    ['R', 'I', 'A', 'S', 'E', 'C'].every(code => 
+                        typeof resultsData.holland[code] === 'number'
+                    );
+                
+                const hasBigFive = resultsData.bigFive && 
+                    typeof resultsData.bigFive === 'object' &&
+                    ['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'neuroticism'].every(trait => 
+                        typeof resultsData.bigFive[trait] === 'number'
+                    );
+                
+                testsComplete = hasHolland && hasBigFive;
+                
+                if (testsComplete) {
+                    testResults = {
+                        holland: {
+                            R: resultsData.holland.R || 0,
+                            I: resultsData.holland.I || 0,
+                            A: resultsData.holland.A || 0,
+                            S: resultsData.holland.S || 0,
+                            E: resultsData.holland.E || 0,
+                            C: resultsData.holland.C || 0
+                        },
+                        bigFive: {
+                            openness: resultsData.bigFive.openness || 0,
+                            conscientiousness: resultsData.bigFive.conscientiousness || 0,
+                            extraversion: resultsData.bigFive.extraversion || 0,
+                            agreeableness: resultsData.bigFive.agreeableness || 0,
+                            neuroticism: resultsData.bigFive.neuroticism || 0
+                        },
+                        completedAt: resultsData.completedAt || null
+                    };
+                    
+                    // Update user's completedTests flag if not already set
+                    if (!userData.completedTests) {
+                        await db.collection('users').doc(uid).update({
+                            completedTests: true
+                        });
+                        userData.completedTests = true;
+                    }
+                    
+                    // Trigger AI analysis if tests are complete but AI data is missing
+                    if (testsComplete && (!userData.aiSummary || !userData.recommendedCareers || userData.recommendedCareers.length === 0)) {
+                        // AI analysis will be triggered asynchronously
+                        // Don't wait for it in the response
+                        triggerAIAnalysis(uid, testResults).catch(err => {
+                            logger.error('Error triggering AI analysis:', err.message);
+                        });
+                    }
+                } else {
+                    // Tests incomplete - return partial results
+                    testResults = {
+                        holland: hasHolland ? resultsData.holland : null,
+                        bigFive: hasBigFive ? resultsData.bigFive : null,
+                        completedAt: null
+                    };
+                }
+            }
+        } catch (testError) {
+            logger.error('Error fetching test results:', testError.message);
+            // Continue without test results
+        }
+
+        // 3. Return combined data with structured response
+        const responseData = {
+            status: 'success',
+            requestId: requestId,
+            timestamp: new Date().toISOString(),
+            data: {
+                user: {
+                    name: userData.name || '',
+                    email: userData.email || '',
+                    age: userData.age || null,
+                    photoURL: userData.photoURL || null,
+                    gender: userData.gender || null,
+                    createdAt: userData.createdAt,
+                    completedTests: userData.completedTests || false,
+                    aiSummary: userData.aiSummary || null,
+                    recommendedCareers: userData.recommendedCareers || [],
+                    skillsProfile: userData.skillsProfile || {}
+                },
+                testResults: testResults,
+                testsComplete: testsComplete
+            }
+        };
+        
+        logger.log(`[Profile API] ✅ [${requestId}] Successfully returned profile for user ${uid}`);
+        logger.log(`[Profile API] ✅ [${requestId}] Tests complete: ${testsComplete}, AI summary: ${userData.aiSummary ? 'yes' : 'no'}`);
+        
+        // ALWAYS return JSON, never HTML
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(responseData);
+        
+    } catch (error) {
+        const requestId = req.requestId || `profile_error_${Date.now()}`;
+        logger.error(`[Profile API] ❌ [${requestId}] Error fetching user profile:`, error.message);
+        logger.error(`[Profile API] ❌ [${requestId}] Error stack:`, error.stack);
+        logger.error(`[Profile API] ❌ [${requestId}] User ID: ${req.user?.uid || 'unknown'}`);
+        
+        // Structured error response - NEVER return HTML
+        res.setHeader('Content-Type', 'application/json');
+        res.status(500).json({ 
+            status: 'error',
+            error: 'Internal server error', 
+            message: 'Failed to fetch user profile',
+            code: 'PROFILE_FETCH_ERROR',
+            requestId: requestId,
+            timestamp: new Date().toISOString(),
+            details: process.env.NODE_ENV === 'production' ? undefined : error.message
+        });
+    }
+});
+
+/**
+ * Helper function to save test results to new tests_results collection structure
+ * Structure: tests_results/{userId} with holland and bigFive sub-objects
+ */
+async function saveToNewTestResultsStructure(userId, testName, resultData) {
+    try {
+        const db = admin.firestore();
+        const testResultsRef = db.collection('tests_results').doc(userId);
+        
+        // Get existing document
+        const existingDoc = await testResultsRef.get();
+        const existingData = existingDoc.exists() ? existingDoc.data() : {};
+        
+        // Normalize test name
+        const normalizedTestName = testName.trim().toLowerCase();
+        let isHolland = normalizedTestName.includes('holland');
+        let isBigFive = normalizedTestName.includes('big') || normalizedTestName.includes('five');
+        
+        // Extract scores from resultData
+        // Handle different data structures
+        let hollandData = null;
+        let bigFiveData = null;
+        
+        if (isHolland) {
+            // Extract Holland codes (R, I, A, S, E, C)
+            const hollandScores = resultData.result || resultData.scores || resultData.holland || {};
+            hollandData = {
+                R: hollandScores.R || hollandScores.Realistic || hollandScores.realistic || 0,
+                I: hollandScores.I || hollandScores.Investigative || hollandScores.investigative || 0,
+                A: hollandScores.A || hollandScores.Artistic || hollandScores.artistic || 0,
+                S: hollandScores.S || hollandScores.Social || hollandScores.social || 0,
+                E: hollandScores.E || hollandScores.Enterprising || hollandScores.enterprising || 0,
+                C: hollandScores.C || hollandScores.Conventional || hollandScores.conventional || 0
+            };
+        }
+        
+        if (isBigFive) {
+            // Extract Big Five traits
+            const bigFiveScores = resultData.result || resultData.scores || resultData.bigFive || {};
+            bigFiveData = {
+                openness: bigFiveScores.openness || bigFiveScores.Openness || bigFiveScores.O || 0,
+                conscientiousness: bigFiveScores.conscientiousness || bigFiveScores.Conscientiousness || bigFiveScores.C || 0,
+                extraversion: bigFiveScores.extraversion || bigFiveScores.Extraversion || bigFiveScores.E || 0,
+                agreeableness: bigFiveScores.agreeableness || bigFiveScores.Agreeableness || bigFiveScores.A || 0,
+                neuroticism: bigFiveScores.neuroticism || bigFiveScores.Neuroticism || bigFiveScores.N || 0
+            };
+        }
+        
+        // Prepare update data
+        const updateData = {
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+        
+        if (hollandData) {
+            updateData.holland = hollandData;
+        }
+        
+        if (bigFiveData) {
+            updateData.bigFive = bigFiveData;
+        }
+        
+        // Set completedAt if both tests are now complete
+        const hasHolland = updateData.holland || existingData.holland;
+        const hasBigFive = updateData.bigFive || existingData.bigFive;
+        
+        if (hasHolland && hasBigFive && !existingData.completedAt) {
+            updateData.completedAt = admin.firestore.FieldValue.serverTimestamp();
+        } else if (hasHolland && hasBigFive && existingData.completedAt) {
+            // Keep existing completedAt
+            updateData.completedAt = existingData.completedAt;
+        }
+        
+        // Save to tests_results collection
+        await testResultsRef.set(updateData, { merge: true });
+        
+        logger.log(`[Save-Test] ✅ Saved to new tests_results structure for user ${userId}`);
+        
+    } catch (error) {
+        logger.error('[Save-Test] Error saving to new structure:', error.message);
+        throw error;
+    }
+}
+
+/**
+ * Helper function to trigger AI analysis asynchronously
+ * Analyzes both tests together and saves results to users collection
+ */
+async function triggerAIAnalysis(userId, testResults) {
+    try {
+        if (!ai) {
+            logger.warn('AI service not available for analysis');
+            return;
+        }
+
+        const { holland, bigFive } = testResults;
+        
+        // Build comprehensive prompt for AI
+        const prompt = `
+You are an expert career counselor and personality analyst. Analyze the following test results to provide personalized career recommendations.
+
+**Holland Codes (RIASEC):**
+- Realistic (R): ${holland.R}%
+- Investigative (I): ${holland.I}%
+- Artistic (A): ${holland.A}%
+- Social (S): ${holland.S}%
+- Enterprising (E): ${holland.E}%
+- Conventional (C): ${holland.C}%
+
+**Big Five Personality Traits:**
+- Openness: ${bigFive.openness}%
+- Conscientiousness: ${bigFive.conscientiousness}%
+- Extraversion: ${bigFive.extraversion}%
+- Agreeableness: ${bigFive.agreeableness}%
+- Neuroticism: ${bigFive.neuroticism}%
+
+**Task:**
+Generate a detailed JSON object with the following structure:
+
+{
+    "personalitySummary": "A comprehensive 200-300 word analysis explaining how their personality traits and interests align with career paths. Write in a warm, encouraging, and human-readable style.",
+    "top3Careers": [
+        {
+            "title": "Specific Job Title 1",
+            "fit": "95%",
+            "reason": "2-3 sentences explaining WHY this fits their specific trait combination",
+            "strengths": ["Strength 1", "Strength 2", "Strength 3"],
+            "weaknesses": ["Area for improvement 1", "Area for improvement 2"]
+        },
+        {
+            "title": "Specific Job Title 2",
+            "fit": "90%",
+            "reason": "...",
+            "strengths": ["..."],
+            "weaknesses": ["..."]
+        },
+        {
+            "title": "Specific Job Title 3",
+            "fit": "85%",
+            "reason": "...",
+            "strengths": ["..."],
+            "weaknesses": ["..."]
+        }
+    ],
+    "overallStrengths": ["Global strength 1", "Global strength 2", "Global strength 3"],
+    "overallWeaknesses": ["Area for growth 1", "Area for growth 2"],
+    "learningRecommendations": [
+        "Specific learning recommendation 1",
+        "Specific learning recommendation 2",
+        "Specific learning recommendation 3"
+    ]
+}
+
+Return ONLY valid JSON, no markdown formatting.
+        `;
+
+        const geminiModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+        
+        const response = await Promise.race([
+            ai.models.generateContent({
+                model: geminiModel,
+                contents: prompt,
+                config: {
+                    responseMimeType: "application/json",
+                }
+            }),
+            new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('AI request timeout')), 60000)
+            )
+        ]);
+
+        // Parse AI response
+        let analysis;
+        try {
+            const responseText = response.text || JSON.stringify(response);
+            analysis = typeof responseText === 'string' ? JSON.parse(responseText) : responseText;
+        } catch (parseError) {
+            logger.error('Error parsing AI response:', parseError.message);
+            throw new Error('Failed to parse AI analysis');
+        }
+
+        // Extract and structure data for Firestore
+        const aiSummary = analysis.personalitySummary || '';
+        const recommendedCareers = (analysis.top3Careers || []).map(career => ({
+            title: career.title || '',
+            fit: career.fit || 'N/A',
+            reason: career.reason || '',
+            strengths: career.strengths || [],
+            weaknesses: career.weaknesses || []
+        }));
+        
+        const skillsProfile = {
+            strengths: analysis.overallStrengths || [],
+            weaknesses: analysis.overallWeaknesses || [],
+            learningRecommendations: analysis.learningRecommendations || []
+        };
+
+        // Save to users collection
+        await admin.firestore().collection('users').doc(userId).update({
+            aiSummary: aiSummary,
+            recommendedCareers: recommendedCareers,
+            skillsProfile: skillsProfile,
+            aiAnalysisUpdatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        logger.log(`[AI Analysis] ✅ Successfully saved analysis for user ${userId}`);
+        
+    } catch (error) {
+        logger.error('[AI Analysis] Error:', error.message);
+        logger.error('[AI Analysis] Stack:', error.stack);
+        throw error;
+    }
+}
+
+// Keep the old endpoint for backward compatibility
 app.get('/api/user-profile', authenticateUser, async (req, res) => {
     try {
-        // FIXED: Validate user object
         if (!req.user || !req.user.uid) {
             return res.status(401).json({ 
                 error: 'Unauthorized', 
@@ -1292,34 +1952,244 @@ app.get('/api/admin/users', authenticateUser, async (req, res) => {
     }
 });
 
-// FIXED: 404 Handler - Must be after all other routes
+// ==========================================
+// GLOBAL 404 HANDLER FOR API ROUTES
+// ==========================================
+// CRITICAL: Must be after all other routes
+// ALWAYS returns JSON, never HTML
 app.use((req, res) => {
+    const requestId = req.requestId || `404_${Date.now()}`;
+    
+    // Log 404 for debugging
+    logger.warn(`[404 Handler] ⚠️ [${requestId}] ${req.method} ${req.path} - Endpoint not found`);
+    logger.warn(`[404 Handler] ⚠️ [${requestId}] Origin: ${req.get('origin') || 'none'}`);
+    logger.warn(`[404 Handler] ⚠️ [${requestId}] User-Agent: ${req.get('user-agent') || 'unknown'}`);
+    
+    // ALWAYS return JSON, never HTML
+    res.setHeader('Content-Type', 'application/json');
     res.status(404).json({ 
+        status: 'error',
         error: 'Not found', 
         message: 'The requested endpoint does not exist',
         code: 'ENDPOINT_NOT_FOUND',
-        path: req.path
+        path: req.path,
+        method: req.method,
+        requestId: requestId,
+        timestamp: new Date().toISOString(),
+        availableEndpoints: [
+            'GET /api/health',
+            'GET /api/profile',
+            'POST /api/analyze-with-gemini',
+            'POST /api/save-test'
+        ]
     });
 });
 
-// FIXED: 500 Error Handler - Standardized error format
+// ==========================================
+// GLOBAL ERROR HANDLER
+// ==========================================
+// CRITICAL: Catches all unhandled errors
+// ALWAYS returns JSON, never HTML
 app.use((err, req, res, next) => {
-    logger.error('Unhandled error:', err.message);
+    const requestId = req.requestId || `error_${Date.now()}`;
+    
+    logger.error(`[Error Handler] ❌ [${requestId}] Unhandled error:`, err.message);
+    logger.error(`[Error Handler] ❌ [${requestId}] Error stack:`, err.stack);
+    logger.error(`[Error Handler] ❌ [${requestId}] Path: ${req.path}`);
+    logger.error(`[Error Handler] ❌ [${requestId}] Method: ${req.method}`);
+    
+    // ALWAYS return JSON, never HTML
+    res.setHeader('Content-Type', 'application/json');
     res.status(500).json({ 
+        status: 'error',
         error: 'Internal server error', 
         message: 'An unexpected error occurred',
         code: 'INTERNAL_ERROR',
+        requestId: requestId,
+        timestamp: new Date().toISOString(),
         details: process.env.NODE_ENV === 'production' ? undefined : err.message
     });
 });
 
-// Start server
+// ==========================================
+// ROUTE REGISTRATION LOGGING & VALIDATION
+// ==========================================
+// Log all registered routes on startup for debugging
+// CRITICAL: Validates routes are actually registered at runtime
+function logRegisteredRoutes() {
+    logger.log('═══════════════════════════════════════════════════════');
+    logger.log('📋 ROUTE REGISTRATION VALIDATION');
+    logger.log('═══════════════════════════════════════════════════════');
+    
+    // Extract actual routes from Express app
+    const actualRoutes = [];
+    
+    function extractRoutes(stack, basePath = '') {
+        if (!stack) return;
+        
+        stack.forEach((layer) => {
+            if (layer.route) {
+                const methods = Object.keys(layer.route.methods)
+                    .filter(method => layer.route.methods[method])
+                    .map(m => m.toUpperCase())
+                    .join(', ');
+                
+                if (methods) {
+                    const fullPath = basePath + layer.route.path;
+                    actualRoutes.push({ methods, path: fullPath });
+                }
+            } else if (layer.name === 'router' && layer.handle && layer.handle.stack) {
+                const routerPath = basePath;
+                extractRoutes(layer.handle.stack, routerPath);
+            }
+        });
+    }
+    
+    if (app._router && app._router.stack) {
+        extractRoutes(app._router.stack);
+    }
+    
+    // Critical routes that MUST exist
+    const criticalRoutes = [
+        { method: 'GET', path: '/' },
+        { method: 'GET', path: '/healthz' },
+        { method: 'GET', path: '/api/health' },
+        { method: 'GET', path: '/api/profile' },
+        { method: 'GET', path: '/api/user-profile' },
+        { method: 'POST', path: '/api/save-test' },
+        { method: 'POST', path: '/api/analyze-with-gemini' },
+        { method: 'POST', path: '/api/analyze-profile' },
+        { method: 'GET', path: '/api/bigfive' },
+        { method: 'GET', path: '/api/holland' },
+        { method: 'GET', path: '/api/tests/bigfive' },
+        { method: 'GET', path: '/api/tests/holland' },
+        { method: 'POST', path: '/api/calculate-scores' },
+        { method: 'GET', path: '/api/admin/users' }
+    ];
+    
+    // Validate critical routes
+    let allRoutesValid = true;
+    criticalRoutes.forEach(route => {
+        const found = actualRoutes.some(r => 
+            r.path === route.path && r.methods.includes(route.method)
+        );
+        
+        if (found) {
+            logger.log(`  ✅ ${route.method.padEnd(6)} ${route.path}`);
+        } else {
+            logger.log(`  ❌ ${route.method.padEnd(6)} ${route.path} - NOT FOUND!`);
+            allRoutesValid = false;
+        }
+    });
+    
+    logger.log('═══════════════════════════════════════════════════════');
+    logger.log(`📊 Total routes registered: ${actualRoutes.length}`);
+    
+    if (!allRoutesValid) {
+        logger.error('⚠️  WARNING: Some critical routes are missing!');
+        logger.error('⚠️  This may cause 404 errors. Check route registration order.');
+    } else {
+        logger.log('✅ All critical routes validated successfully');
+    }
+    
+    logger.log('═══════════════════════════════════════════════════════');
+    
+    // Log all registered routes for debugging
+    if (process.env.LOG_ALL_ROUTES === 'true') {
+        logger.log('📋 All Registered Routes:');
+        actualRoutes.forEach(route => {
+            logger.log(`  ${route.methods.padEnd(20)} ${route.path}`);
+        });
+    }
+}
+
+// ==========================================
+// SERVER STARTUP WITH VALIDATION
+// ==========================================
+// Start server with comprehensive validation
 // FIXED: Railway deployment - listens on PORT from environment
-app.listen(PORT, '0.0.0.0', () => {
-    logger.log(`Server running on port ${PORT}`);
-    logger.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    logger.log(`Server ready for requests`);
-});
+
+// CRITICAL: Validate server can start before listening
+function validateServerReady() {
+    const issues = [];
+    
+    if (!admin) {
+        issues.push('Firebase Admin not initialized');
+    }
+    
+    if (!ai) {
+        issues.push('Gemini AI not initialized');
+    }
+    
+    if (!app) {
+        issues.push('Express app not created');
+    }
+    
+    // Validate critical routes exist in code (static check)
+    // Note: Runtime validation happens in logRegisteredRoutes()
+    
+    if (issues.length > 0) {
+        logger.error('═══════════════════════════════════════════════════════');
+        logger.error('❌ SERVER VALIDATION FAILED');
+        logger.error('═══════════════════════════════════════════════════════');
+        issues.forEach(issue => logger.error(`  ❌ ${issue}`));
+        logger.error('═══════════════════════════════════════════════════════');
+        return false;
+    }
+    
+    return true;
+}
+
+// Start server
+try {
+    if (!validateServerReady()) {
+        logger.error('Server cannot start due to validation failures. Exiting.');
+        process.exit(1);
+    }
+    
+    app.listen(PORT, '0.0.0.0', () => {
+        logger.log('═══════════════════════════════════════════════════════');
+        logger.log(`🚀 SERVER STARTED SUCCESSFULLY`);
+        logger.log('═══════════════════════════════════════════════════════');
+        logger.log(`📍 Port: ${PORT}`);
+        logger.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+        logger.log(`⏰ Started at: ${new Date().toISOString()}`);
+        logger.log(`🔧 Node Version: ${process.version}`);
+        logger.log('═══════════════════════════════════════════════════════');
+        
+        // Log registered routes with validation
+        logRegisteredRoutes();
+        
+        logger.log('═══════════════════════════════════════════════════════');
+        logger.log(`✅ Server ready for requests`);
+        logger.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
+        logger.log(`🔗 Profile API: http://localhost:${PORT}/api/profile`);
+        logger.log(`🔗 Root: http://localhost:${PORT}/`);
+        logger.log('═══════════════════════════════════════════════════════');
+        logger.log(`💡 TIP: Test health endpoint first: curl http://localhost:${PORT}/api/health`);
+        logger.log(`💡 TIP: If you see 404 errors, check route registration log above`);
+        logger.log('═══════════════════════════════════════════════════════');
+    });
+    
+    // Handle server errors
+    app.on('error', (error) => {
+        logger.error('═══════════════════════════════════════════════════════');
+        logger.error('❌ SERVER ERROR');
+        logger.error('═══════════════════════════════════════════════════════');
+        logger.error('Error:', error.message);
+        logger.error('Stack:', error.stack);
+        logger.error('═══════════════════════════════════════════════════════');
+    });
+    
+} catch (startupError) {
+    logger.error('═══════════════════════════════════════════════════════');
+    logger.error('❌ SERVER STARTUP FAILED');
+    logger.error('═══════════════════════════════════════════════════════');
+    logger.error('Error:', startupError.message);
+    logger.error('Stack:', startupError.stack);
+    logger.error('═══════════════════════════════════════════════════════');
+    process.exit(1);
+}
 
 // Export app for testing
 module.exports = app;

@@ -1,84 +1,98 @@
 let currentLang = localStorage.getItem('lang') || 'en';
 let translations = {};
 
+// Cache the successful base path to avoid multiple 404s
+let cachedBasePath = null;
+
 async function loadLanguage(lang) {
   try {
-    // Determine the correct path based on current page location
-    // This avoids trying absolute paths that fail on localhost
-    const currentPath = window.location.pathname;
-    let basePath = '../assets/i18n/';
-    
-    // Calculate relative path to assets/i18n based on current page depth
-    // Root pages (index.html) -> ./assets/i18n/
-    // One level deep (profile/profile.html) -> ../assets/i18n/
-    // Two levels deep -> ../../assets/i18n/
-    if (currentPath === '/' || currentPath.endsWith('/index.html') || currentPath.endsWith('/')) {
-      // Root level
-      basePath = './assets/i18n/';
-    } else {
-      // Count directory depth (excluding filename)
-      const pathParts = currentPath.split('/').filter(p => p && !p.endsWith('.html'));
-      const depth = pathParts.length;
-      basePath = '../'.repeat(depth) + 'assets/i18n/';
-    }
-    
-    // Try the calculated path first (most reliable)
-    const primaryPath = `${basePath}${lang}.json`;
-    
-    let response = null;
-    let successfulPath = null;
-    
-    // Try primary path first
-    try {
-      response = await fetch(primaryPath);
-      if (response.ok) {
-        successfulPath = primaryPath;
-        console.log(`[i18n] ✅ Found language file at: ${successfulPath}`);
-      }
-    } catch (err) {
-      // Primary path failed, try fallback
-      console.log(`[i18n] Primary path failed: ${primaryPath}, trying fallback...`);
-    }
-    
-    // Fallback: try one level up if primary failed
-    if (!response || !response.ok) {
-      const fallbackPath = `../assets/i18n/${lang}.json`;
+    // If we have a cached successful path, use it immediately
+    if (cachedBasePath) {
+      const cachedPath = `${cachedBasePath}${lang}.json`;
       try {
-        response = await fetch(fallbackPath);
+        const response = await fetch(cachedPath);
         if (response.ok) {
-          successfulPath = fallbackPath;
-          console.log(`[i18n] ✅ Found language file at: ${successfulPath}`);
+          translations = await response.json();
+          applyTranslations();
+          applyDirection(lang);
+          localStorage.setItem('lang', lang);
+          currentLang = lang;
+          updateAllLanguageDisplays();
+          console.log(`[i18n] ✅ Language loaded from cached path: ${cachedPath}`);
+          return;
         }
       } catch (err) {
-        // Fallback also failed
+        // Cached path failed, reset and try discovery
+        cachedBasePath = null;
       }
     }
     
-    if (!response || !response.ok) {
-      throw new Error(`Failed to load language: ${lang} from ${primaryPath}`);
+    // Determine the correct path based on script location (more reliable than page path)
+    const scripts = document.querySelectorAll('script[src*="lang.js"]');
+    let basePath = null;
+    
+    if (scripts.length > 0) {
+      const scriptSrc = scripts[scripts.length - 1].getAttribute('src');
+      const scriptUrl = new URL(scriptSrc, window.location.href);
+      const scriptPath = scriptUrl.pathname;
+      
+      // Extract directory from script path
+      // lang.js is in /js/lang.js, so assets is at /assets/
+      // lang.js is in /profile/js/lang.js, so assets is at /profile/../assets/
+      const scriptDir = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
+      
+      if (scriptDir === '/js' || scriptDir.endsWith('/js')) {
+        // Script is in /js or subdir/js/, assets is one level up
+        basePath = '../assets/i18n/';
+      } else {
+        // Calculate relative path: count how many levels up to root
+        const levels = scriptDir.split('/').filter(p => p && p !== 'js').length;
+        basePath = '../'.repeat(levels) + 'assets/i18n/';
+      }
+    } else {
+      // Fallback: calculate from current page path
+      const currentPath = window.location.pathname;
+      if (currentPath === '/' || currentPath.endsWith('/index.html') || currentPath.endsWith('/')) {
+        basePath = './assets/i18n/';
+      } else {
+        const pathParts = currentPath.split('/').filter(p => p && !p.endsWith('.html'));
+        const depth = pathParts.length;
+        basePath = '../'.repeat(depth) + 'assets/i18n/';
+      }
+    }
+    
+    // Try the calculated path (only one attempt, no fallbacks to avoid 404s)
+    const primaryPath = `${basePath}${lang}.json`;
+    
+    const response = await fetch(primaryPath);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to load language file: ${response.status} ${response.statusText}`);
     }
     
     translations = await response.json();
+    
+    // Cache the successful base path
+    cachedBasePath = basePath;
+    
     applyTranslations();
     applyDirection(lang);
     localStorage.setItem('lang', lang);
     currentLang = lang;
     
-    // Update all language dropdowns to show current language
     updateAllLanguageDisplays();
-    console.log(`[i18n] ✅ Language loaded successfully: ${lang} from ${successfulPath}`);
+    console.log(`[i18n] ✅ Language loaded successfully: ${lang} from ${primaryPath}`);
   } catch (error) {
-    console.error('Error loading language:', error);
+    console.error(`[i18n] ❌ Error loading language '${lang}':`, error.message);
     // Fallback: Use empty translations object to prevent crashes
     translations = {};
-    // Try to load English as fallback
+    // Try to load English as fallback only if not already English
     if (lang !== 'en') {
       console.log(`[i18n] Attempting fallback to English...`);
-      loadLanguage('en');
+      await loadLanguage('en');
     } else {
       // Even English failed, but we continue with empty translations
       console.warn('[i18n] ⚠️ Language files not found, continuing without translations');
-      console.warn('[i18n] Expected location: ./assets/i18n/en.json or ../assets/i18n/en.json');
     }
   }
 }
