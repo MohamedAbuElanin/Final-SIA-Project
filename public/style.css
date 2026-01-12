@@ -602,6 +602,10 @@ section {
     border-top: 1px solid var(--color-gold-medium);
 }
 
+.footer__motto {
+    color: var(--color-gold);
+}
+
 /* Social Media Icons */
 .footer__social {
     display: flex;
