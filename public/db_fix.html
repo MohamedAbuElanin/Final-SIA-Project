@@ -30,555 +30,1149 @@
 
     <script>
         const bigFiveData = [
-    { "id": "B1",  "question": "Worry about things",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B2",  "question": "Get angry easily",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B3", "question": "Often feel blue",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B4", "question": "Panic easily",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B5", "question": "Fear for the worst",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B6", "question": "Become overwhelmed by events",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B7", "question": "Am afraid of many things",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B8", "question": "Get stressed out easily",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B9", "question": "Lose my temper",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B10", "question": "Am often down in the dumps",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B11", "question": "Remain calm under pressure",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B12", "question": "Remain calm in tense situations",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B13", "question": "Rarely notice my emotional reactions",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B14", "question": "Do not understand people who get emotional",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B15", "question": "Don't understand people who get emotional",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B16", "question": "Feel that I'm unable to deal with things",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B17", "question": "Get irritated easily",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B18", "question": "Yell at people",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B19", "question": "Love a good fight",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B20", "question": "Jump into things without thinking",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-        { "id": "B21", "question": "Am the life of the party",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B22", "question": "Talk to a lot of different people at parties",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B23", "question": "Don't mind being the center of attention",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B24", "question": "Feel comfortable around people",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B25", "question": "Start conversations",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B26", "question": "Talk a lot",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B27", "question": "Think before speaking",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B28", "question": "Keep in the background",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B29", "question": "Have little to say",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B30", "question": "Am quiet around strangers",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B31", "question": "Have a rich vocabulary",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B32", "question": "Have a vivid imagination",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B33", "question": "Spend time reflecting on things",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B34", "question": "Have difficulty understanding abstract ideas",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B35", "question": "Am not interested in abstract ideas",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B36", "question": "Am original, come up with new ideas",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B37", "question": "Am not interested in theoretical discussions",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B38", "question": "Do not have a good imagination",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B39", "question": "Am talkative",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B40", "question": "Tend to find fault with others",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B41", "question": "Am generally trusting",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B42", "question": "Can be cold and distant",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B43", "question": "Sympathize with others' feelings",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B44", "question": "Am not interested in other people's problems",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B45", "question": "Feel others' emotions",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B46", "question": "Make people feel welcome",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B47", "question": "Take advantage of others",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B48", "question": "Feel little concern for others",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B49", "question": "Am interested in people",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B50", "question": "Am helpful and unselfish with others",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B51", "question": "Am always prepared",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B52", "question": "Pay attention to details",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B53", "question": "Get chores done right away",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B54", "question": "Like order",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B55", "question": "Follow a schedule",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B56", "question": "Am exacting in my work",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B57", "question": "Waste my time",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B58", "question": "Find it difficult to get down to work",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B59", "question": "Leave my belongings around",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B60", "question": "Am sloppy",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-        },
-        { "id": "B61", "question": "Get stressed out easily",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B62", "question": "Worry about little things",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B63", "question": "Get upset easily",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B64", "question": "Have frequent mood swings",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B65", "question": "Get irritated easily",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B66", "question": "Have a temper",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B67", "question": "Am relaxed most of the time",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B68", "question": "Rarely feel anxious or nervous",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B69", "question": "Am not easily bothered by things",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B70", "question": "Remain calm under pressure",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B71", "question": "Am outgoing, sociable",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B72", "question": "Enjoy meeting new people",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B73", "question": "Am full of energy",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B74", "question": "Am enthusiastic",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B75", "question": "Am dominant, assertive",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B76", "question": "Am reserved, shy",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B77", "question": "Am independent, self-reliant",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B78", "question": "Am cooperative, helpful",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B79", "question": "Can be moody",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B80", "question": "Have a forgiving nature",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B81", "question": "Am considerate and kind to almost everyone",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B82", "question": "Am sometimes rude to others",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B83", "question": "Am organized and neat",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B84", "question": "Am thorough, pay attention to details",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B85", "question": "Leave things unfinished",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B86", "question": "Tend to procrastinate",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B87", "question": "Am curious about many different things",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B88", "question": "Have an active imagination",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B89", "question": "Am ingenious, a deep thinker",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B90", "question": "Am not interested in abstract ideas",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-            },
-            { "id": "B91", "question": "Have a vivid imagination",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B92", "question": "Am original, come up with new ideas",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B93", "question": "Am curious about the world",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B94", "question": "Am not inventive",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B95", "question": "Value artistic experiences",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B96", "question": "Am quiet around strangers",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B97", "question": "Tend to be reserved",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B98", "question": "Am affectionate, warm",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B99", "question": "Am helpful and cooperative",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B100", "question": "Am easily bothered by others",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B101", "question": "Am punctual, reliable",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B102", "question": "Am lazy or careless",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B103", "question": "Am disciplined, well-organized",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B104", "question": "Am methodical, plan ahead",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B105", "question": "Am imaginative, enjoy fantasy",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B106", "question": "Am interested in abstract ideas",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B107", "question": "Am original in my thinking",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B108", "question": "Am curious and eager to learn",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B109", "question": "Am artistic, appreciate beauty",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B110", "question": "Am talkative, enjoy conversation",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B111", "question": "Am energetic, lively",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B112", "question": "Am outgoing, enjoy social events",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B113", "question": "Am assertive, speak up",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B114", "question": "Am kind, considerate",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B115", "question": "Am sympathetic to others' feelings",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B116", "question": "Am critical or quarrelsome",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B117", "question": "Am reliable, can be counted on",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B118", "question": "Am careful, cautious",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B119", "question": "Am inventive, come up with creative solutions",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    },
-    { "id": "B120", "question": "Am imaginative and original",
-        "options": ["Very Inaccurate","Moderately Inaccurate","Neither Accurate Nor Inaccurate","Moderately Accurate","Very Accurate"],
-        "scores": [0,1,2,3,4]
-    }
+      {
+    "id": "B1",
+    "question": "أقلق بشأن الأشياء",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B2",
+    "question": "أغضب بسهولة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B3",
+    "question": "غالباً ما أشعر بالحزن أو الإحباط",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B4",
+    "question": "أصاب بالذعر بسهولة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B5",
+    "question": "أخشى الأسوأ دائماً",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B6",
+    "question": "أشعر بالعجز أو الارتباك أمام الأحداث",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B7",
+    "question": "أخاف من أشياء كثيرة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B8",
+    "question": "أتعرض للضغط العصبي بسهولة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B9",
+    "question": "أفقد أعصابي بسهولة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B10",
+    "question": "غالباً ما أشعر بالكآبة أو سوء الحالة المزاجية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B11",
+    "question": "أظل هادئاً تحت الضغط",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B12",
+    "question": "أظل هادئاً في المواقف المتوترة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B13",
+    "question": "نادراً ما ألاحظ ردود فعلي العاطفية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B14",
+    "question": "لا أفهم الأشخاص الذين ينفعلون عاطفياً",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B15",
+    "question": "لا أفهم الناس الذين يتأثرون عاطفياً بسهولة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B16",
+    "question": "أشعر أنني غير قادر على التعامل مع الأمور",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B17",
+    "question": "أشعر بالانزعاج بسهولة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B18",
+    "question": "أصرخ في وجه الناس",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B19",
+    "question": "أحب خوض التحديات والمواجهات",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B20",
+    "question": "أندفع في الأمور دون تفكير",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B21",
+    "question": "أنا روح الحفلة/المكان",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B22",
+    "question": "أتحدث مع الكثير من الأشخاص المختلفين في المناسبات",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B23",
+    "question": "لا أمانع في أن أكون مركز الاهتمام",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B24",
+    "question": "أشعر بالراحة وسط الناس",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B25",
+    "question": "أبادر ببدء المحادثات",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B26",
+    "question": "أتحدث كثيراً",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B27",
+    "question": "أفكر قبل الكلام",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B28",
+    "question": "أفضل البقاء في الخلفية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B29",
+    "question": "ليس لدي الكثير لأقوله",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B30",
+    "question": "أكون هادئاً حول الغرباء",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B31",
+    "question": "لدي ثروة لغوية غنية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B32",
+    "question": "لدي خيال حي ونشط",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B33",
+    "question": "أقضي وقتاً في التفكير في الأمور",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B34",
+    "question": "أجد صعوبة في فهم الأفكار المجردة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B35",
+    "question": "لست مهتماً بالأفكار المجردة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B36",
+    "question": "أنا مبتكر، وآتي بأفكار جديدة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B37",
+    "question": "لست مهتماً بالمناقشات النظرية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B38",
+    "question": "لا أملك خيالاً جيداً",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B39",
+    "question": "أنا كثير الكلام",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B40",
+    "question": "أميل إلى البحث عن أخطاء الآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B41",
+    "question": "أثق بالناس بشكل عام",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B42",
+    "question": "يمكن أن أكون بارداً وبعيداً",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B43",
+    "question": "أتعاطف مع مشاعر الآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B44",
+    "question": "لست مهتماً بمشاكل الآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B45",
+    "question": "أشعر بمشاعر الآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B46",
+    "question": "أجعل الناس يشعرون بالراحة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B47",
+    "question": "أهين الناس",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B48",
+    "question": "أهتم بالآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B49",
+    "question": "لدي قلب طيب",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B50",
+    "question": "أخصص وقتاً للآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B51",
+    "question": "أنا دائماً مستعد",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B52",
+    "question": "أترك أغراضي مبعثرة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B53",
+    "question": "أقوم بالأعمال المنزلية على الفور",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B54",
+    "question": "أنسى إعادة الأشياء إلى أماكنها",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B55",
+    "question": "أهتم بالتفاصيل",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B56",
+    "question": "أقوم بجدول أعمال",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B57",
+    "question": "أحب النظام",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B58",
+    "question": "أقوم بالأشياء وفقاً لخطة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B59",
+    "question": "أنهي مهامي",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B60",
+    "question": "أتجنب واجباتي ومسؤولياتي",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B61",
+    "question": "أقوم بالأشياء بصورة عشوائية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B62",
+    "question": "أضيع وقتي",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B63",
+    "question": "أجد صعوبة في البدء بالمهام",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B64",
+    "question": "أعمل بجد",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B65",
+    "question": "أقوم بمهامي بجدية وفعالية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B66",
+    "question": "أخطط للأمور بعناية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B67",
+    "question": "أحافظ على وعودي",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B68",
+    "question": "أفكر في عواقب أفعالي",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B69",
+    "question": "أتصرف بطريقة منضبطة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B70",
+    "question": "أهتم بصحتي وسلامتي",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B71",
+    "question": "أحب مساعدة الآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B72",
+    "question": "أحاول أن أكون لطيفاً مع الجميع",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B73",
+    "question": "أؤمن بأن أغلب الناس طيبون",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B74",
+    "question": "أحترم السلطة والقواعد",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B75",
+    "question": "أتعاون مع الآخرين بسهولة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B76",
+    "question": "أقدر الفن والجمال",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B77",
+    "question": "أحب تجربة أطعمة جديدة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B78",
+    "question": "أهتم بالمواضيع الفلسفية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B79",
+    "question": "أحب تعلم أشياء جديدة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B80",
+    "question": "لدي أحلام يقظة متكررة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B81",
+    "question": "أحب أن أكون في وسط التجمعات",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B82",
+    "question": "أشعر بالحيوية عندما أتفاعل مع الآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B83",
+    "question": "أميل إلى الضحك كثيراً",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B84",
+    "question": "أتحدث بنبرة واثقة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B85",
+    "question": "أحب المغامرة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B86",
+    "question": "أشعر بالتوتر بسهولة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B87",
+    "question": "أقلق بشأن المستقبل",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B88",
+    "question": "أشعر بالخجل في المواقف الاجتماعية الجديدة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B89",
+    "question": "أعاني من تقلبات مزاجية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B90",
+    "question": "أشعر بالذنب كثيراً",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B91",
+    "question": "أنا شخص منظم جداً",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B92",
+    "question": "أحب أن تكون الأشياء في مكانها الصحيح",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B93",
+    "question": "أقوم بإنهاء المهام في وقتها المحدد",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B94",
+    "question": "أركز جيداً أثناء العمل",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B95",
+    "question": "أثق في حكمي الخاص",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B96",
+    "question": "أميل إلى التسامح مع الآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B97",
+    "question": "أحب مشاركة أغراضي مع الآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B98",
+    "question": "أهتم بمشاعر أصدقائي",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B99",
+    "question": "أحب مساعدة الضعفاء",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B100",
+    "question": "أحب استكشاف أماكن جديدة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B101",
+    "question": "أحب التفكير في أسرار الكون",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B102",
+    "question": "أحب قراءة الروايات الخيالية",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B103",
+    "question": "أحب الاستماع إلى أنواع مختلفة من الموسيقى",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B104",
+    "question": "أحب التعبير عن مشاعري من خلال الفن",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B105",
+    "question": "أنا شخص اجتماعي جداً",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B106",
+    "question": "أحب العمل ضمن فريق",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B107",
+    "question": "أحب قيادة الآخرين",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B108",
+    "question": "أحب التعرف على أشخاص جدد باستمرار",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B109",
+    "question": "أشعر بالحماس بسهولة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B110",
+    "question": "أشعر بالهدوء في أغلب الأوقات",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B111",
+    "question": "نادراً ما أفقد هدوئي",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B112",
+    "question": "أتعامل مع الصعوبات بصبر",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B113",
+    "question": "أثق في أن الأمور ستسير على ما يرام",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B114",
+    "question": "أشعر بالرضا عن حياتي",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B115",
+    "question": "أقوم بالتفكير العميق قبل اتخاذ أي قرار",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B116",
+    "question": "أحب أن تكون كتبي وأدواتي مرتبة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B117",
+    "question": "أنا حذر ودقيق في عملي",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B118",
+    "question": "أنا شخص مبتكر وآتي بحلول مبدعة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B119",
+    "question": "أنا شخص مبتكر وآتي بحلول مبدعة",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  },
+  {
+    "id": "B120",
+    "question": "أنا واسع الخيال وأحب التجديد",
+    "options": ["غير دقيق تماماً", "غير دقيق إلى حد ما", "محايد", "دقيق إلى حد ما", "دقيق تماماً"],
+    "scores": [0, 1, 2, 3, 4]
+  }
     ];
 
         const hollandData = [
-        {"id":"H1","category":"R","question":"I enjoy fixing things when they break.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H2","category":"R","question":"I prefer working with my hands rather than sitting at a desk.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H3","category":"R","question":"I enjoy activities that require physical effort.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H4","category":"R","question":"I like using tools or mechanical equipment.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H5","category":"R","question":"I feel comfortable working outdoors.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H6","category":"R","question":"I enjoy building or repairing things.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H7","category":"R","question":"I enjoy solving practical problems.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H8","category":"R","question":"I like working with machines or tools.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H9","category":"R","question":"I enjoy physical work over sitting at a desk.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H10","category":"R","question":"I feel satisfied completing hands-on tasks.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-
-    {"id":"H11","category":"I","question":"I like analyzing complex problems to find the cause.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H12","category":"I","question":"I enjoy conducting experiments or searching for new information.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H13","category":"I","question":"I think logically before making decisions.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H14","category":"I","question":"I enjoy reading or watching scientific content.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H15","category":"I","question":"I like solving puzzles or brain teasers.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H16","category":"I","question":"I enjoy learning about new technologies.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H17","category":"I","question":"I like understanding how things work.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H18","category":"I","question":"I enjoy research and investigation tasks.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H19","category":"I","question":"I enjoy tasks that require careful thinking.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H20","category":"I","question":"I like working independently on intellectual tasks.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-
-    {"id":"H21","category":"A","question":"I enjoy creating new or original ideas.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H22","category":"A","question":"I like drawing, designing, or artistic activities.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H23","category":"A","question":"I have a vivid imagination and enjoy fantasizing.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H24","category":"A","question":"I like making creative projects.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H25","category":"A","question":"I enjoy artistic self-expression.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H26","category":"A","question":"I like to innovate and think outside the box.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H27","category":"A","question":"I enjoy performing or presenting creative work.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H28","category":"A","question":"I enjoy experimenting with new ideas.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H29","category":"A","question":"I like tasks that allow personal expression.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H30","category":"A","question":"I enjoy making original designs or art.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-
-    {"id":"H31","category":"S","question":"I like helping people solve their problems.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H32","category":"S","question":"I feel happy when I teach others something new.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H33","category":"S","question":"I enjoy working in groups.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H34","category":"S","question":"I can listen to others and understand their feelings.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H35","category":"S","question":"I like helping people learn new skills.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H36","category":"S","question":"I enjoy providing guidance or advice.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H37","category":"S","question":"I like cooperating with others to achieve goals.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H38","category":"S","question":"I feel rewarded by helping others.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H39","category":"S","question":"I enjoy mentoring or coaching others.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H40","category":"S","question":"I like activities that improve the wellbeing of others.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-
-    {"id":"H41","category":"E","question":"I like leading a team or project.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H42","category":"E","question":"I enjoy persuading and negotiating with others.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H43","category":"E","question":"I want to start my own business or independent project.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H44","category":"E","question":"I like making decisions and taking responsibility.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H45","category":"E","question":"I prefer activities that involve challenge or risk.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H46","category":"E","question":"I like influencing and motivating others.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H47","category":"E","question":"I enjoy taking initiative in projects.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H48","category":"E","question":"I like leading discussions and meetings.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H49","category":"E","question":"I enjoy persuading others to follow my ideas.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H50","category":"E","question":"I like being in charge of projects or tasks.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-
-    {"id":"H51","category":"C","question":"I like organizing files and information accurately.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H52","category":"C","question":"I prefer following clear and structured steps.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H53","category":"C","question":"I enjoy working with data or spreadsheets.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H54","category":"C","question":"I feel comfortable working in a well-organized system.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H55","category":"C","question":"I prefer tasks that require attention to small details.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H56","category":"C","question":"I enjoy following rules and procedures carefully.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H57","category":"C","question":"I like checking my work for accuracy.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H58","category":"C","question":"I enjoy tasks that require precision.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H59","category":"C","question":"I like making lists and keeping things organized.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]},
-    {"id":"H60","category":"C","question":"I enjoy following structured procedures.","options":["Dislike","Slightly dislike","Neutral","Slightly enjoy","Enjoy"],"points":[1,2,3,4,5]
-}
+        {
+    "id": "H1",
+    "category": "R",
+    "question": "أستمتع بإصلاح الأشياء عندما تتعطل.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H2",
+    "category": "R",
+    "question": "أفضل العمل بيدي بدلاً من الجلوس خلف المكتب.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H3",
+    "category": "R",
+    "question": "أستمتع بالأنشطة التي تتطلب مجهوداً بدنياً.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H4",
+    "category": "R",
+    "question": "أحب استخدام الأدوات أو المعدات الميكانيكية.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H5",
+    "category": "R",
+    "question": "أشعر بالراحة عند العمل في الهواء الطلق.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H6",
+    "category": "R",
+    "question": "أستمتع بالبناء أو إصلاح الأشياء.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H7",
+    "category": "R",
+    "question": "أستمتع بحل المشكلات العملية.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H8",
+    "category": "R",
+    "question": "أحب العمل مع الآلات أو الأدوات.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H9",
+    "category": "R",
+    "question": "أستمتع بالعمل البدني أكثر من الجلوس خلف المكتب.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H10",
+    "category": "R",
+    "question": "أشعر بالرضا عند إكمال المهام اليدوية.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H11",
+    "category": "I",
+    "question": "أحب تحليل المشكلات المعقدة لمعرفة السبب.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H12",
+    "category": "I",
+    "question": "أستمتع بإجراء التجارب أو البحث عن معلومات جديدة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H13",
+    "category": "I",
+    "question": "أفكر بمنطقية قبل اتخاذ القرارات.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H14",
+    "category": "I",
+    "question": "أستمتع بقراءة أو مشاهدة المحتوى العلمي.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H15",
+    "category": "I",
+    "question": "أحب حل الألغاز أو ألعاب الذكاء.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H16",
+    "category": "I",
+    "question": "أستمتع بالتعرف على التقنيات الجديدة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H17",
+    "category": "I",
+    "question": "أحب فهم كيفية عمل الأشياء.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H18",
+    "category": "I",
+    "question": "أستمتع بمهام البحث والتحقيق.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H19",
+    "category": "I",
+    "question": "أستمتع بالمهام التي تتطلب تفكيراً دقيقاً.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H20",
+    "category": "I",
+    "question": "أحب العمل بشكل مستقل في المهام الفكرية.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H21",
+    "category": "A",
+    "question": "أستمتع بابتكار أفكار جديدة أو أصيلة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H22",
+    "category": "A",
+    "question": "أحب الرسم أو التصميم أو الأنشطة الفنية.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H23",
+    "category": "A",
+    "question": "لدي خيال واسع وأستمتع بالتخيل.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H24",
+    "category": "A",
+    "question": "أحب القيام بمشاريع إبداعية.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H25",
+    "category": "A",
+    "question": "أستمتع بالتعبير عن نفسي فنياً.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H26",
+    "category": "A",
+    "question": "أحب الابتكار والتفكير خارج الصندوق.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H27",
+    "category": "A",
+    "question": "أستمتع بالأداء أو تقديم أعمال إبداعية.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H28",
+    "category": "A",
+    "question": "أستمتع بتجربة أفكار جديدة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H29",
+    "category": "A",
+    "question": "أحب المهام التي تسمح بالتعبير الشخصي.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H30",
+    "category": "A",
+    "question": "أستمتع بعمل تصميمات أو فنون أصيلة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H31",
+    "category": "S",
+    "question": "أحب مساعدة الناس في حل مشكلاتهم.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H32",
+    "category": "S",
+    "question": "أشعر بالسعادة عندما أعلم الآخرين شيئاً جديداً.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H33",
+    "category": "S",
+    "question": "أستمتع بالعمل في مجموعات.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H34",
+    "category": "S",
+    "question": "يمكنني الاستماع للآخرين وفهم مشاعرهم.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H35",
+    "category": "S",
+    "question": "أحب مساعدة الناس على تعلم مهارات جديدة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H36",
+    "category": "S",
+    "question": "أستمتع بتقديم التوجيه أو النصيحة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H37",
+    "category": "S",
+    "question": "أحب التعاون مع الآخرين لتحقيق الأهداف.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H38",
+    "category": "S",
+    "question": "أشعر بالرضا عند مساعدة الآخرين.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H39",
+    "category": "S",
+    "question": "أستمتع بتوجيه أو تدريب الآخرين.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H40",
+    "category": "S",
+    "question": "أحب الأنشطة التي تحسن رفاهية الآخرين.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H41",
+    "category": "E",
+    "question": "أحب قيادة فريق أو مشروع.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H42",
+    "category": "E",
+    "question": "أستمتع بإقناع الآخرين والتفاوض معهم.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H43",
+    "category": "E",
+    "question": "أحب تحمل المسؤولية واتخاذ القرارات.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H44",
+    "category": "E",
+    "question": "أستمتع بالحديث أمام الجمهور.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H45",
+    "category": "E",
+    "question": "أحب التحديات التي تتطلب مهارات قيادية.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H46",
+    "category": "E",
+    "question": "أستمتع بتطوير استراتيجيات لتحقيق النجاح.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H47",
+    "category": "E",
+    "question": "أحب التنافس في بيئات العمل.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H48",
+    "category": "E",
+    "question": "أستمتع بإدارة الموارد وتوزيع المهام.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H49",
+    "category": "E",
+    "question": "أحب أن أكون في مركز الصدارة والقيادة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H50",
+    "category": "E",
+    "question": "أستمتع بالتخطيط للمستقبل وتحقيق النمو.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H51",
+    "category": "C",
+    "question": "أحب العمل في بيئة منظمة ومرتبة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H52",
+    "category": "C",
+    "question": "أهتم جداً بالتفاصيل في عملي.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H53",
+    "category": "C",
+    "question": "أستمتع بالتعامل مع الأرقام والبيانات.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H54",
+    "category": "C",
+    "question": "أحب اتباع القواعد والتعليمات بدقة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H55",
+    "category": "C",
+    "question": "أشعر بالرضا عند إكمال المهام الإدارية.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H56",
+    "category": "C",
+    "question": "أحب الاحتفاظ بسجلات دقيقة ومنظمة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H57",
+    "category": "C",
+    "question": "أستمتع بمهام التصنيف والأرشفة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H58",
+    "category": "C",
+    "question": "أفضل المهام التي لها إجراءات واضحة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H59",
+    "category": "C",
+    "question": "أحب عمل القوائم وتنظيم الأشياء.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "H60",
+    "category": "C",
+    "question": "أستمتع باتباع الإجراءات المهيكلة.",
+    "options": ["لا أحب", "لا أحب قليلاً", "محايد", "أستمتع قليلاً", "أستمتع"],
+    "scores": [1, 2, 3, 4, 5]
+  }
 ];
 
         function fixDatabase() {

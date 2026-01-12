@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password - SIA – Ancient Wisdom for Modern Careers</title>
+    <title>إعادة تعيين كلمة المرور - SIA – حكمة قديمة لمسارات مهنية حديثة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../sign in/signin.css">
     <link rel="stylesheet" href="../template.css">
@@ -17,39 +17,23 @@
             <!-- Logo Section -->
             <a href="../index.html" class="brand" aria-label="SIA homepage">
                 <span class="brand__mark">
-                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA golden logo">
+                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="شعار SIA الذهبي">
                 </span>
             </a>
 
             <!-- Center Navigation Links -->
             <ul class="nav-links" id="navLinks">
-                <li><a href="../index.html" data-key="nav_home">Home</a></li>
-                <li><a href="../About/About.html" data-key="nav_about">About</a></li>
-                <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
-                <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
-                <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
+                <li><a href="../index.html">الرئيسية</a></li>
+                <li><a href="../About/About.html">عن المنصة</a></li>
+                <li><a href="../Test/Test.html">الاختبار</a></li>
+                <li><a href="../profile/profile.html">الملف الشخصي</a></li>
+                <li><a href="../privacy-terms.html">الخصوصية والشروط</a></li>
             </ul>
 
             <!-- Right Buttons Section -->
             <div class="nav-auth" id="navAuth">
-                <div class="lang-dropdown">
-                    <button class="lang-dropdown-toggle" type="button">
-                        <span class="lang-current">EN</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="lang-dropdown-menu">
-                        <a href="../assets/i18n/en.json" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
-                            <span>English</span>
-                            <span class="lang-code">EN</span>
-                        </a>
-                        <a href="../assets/i18n/ar.json" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
-                            <span>العربية</span>
-                            <span class="lang-code">AR</span>
-                        </a>
-                    </div>
-                </div>
-                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
-                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
+                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">تسجيل الدخول</a>
+                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">إنشاء حساب</a>
             </div>
 
             <!-- Responsive Menu (Hamburger control + label for accessibility) -->
@@ -63,32 +47,16 @@
             <div class="nav-drawer" aria-hidden="true">
                 <!-- Center Navigation Links duplicated for the mobile drawer -->
                 <ul class="drawer-links">
-                    <li><a href="../index.html" data-key="nav_home">Home</a></li>
-                    <li><a href="../About/About.html" data-key="nav_about">About</a></li>
-                    <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
-                    <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
-                    <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
+                    <li><a href="../index.html">الرئيسية</a></li>
+                    <li><a href="../About/About.html">عن المنصة</a></li>
+                    <li><a href="../Test/Test.html">الاختبار</a></li>
+                    <li><a href="../profile/profile.html">الملف الشخصي</a></li>
+                    <li><a href="../privacy-terms.html">الخصوصية والشروط</a></li>
                 </ul>
                 <!-- Right Buttons Section duplicated for stacked layout -->
                 <div class="drawer-auth">
-                    <div class="lang-dropdown" style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                        <button class="lang-dropdown-toggle" type="button">
-                            <span class="lang-current">EN</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="lang-dropdown-menu">
-                            <a href="../assets/i18n/en.json" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
-                                <span>English</span>
-                                <span class="lang-code">EN</span>
-                            </a>
-                            <a href="../assets/i18n/ar.json" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
-                                <span>العربية</span>
-                                <span class="lang-code">AR</span>
-                            </a>
-                        </div>
-                    </div>
-                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
-                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
+                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">تسجيل الدخول</a>
+                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">إنشاء حساب</a>
                 </div>
             </div>
         </nav>
@@ -100,8 +68,8 @@
         <section class="hero-section">
             <div class="container">
                 <div class="hero-content fade-in">
-                    <h1 class="hero-title" data-key="reset_title">Reset Password</h1>
-                    <p class="hero-subtitle" data-key="reset_subtitle">Enter your email address and we'll send you a link to reset your password.</p>
+                    <h1 class="hero-title">إعادة تعيين كلمة المرور</h1>
+                    <p class="hero-subtitle">أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور الخاصة بك.</p>
                 </div>
             </div>
         </section>
@@ -112,22 +80,21 @@
                 <div class="form-wrapper fade-in" id="resetForm">
                     <div class="form-header">
                         <h2 class="form-title">
-                            <i class="fas fa-key"></i> <span data-key="reset_form_title">Reset Password</span>
+                            <i class="fas fa-key"></i> <span>إعادة تعيين كلمة المرور</span>
                         </h2>
                     </div>
 
                     <form id="resetFormElement" class="auth-form">
                         <div class="form-group">
                             <label for="resetEmail" class="form-label">
-                                <i class="fas fa-envelope"></i> <span data-key="reset_email_label">Email</span>
+                                <i class="fas fa-envelope"></i> <span>البريد الإلكتروني</span>
                             </label>
                             <input 
                                 type="email" 
                                 id="resetEmail" 
                                 name="email" 
                                 class="form-input" 
-                                data-placeholder-key="reset_email_placeholder"
-                                placeholder="Enter your email address"
+                                placeholder="أدخل بريدك الإلكتروني"
                                 required
                             >
                             <span class="error-message" id="resetEmailError"></span>
@@ -137,12 +104,12 @@
                         <div class="form-success" id="resetFormSuccess"></div>
 
                         <button type="submit" class="form-btn">
-                            <i class="fas fa-paper-plane"></i> <span data-key="reset_submit">Send Reset Link</span>
+                            <i class="fas fa-paper-plane"></i> <span>إرسال رابط إعادة التعيين</span>
                         </button>
                     </form>
 
                     <div class="form-footer">
-                        <p><span data-key="reset_remember_password">Remember your password?</span> <a href="../sign in/signin.html" class="toggle-link" data-key="nav_sign_in">Sign In</a></p>
+                        <p><span>تذكرت كلمة المرور؟</span> <a href="../sign in/signin.html" class="toggle-link">تسجيل الدخول</a></p>
                     </div>
                 </div>
             </div>
@@ -152,20 +119,20 @@
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer__brand">
-            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
+            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="أيقونة عين رع SIA" class="footer__logo">
             <div>
-                <p class="footer__title" data-key="footer_title">SIA</p>
-                <p class="footer__mission" data-key="footer_mission">We connect ancient wisdom with modern career paths.</p>
+                <p class="footer__title">SIA</p>
+                <p class="footer__mission">نربط الحكمة القديمة بمسارات المهن الحديثة.</p>
             </div>
         </div>
         <div class="footer__nav" aria-label="Footer navigation">
-            <a href="../index.html" data-key="nav_home">Home</a>
-            <a href="../About/About.html" data-key="nav_about">About</a>
-            <a href="../Test/Test.html" data-key="nav_test">Test</a>
-            <a href="../profile/profile.html" data-key="nav_profile">Profile</a>
-            <a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a>
+            <a href="../index.html">الرئيسية</a>
+            <a href="../About/About.html">عن المنصة</a>
+            <a href="../Test/Test.html">الاختبار</a>
+            <a href="../profile/profile.html">الملف الشخصي</a>
+            <a href="../privacy-terms.html">الخصوصية والشروط</a>
         </div>
-        <p class="footer__copy" data-key="footer_copyright">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+        <p class="footer__copy">حقوق الطبع والنشر 2025–2026 SIA – حكمة قديمة لمسارات مهنية حديثة</p>
     </footer>
 
     <canvas id="particles"></canvas>
@@ -175,9 +142,6 @@
     
     <!-- Reset Password Script -->
     <script src="reset.js"></script>
-    
-    <!-- Language Translation Script -->
-    <script src="../js/lang.js"></script>
 </body>
 </html>
 

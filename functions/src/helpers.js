@@ -5,170 +5,179 @@
  * Works for both Firebase Functions and Railway deployment
  */
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const functions = require('firebase-functions');
-const logger = require('./logger');
+const {GoogleGenerativeAI} = require("@google/generative-ai");
+const functions = require("firebase-functions");
 
-// FIXED: Use environment variables only - no hardcoded keys
-// For Firebase Functions, use: firebase functions:secrets:set GEMINI_API_KEY
-// For Railway, set GEMINI_API_KEY in environment variables
-// Legacy support: firebase functions:config:set gemini.key="YOUR_KEY"
+const {logger} = functions;
+
+// Import static data for post-processing
+const {careers} = require("./data/careers");
+const {matchCareers} = require("./engine/matching");
+
+// Logic to get API Key safely
 let GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-// FIXED: Railway deployment - functions.config may not exist
-if (!GEMINI_API_KEY && typeof functions !== 'undefined' && functions.config) {
-    try {
-        GEMINI_API_KEY = functions.config().gemini?.key || null;
-    } catch (error) {
-        // functions.config() may fail in Railway - ignore
-        GEMINI_API_KEY = null;
-    }
+if (!GEMINI_API_KEY && functions.config && functions.config().gemini) {
+  GEMINI_API_KEY = functions.config().gemini.key;
 }
 
-// FIXED: Initialize AI only if key is available
+// Initialize AI only if key is available
 let genAI = null;
 let model = null;
 
 if (GEMINI_API_KEY) {
-    try {
-        genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-        model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        logger.log('Gemini AI initialized successfully');
-    } catch (error) {
-        logger.error('ERROR: Failed to initialize Gemini AI:', error.message);
-        // Server continues - AI calls will fail gracefully
-    }
+  try {
+    genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    // Use gemini-1.5-flash for speed and cost effectiveness
+    model = genAI.getGenerativeModel({model: "gemini-1.5-flash"});
+    logger.log("Gemini AI initialized successfully");
+  } catch (error) {
+    logger.error("ERROR: Failed to initialize Gemini AI:", error.message);
+  }
 } else {
-    logger.warn('WARNING: GEMINI_API_KEY is not set!');
-    logger.warn('Set it using: firebase functions:secrets:set GEMINI_API_KEY');
-    logger.warn('Or (legacy): firebase functions:config:set gemini.key="YOUR_KEY"');
+  logger.warn("WARNING: GEMINI_API_KEY is not set!");
+  logger.warn("Set it using: firebase functions:secrets:set GEMINI_API_KEY");
 }
 
 /**
  * Generate AI analysis for test results
  * FIXED: Added comprehensive error handling, validation, and production-safe logging
- * @param {string} testType - Type of test ('Big-Five' or 'Holland')
- * @param {Object} results - Test results object
+ * @param {string} testType - Type of test ('Big-Five', 'Holland', 'Career-Match')
+ * @param {Object} results - Test results object or Combined results
  * @param {Object} userData - User profile data
- * @returns {Promise<Object>} AI-generated analysis
+ * @return {Promise<Object>} AI-generated analysis
  */
 const generateAnalysis = async (testType, results, userData) => {
-    // FIXED: Validate inputs
-    if (!testType || typeof testType !== 'string') {
-        throw new Error('Invalid testType: must be a non-empty string');
-    }
+  if (!model) {
+    throw new Error("Gemini AI is not initialized (Missing API Key)");
+  }
 
-    if (!results || typeof results !== 'object') {
-        throw new Error('Invalid results: must be an object');
-    }
+  let prompt = "";
 
-    if (!userData || typeof userData !== 'object') {
-        throw new Error('Invalid userData: must be an object');
-    }
-
-    // FIXED: Check if AI is initialized
-    if (!model || !genAI) {
-        throw new Error('AI service is not available - GEMINI_API_KEY not configured');
-    }
-
-    let prompt = "";
-    
-    if (testType === 'Big-Five') {
-        prompt = `
-        You are a personality expert. Analyze these Big Five scores:
+  if (testType === "Big-Five") {
+    prompt = `
+        You are an expert Psychologist. Analyze these Big Five Personality Traits scores:
         ${JSON.stringify(results)}
         
         User Context: ${JSON.stringify(userData)}
-        
-        Provide:
-        1. A summary of their personality.
-        2. Key strengths and weaknesses.
-        3. Career recommendations.
-        
-        Return JSON format:
+
+        Return structured JSON (ensure keys are exact):
         {
-            "personalityAnalysis": "...",
-            "strengths": ["..."],
-            "weaknesses": ["..."],
-            "recommendedCareers": [
-                {"title": "...", "fit": "High/Medium", "reason": "...", "skills": ["..."]}
-            ]
+            "personalityAnalysis": "Detailed 2-paragraph analysis of their personality.",
+            "strengths": ["Strength 1", "Strength 2", "Strength 3"],
+            "weaknesses": ["Weakness 1", "Weakness 2", "Weakness 3"],
+            "learningRecommendations": ["Tip 1", "Tip 2"]
         }
         `;
-    } else if (testType === 'Holland') {
-        prompt = `
-        You are a career counselor. Analyze these Holland Codes (RIASEC):
+  } else if (testType === "Holland") {
+    prompt = `
+        You are a Career Counselor. Analyze these Holland Code (RIASEC) scores:
         ${JSON.stringify(results)}
         
         User Context: ${JSON.stringify(userData)}
-        
-        Provide career recommendations and explanation of their type.
-        
-        Return JSON format:
+
+        Return structured JSON (ensure keys are exact):
         {
-            "typeExplanation": "...",
-            "top3Careers": [
+            "typeExplanation": "Explain their primary and secondary Holland types.",
+            "workStyle": "Describe their preferred work environment."
+        }
+        `;
+  } else if (testType === "Career-Match") {
+    // Use the Matching Engine to get data-driven matches first
+    // We ask for top 5 matches to give the AI good context
+    const topMatches = matchCareers(results.bigFive, results.holland, 5);
+
+    prompt = `
+        You are a generic career counselor.
+        We have identified the top career matches for this user based on their personality (Big Five) 
+        and interests (Holland Codes).
+
+        User Context: ${JSON.stringify(userData)}
+        
+        Top Data-Driven Matches (Technical Roles):
+        ${JSON.stringify(topMatches)}
+        
+        Task:
+        For EACH of the matches provided in the list above, provide:
+        1. A specific "Why this fits you" explanation.
+        2. A "Skills Gap / Focus" recommendation based on general knowledge of these roles.
+        3. Recommended resources (1 book, 1 course/link).
+
+        CRITICAL: 
+        - DO NOT invent new careers. Use ONLY the titles provided in the matches.
+        - You do NOT need to provide salary data; we have that statically.
+
+        Return structured JSON (ensure keys are exact):
+        {
+            "topCareers": [
                 {
-                    "title": "...", 
-                    "fit": "90%", 
+                    "title": "(Use the exact title from the match data)", 
+                    "fit": "(Excellent Match / Good Match / Fair Match - based on score)", 
                     "reason": "...", 
-                    "skills": ["..."],
+                    "skills": ["..."], 
                     "roadmap": [{"step": "...", "description": "..."}],
                     "resources": {"books": [{"title": "...", "author": "..."}]}
                 }
             ]
         }
         `;
-    } else {
-        throw new Error(`Invalid testType: ${testType}. Must be 'Big-Five' or 'Holland'`);
+  } else {
+    throw new Error(`Invalid testType: ${testType}. Must be 'Big-Five', 'Holland', or 'Career-Match'`);
+  }
+
+  try {
+    // Add timeout for AI requests (30 seconds)
+    const aiPromise = model.generateContent(prompt);
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("AI request timeout after 30 seconds")), 30000),
+    );
+
+    const result = await Promise.race([aiPromise, timeoutPromise]);
+    const response = await result.response;
+    const text = response.text();
+
+    // Better JSON cleanup
+    let jsonStr = text.trim();
+
+    // Remove markdown code blocks if present
+    if (jsonStr.startsWith("```json")) {
+      jsonStr = jsonStr.replace(/^```json\s*/i, "").replace(/\s*```$/i, "");
+    } else if (jsonStr.startsWith("```")) {
+      jsonStr = jsonStr.replace(/^```\s*/, "").replace(/\s*```$/, "");
     }
 
+    jsonStr = jsonStr.trim();
+
+    // Better error handling for JSON parsing
     try {
-        // FIXED: Add timeout for AI requests (30 seconds)
-        const aiPromise = model.generateContent(prompt);
-        const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('AI request timeout after 30 seconds')), 30000)
-        );
+      const parsed = JSON.parse(jsonStr);
 
-        const result = await Promise.race([aiPromise, timeoutPromise]);
-        const response = await result.response;
-        const text = response.text();
-        
-        // FIXED: Better JSON cleanup
-        let jsonStr = text.trim();
-        
-        // Remove markdown code blocks if present
-        if (jsonStr.startsWith('```json')) {
-            jsonStr = jsonStr.replace(/^```json\s*/i, '').replace(/\s*```$/i, '');
-        } else if (jsonStr.startsWith('```')) {
-            jsonStr = jsonStr.replace(/^```\s*/, '').replace(/\s*```$/, '');
-        }
-        
-        jsonStr = jsonStr.trim();
+      // POST-PROCESSING: Merge Static Data (Salary) for Career-Match
+      if (testType === "Career-Match" && parsed.topCareers && Array.isArray(parsed.topCareers)) {
+        parsed.topCareers = parsed.topCareers.map((aiCareer) => {
+          const staticMatch = careers.find((c) => c.title === aiCareer.title) || {};
+          // Ensure salary is injected from static data (Single Source of Truth)
+          const salary = staticMatch.salary || {egypt: "N/A", usa: "N/A"};
 
-        // FIXED: Better error handling for JSON parsing
-        try {
-            return JSON.parse(jsonStr);
-        } catch (parseError) {
-            logger.error('JSON Parse Error:', parseError.message);
-            logger.error('Raw AI Response (first 500 chars):', jsonStr.substring(0, 500));
-            throw new Error(`Failed to parse AI response as JSON: ${parseError.message}`);
-        }
-    } catch (error) {
-        // FIXED: Return structured error instead of generic object
-        if (error.message && error.message.includes('timeout')) {
-            throw new Error('AI service timeout - please try again');
-        } else if (error.message && error.message.includes('API key')) {
-            throw new Error('AI service authentication failed - check API key configuration');
-        } else {
-            logger.error('AI Generation Error:', error.message);
-            // FIXED: Sanitize error message for production
-            const errorMsg = process.env.NODE_ENV === 'production' 
-                ? 'AI generation failed' 
-                : error.message;
-            throw new Error(`AI generation failed: ${errorMsg}`);
-        }
+          return {
+            ...aiCareer,
+            salary: salary,
+            // Ensure fit score is numeric if possible (passed from match data), or keep AI text
+            fit: typeof aiCareer.fit === "number" ? aiCareer.fit : aiCareer.fit,
+          };
+        });
+      }
+
+      return parsed;
+    } catch (parseError) {
+      logger.error("JSON Parse Error:", parseError.message);
+      logger.error("Raw AI Response (first 500 chars):", jsonStr.substring(0, 500));
+      throw new Error(`Failed to parse AI response as JSON: ${parseError.message}`);
     }
+  } catch (error) {
+    logger.error(`AI Generation Error (${testType}):`, error.message);
+    throw error;
+  }
 };
 
-module.exports = { generateAnalysis };
+module.exports = {generateAnalysis};

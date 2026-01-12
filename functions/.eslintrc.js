@@ -4,7 +4,7 @@ module.exports = {
     node: true,
   },
   parserOptions: {
-    "ecmaVersion": 2018,
+    "ecmaVersion": 2020,
   },
   extends: [
     "eslint:recommended",
@@ -16,6 +16,7 @@ module.exports = {
     "quotes": ["error", "double", {"allowTemplateLiterals": true}],
     "max-len": ["error", {"code": 120}], // بدل 80 خليها 120 حرف
     "no-unused-vars": "warn", // يحول تحذيرات المتغيرات الغير مستخدمة لتحذير بدل خطأ
+    "linebreak-style": "off",
   },
   overrides: [
     {

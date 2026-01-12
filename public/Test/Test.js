@@ -454,7 +454,7 @@ async function startTest(testType) {
     // FIXED: Use modular SDK auth
     const user = auth.currentUser;
     if (!user) {
-        alert(window.i18n?.t('test_please_sign_in') || "Please sign in to start the test.");
+        alert("يرجى تسجيل الدخول لبدء الاختبار.");
         return;
     }
 
@@ -464,7 +464,7 @@ async function startTest(testType) {
         const userTestSnap = await getDoc(userTestRef);
 
         if (userTestSnap.exists()) {
-            const confirmReview = confirm(window.i18n?.t('test_already_completed') || "You have already completed this test. Would you like to review your answers instead?");
+            const confirmReview = confirm("لقد أكملت هذا الاختبار بالفعل. هل ترغب في مراجعة إجاباتك بدلاً من ذلك؟");
             if (confirmReview) {
                 startReview(testType);
             }
@@ -676,7 +676,7 @@ async function startTest(testType) {
                 console.log(`[Test] ✅ Successfully loaded from local JSON file`);
             } catch (jsonError) {
                 console.error(`[Test] Failed to load local JSON file:`, jsonError);
-                const errorMsg = window.i18n?.t('test_failed_load') || "Failed to load test questions. Please check your connection and try again.";
+                const errorMsg = "فشل في تحميل أسئلة الاختبار. يرجى التحقق من اتصالك والمحاولة مرة أخرى.";
                 throw new Error(errorMsg);
             }
         }
@@ -798,8 +798,8 @@ async function startTest(testType) {
         });
         
         // Show user-friendly error message
-        const errorMessage = error.message || (window.i18n?.t('test_failed_load_generic') || "Failed to load the test. Please try again later.");
-        alert(`Error: ${errorMessage}\n\nIf this problem persists, please contact support.`);
+        const errorMessage = error.message || "فشل تحميل الاختبار. يرجى المحاولة مرة أخرى لاحقاً.";
+        alert(`خطأ: ${errorMessage}\n\nإذا استمرت هذه المشكلة، يرجى الاتصال بالدعم.`);
         
         // Optionally, show error in UI instead of alert
         if (elements.selectionView) {
@@ -963,7 +963,7 @@ async function startReview(testType) {
                 console.log(`[Review] ✅ Successfully loaded from local JSON file`);
             } catch (jsonError) {
                 console.error(`[Review] Failed to load local JSON file:`, jsonError);
-                alert(window.i18n?.t('test_failed_load') || "Failed to load test questions. Please check your connection and try again.");
+                alert("فشل في تحميل أسئلة الاختبار. يرجى التحقق من اتصالك والمحاولة مرة أخرى.");
                 return;
             }
         }
@@ -994,7 +994,7 @@ async function startReview(testType) {
         const userTestDoc = await getDoc(userTestRef);
         
         if (!userTestDoc.exists()) {
-            alert("No results found for this test.");
+            alert("لم يتم العثور على نتائج لهذا الاختبار.");
             window.location.href = "Test.html"; // Go back to selection
             return;
         }
@@ -1015,7 +1015,7 @@ async function startReview(testType) {
         
         // Hide Timer or Show "Review Mode"
         if (elements.timerDisplay) {
-            elements.timerDisplay.textContent = window.i18n?.t('test_review_mode') || "Review Mode";
+            elements.timerDisplay.textContent = "وضع المراجعة";
         }
         
         renderQuestion();
@@ -1023,7 +1023,7 @@ async function startReview(testType) {
 
     } catch (error) {
         console.error("Error starting review:", error);
-        alert(window.i18n?.t('test_failed_load_review') || "Failed to load review data.");
+        alert("فشل في تحميل بيانات المراجعة.");
     }
 }
 
@@ -1053,7 +1053,7 @@ function renderQuestion() {
 
     // Wait for fade-out, then update content and fade-in
     setTimeout(() => {
-        const questionText = question.question || question.text || (window.i18n?.t('test_question_not_available') || "Question not available");
+        const questionText = question.question || question.text || "السؤال غير متوفر";
         elements.questionText.textContent = questionText;
         elements.currentQuestionNum.textContent = state.currentQuestionIndex + 1;
 
@@ -1129,8 +1129,8 @@ function renderQuestion() {
         elements.prevBtn.disabled = state.currentQuestionIndex === 0;
     }
     if (elements.nextBtn) {
-        const finishText = window.i18n?.t('test_finish_btn') || 'Finish';
-        const nextText = window.i18n?.t('test_next') || 'Next';
+        const finishText = 'إنهاء';
+        const nextText = 'التالي';
         elements.nextBtn.textContent = state.currentQuestionIndex === state.questions.length - 1 ? finishText : nextText;
         // Keep Next button visible but disabled during auto-advance
         // User can still use it for manual navigation if needed
@@ -1358,17 +1358,19 @@ function finishTest() {
 
     // Validate that we have answers
     if (!currentTestType || Object.keys(finalResult).length === 0) {
-        alert("Error: No test data to save. Please complete the test first.");
+        alert("خطأ: لا توجد بيانات للاختبار لحفظها. يرجى إكمال الاختبار أولاً.");
         return;
     }
 
     saveTestResult(currentTestType, finalResult, totalTime);
 }
 
+
 /**
  * Save test result with instant result generation
  * Shows results immediately after calculation, then saves to Firestore
- * FIXED: Uses modular SDK for all Firebase operations
+ * STRICT: Saves ONLY to tests_results/{uid}
+ * Schema: { [testType]: { completed: true, scores: {...}, completedAt: ... } }
  */
 async function saveTestResult(testType, resultData, totalTime) {
     if (state.isSaving) {
@@ -1377,7 +1379,7 @@ async function saveTestResult(testType, resultData, totalTime) {
     }
     state.isSaving = true;
 
-    // FIXED: Use modular SDK auth
+    // Use modular SDK auth
     const user = auth.currentUser;
     if (!user) {
         state.isSaving = false;
@@ -1385,23 +1387,15 @@ async function saveTestResult(testType, resultData, totalTime) {
         return;
     }
 
-    const finishBtn = elements.finishBtn;
-    if (finishBtn) {
-        finishBtn.disabled = true;
-        const processingText = window.i18n?.t('test_processing') || 'Processing...';
-        finishBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${processingText}`;
-    }
+    // Interactive elements for UI updates
+    const finishBtn = elements.finishBtn || document.getElementById('finishBtn');
 
     try {
-        console.log(`[Test] Starting test result save for ${testType}`);
-        console.log(`[Test] Total answers: ${Object.keys(resultData).length}, Time: ${totalTime}s`);
-        
-        // Show loading animation in result view
-        showResultLoading();
+        console.log('[Test] 💾 Starting save process for:', testType);
+        // showResultLoading(); // REMOVED: This was overwriting the Arabic completion card with English text
 
-        // Step 1: Calculate scores client-side using the questions we already have
+        // Step 1: Calculate scores client-side
         let calculatedResults = {};
-        let analysis = { message: 'Results calculated successfully.' };
         
         try {
             if (!state.questions || state.questions.length === 0) {
@@ -1413,90 +1407,78 @@ async function saveTestResult(testType, resultData, totalTime) {
             
         } catch (calcError) {
             console.error('[Test] ❌ Error calculating scores:', calcError);
-            analysis = { 
-                message: 'Score calculation encountered an error. Results may be incomplete.',
-                error: calcError.message 
-            };
-            // Continue with empty results - user can still see their answers
+            // We continue saving even if calculation fails (though it shouldn't)
         }
         
-        // Step 2: Show results immediately to user
-        displayInstantResults(testType, calculatedResults, analysis);
+        // Result calculation happens above
         
-        // Update result view
-        elements.testView.classList.remove('active');
-        elements.testView.classList.add('hidden');
-        elements.resultView.classList.remove('hidden');
-        setTimeout(() => elements.resultView.classList.add('active'), 50);
+        // Hide test view
+        if (elements.testView) {
+            elements.testView.classList.remove('active');
+            elements.testView.classList.add('hidden');
+        }
+
+        // Show a generic completion state if needed, but we will redirect soon
+        if (elements.resultView) {
+            elements.resultView.classList.remove('hidden');
+            setTimeout(() => elements.resultView.classList.add('active'), 50);
+        }
 
         // Update finish button to show saving state
         if (finishBtn) {
             finishBtn.disabled = true;
-            const savingText = window.i18n?.t('test_saving') || 'Saving...';
+            const savingText = 'جاري الحفظ...';
             finishBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${savingText}`;
         }
 
-        // Step 3: Save everything directly to Firestore (no backend API calls)
-        try {
-            const testDocRef = doc(db, 'users', user.uid, 'tests', testType);
-            
-            // Prepare complete test result data
-            const testResultData = {
-                testType: testType,
-                answers: resultData, // All individual answers
-                results: calculatedResults, // Calculated scores
-                analysis: analysis, // Analysis message
-                timeSpent: totalTime,
-                totalTime: totalTime,
-                totalQuestions: state.questions.length,
-                answeredQuestions: Object.keys(resultData).length,
-                completedAt: serverTimestamp(),
-                lastUpdated: serverTimestamp()
-            };
-            
-            // Preserve startTime if it exists
-            const existingDoc = await getDoc(testDocRef);
-            if (existingDoc.exists()) {
-                const existingData = existingDoc.data();
-                if (existingData.startTime) {
-                    testResultData.startTime = existingData.startTime;
-                }
-            } else if (state.startTime) {
-                testResultData.startTime = new Date(state.startTime).toISOString();
-            }
-            
-            // Save to Firestore (merge to preserve any existing data)
-            await setDoc(testDocRef, testResultData, { merge: true });
-            
-            console.log(`[Test] ✅ Test result saved to Firestore: /users/${user.uid}/tests/${testType}`);
-            
-            // Show success notification
-            showSaveSuccess();
-            
-            // Check if both tests are complete and trigger Gemini analysis (if needed)
-            try {
-                await checkAndTriggerGeminiAnalysis(user.uid);
-            } catch (geminiError) {
-                // Gemini analysis is optional, don't block on this
-                console.warn('[Test] Gemini analysis check failed (non-critical):', geminiError);
-            }
-            
-        } catch (saveError) {
-            console.error('[Test] ❌ Error saving test result to Firestore:', saveError);
-            const errorMsg = window.i18n?.t('test_save_error') || 'Failed to save result: ';
-            alert(errorMsg + saveError.message);
-            // Don't throw - user can still see their results
+        // Step 3: Save to Single Source of Truth
+        // Collection: tests_results
+        // Document: {uid}
+        
+        // Normalize field names
+        // Big-Five -> bigFive
+        // Holland -> holland
+        let fieldName = 'unknown';
+        if (testType === 'Big-Five') fieldName = 'bigFive';
+        else if (testType === 'Holland' || testType === 'Holland-codes') fieldName = 'holland';
+        
+        if (fieldName === 'unknown') {
+            throw new Error(`Unknown test type: ${testType}`);
         }
 
+        const resultsRef = doc(db, 'tests_results', user.uid);
+        
+        const updateData = {
+            [fieldName]: {
+                completed: true,
+                scores: calculatedResults,
+                answers: resultData, // Persist answers just in case
+                completedAt: serverTimestamp(),
+                timeSpent: totalTime
+            },
+            lastUpdated: serverTimestamp()
+        };
+        
+        await setDoc(resultsRef, updateData, { merge: true });
+        
+        console.log(`[Test] ✅ Test result saved to tests_results/${user.uid} (Field: ${fieldName})`);
+            
+        // Show success notification
+        showSaveSuccess();
+        
+        // Finalize state
         state.isSaving = false;
         
-        // Update finish button
+        // Update finish button to exit
         if (finishBtn) {
             finishBtn.disabled = false;
-            const viewProfileText = window.i18n?.t('test_view_profile') || 'View Profile';
+            const viewProfileText = 'عرض الملف الشخصي';
             finishBtn.innerHTML = viewProfileText;
             finishBtn.onclick = () => {
-                window.location.href = "../profile/profile.html";
+                const resultsURL = (fieldName === 'bigFive') 
+                    ? "../profile/personality-results.html" 
+                    : "../profile/career-results.html";
+                window.location.href = resultsURL;
             };
         }
 
@@ -1523,8 +1505,8 @@ function showResultLoading() {
         elements.resultView.innerHTML = `
             <div class="text-center p-5">
                 <i class="fas fa-spinner fa-spin fa-3x text-gold mb-3"></i>
-                <h4 class="text-gold">Generating Your Results...</h4>
-                <p class="text-muted">This may take a few seconds</p>
+                <h4 class="text-gold">جاري معالجة نتائجك...</h4>
+                <p class="text-muted">قد يستغرق هذا بضع ثوانٍ</p>
             </div>
         `;
     }
@@ -1547,7 +1529,7 @@ function showSaveSuccess() {
     successMsg.innerHTML = `
         <div class="save-success-content">
             <i class="fas fa-check-circle"></i>
-            <span>Test results saved successfully!</span>
+            <span>تم حفظ النتائج بنجاح!</span>
         </div>
     `;
     successMsg.style.cssText = `
@@ -1615,104 +1597,6 @@ if (!document.getElementById('save-success-styles')) {
 }
 
 
-/**
- * Display instant results after calculation
- * Uses inline styles to avoid modifying CSS files
- */
-function displayInstantResults(testType, results, analysis) {
-    if (!elements.resultView) return;
-
-    // Inline styles for result display (to avoid modifying CSS files)
-    const resultCardStyle = 'background: #0a0a0a; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 16px; padding: 2rem; margin: 2rem 0;';
-    const resultsGridStyle = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0;';
-    const resultItemStyle = 'background: rgba(212, 175, 55, 0.05); padding: 1rem; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.2);';
-    const resultLabelStyle = 'color: #d4af37; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem;';
-    const resultValueStyle = 'color: #fff; font-size: 1.5rem; font-weight: 700; margin: 0.5rem 0;';
-    const resultBarStyle = 'background: rgba(255, 255, 255, 0.1); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 0.5rem;';
-    const resultBarFillStyle = 'background: linear-gradient(90deg, #d4af37, #f4d03f); height: 100%; transition: width 0.3s ease;';
-    const analysisSectionStyle = 'margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(212, 175, 55, 0.2);';
-
-    let resultHTML = '';
-
-    if (testType === 'Big-Five') {
-        const labels = {
-            'O': 'Openness',
-            'C': 'Conscientiousness',
-            'E': 'Extraversion',
-            'A': 'Agreeableness',
-            'N': 'Neuroticism'
-        };
-        
-        resultHTML = `
-            <div style="${resultCardStyle}">
-                <h3 style="color: #d4af37; margin-bottom: 2rem; text-align: center; font-size: 2rem;">Big Five Personality Results</h3>
-                <div style="${resultsGridStyle}">
-                    ${Object.keys(results).map(key => `
-                        <div style="${resultItemStyle}">
-                            <div style="${resultLabelStyle}">${labels[key] || key}</div>
-                            <div style="${resultValueStyle}">${results[key]}%</div>
-                            <div style="${resultBarStyle}">
-                                <div class="result-bar-fill" style="${resultBarFillStyle} width: ${results[key]}%"></div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-                ${analysis ? `
-                    <div style="${analysisSectionStyle}">
-                        <h4 style="color: #d4af37; margin-bottom: 1rem;">Analysis</h4>
-                        <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.6;">${analysis.personalityAnalysis || 'Analysis generated successfully.'}</p>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-    } else if (testType === 'Holland' || testType === 'Holland-codes') {
-        const labels = {
-            'R': 'Realistic',
-            'I': 'Investigative',
-            'A': 'Artistic',
-            'S': 'Social',
-            'E': 'Enterprising',
-            'C': 'Conventional'
-        };
-        
-        resultHTML = `
-            <div style="${resultCardStyle}">
-                <h3 style="color: #d4af37; margin-bottom: 2rem; text-align: center; font-size: 2rem;">Holland Codes Results</h3>
-                <div style="${resultsGridStyle}">
-                    ${Object.keys(results).map(key => `
-                        <div style="${resultItemStyle}">
-                            <div style="${resultLabelStyle}">${labels[key] || key}</div>
-                            <div style="${resultValueStyle}">${results[key]}%</div>
-                            <div style="${resultBarStyle}">
-                                <div class="result-bar-fill" style="${resultBarFillStyle} width: ${results[key]}%"></div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-                ${analysis ? `
-                    <div style="${analysisSectionStyle}">
-                        <h4 style="color: #d4af37; margin-bottom: 1rem;">Analysis</h4>
-                        <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
-                            ${analysis.typeExplanation || analysis.personalityAnalysis || 'Analysis generated successfully.'}
-                        </p>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-    }
-
-    if (elements.resultView) {
-        elements.resultView.innerHTML = resultHTML;
-    }
-
-    // Add event listener for profile button
-    const profileBtn = document.getElementById('viewProfileBtn');
-    if (profileBtn) {
-        profileBtn.addEventListener('click', () => {
-            window.location.href = "../profile/profile.html";
-        });
-    }
-}
 
 /**
  * Save test results to Firestore
@@ -1737,96 +1621,4 @@ function displayInstantResults(testType, results, analysis) {
  * No backend API calls are needed for saving test results
  */
 
-/**
- * Check if both tests are complete and trigger Gemini analysis
- */
-async function checkAndTriggerGeminiAnalysis(userId) {
-    try {
-        console.log('[Gemini] Checking if both tests are complete...');
-        
-        // Fetch both test results from Firestore
-        const bigFiveRef = doc(db, 'users', userId, 'tests', 'Big-Five');
-        const hollandRef = doc(db, 'users', userId, 'tests', 'Holland');
-        
-        const [bigFiveSnap, hollandSnap] = await Promise.all([
-            getDoc(bigFiveRef),
-            getDoc(hollandRef)
-        ]);
-        
-        if (!bigFiveSnap.exists() || !hollandSnap.exists()) {
-            console.log('[Gemini] Both tests not complete yet. Big-Five:', bigFiveSnap.exists(), 'Holland:', hollandSnap.exists());
-            return;
-        }
-        
-        console.log('[Gemini] Both tests complete! Triggering analysis...');
-        
-        // Get test results
-        const bigFiveData = bigFiveSnap.data();
-        const hollandData = hollandSnap.data();
-        
-        // Prepare combined results
-        const combinedResults = {
-            bigfive: bigFiveData.results || bigFiveData.result || bigFiveData,
-            holland: hollandData.results || hollandData.result || hollandData
-        };
-        
-        // Save combined results to Firestore for potential Cloud Function processing
-        // This allows a Cloud Function to trigger Gemini analysis later if needed
-        const analysisRef = doc(db, 'users', userId, 'analysis', 'combined');
-        await setDoc(analysisRef, {
-            combinedResults: combinedResults,
-            bigFiveCompleted: bigFiveData.completedAt || serverTimestamp(),
-            hollandCompleted: hollandData.completedAt || serverTimestamp(),
-            lastUpdated: serverTimestamp(),
-            status: 'pending' // Can be processed by Cloud Function
-        }, { merge: true });
-        
-        console.log('[Gemini] ✅ Combined results saved to Firestore for analysis');
-        console.log('[Gemini] Note: Gemini analysis can be triggered by a Cloud Function if configured');
-        
-        // Note: Gemini analysis via API has been removed - use Cloud Functions if needed
-        
-    } catch (error) {
-        console.error('[Gemini] ❌ Error triggering analysis:', error);
-        // Don't show error to user - analysis can be triggered manually later
-    }
-}
-
-/**
- * Show notification that Gemini analysis is complete
- */
-function showGeminiAnalysisComplete() {
-    const notification = document.createElement('div');
-    notification.className = 'gemini-analysis-notification';
-    notification.innerHTML = `
-        <div class="gemini-notification-content">
-            <i class="fas fa-check-circle"></i>
-            <span>Career analysis complete! Check your profile for job recommendations.</span>
-        </div>
-    `;
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #4CAF50, #45a049);
-        color: #fff;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
-        z-index: 10001;
-        animation: slideInRight 0.3s ease-out;
-        font-weight: 600;
-        max-width: 400px;
-    `;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.style.animation = 'slideOutRight 0.3s ease-out';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }, 5000);
-}
+// [Legacy AI functions removed - AI Analysis is now triggered by Profile Page]

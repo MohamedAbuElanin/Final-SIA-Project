@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SIA - Profile</title>
+    <title>SIA - الملف الشخصي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../style.css" />
@@ -20,37 +20,21 @@
             <!-- Logo Section -->
             <a href="../index.html" class="brand" aria-label="SIA homepage">
                 <span class="brand__mark">
-                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA golden logo" />
+                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="شعار SIA الذهبي" />
                 </span>
             </a>
 
             <!-- Center Navigation Links -->
             <ul class="nav-links" id="navLinks">
-                <li><a href="../index.html" data-key="nav_home">Home</a></li>
-                <li><a href="../About/About.html" data-key="nav_about">About</a></li>
-                <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
-                <li><a href="profile.html" aria-current="page" data-key="nav_profile">Profile</a></li>
-                <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
+                <li><a href="../index.html">الرئيسية</a></li>
+                <li><a href="../About/About.html">عن المنصة</a></li>
+                <li><a href="../Test/Test.html">الاختبار</a></li>
+                <li><a href="profile.html" aria-current="page">الملف الشخصي</a></li>
+                <li><a href="../privacy-terms.html">الخصوصية والشروط</a></li>
             </ul>
 
             <!-- Right Buttons Section -->
             <div class="nav-auth" id="navAuth">
-                <div class="lang-dropdown">
-                    <button class="lang-dropdown-toggle" type="button">
-                        <span class="lang-current">EN</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="lang-dropdown-menu">
-                        <a href="../assets/i18n/en.json" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
-                            <span>English</span>
-                            <span class="lang-code">EN</span>
-                        </a>
-                        <a href="../assets/i18n/ar.json" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
-                            <span>العربية</span>
-                            <span class="lang-code">AR</span>
-                        </a>
-                    </div>
-                </div>
                 <!-- Injected by auth.js -->
             </div>
 
@@ -64,30 +48,14 @@
             <!-- Responsive Menu -->
             <div class="nav-drawer" aria-hidden="true">
                 <ul class="drawer-links">
-                    <li><a href="../index.html" data-key="nav_home">Home</a></li>
-                    <li><a href="../About/About.html" data-key="nav_about">About</a></li>
-                    <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
-                    <li><a href="profile.html" aria-current="page" data-key="nav_profile">Profile</a></li>
-                    <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
+                    <li><a href="../index.html">الرئيسية</a></li>
+                    <li><a href="../About/About.html">عن المنصة</a></li>
+                    <li><a href="../Test/Test.html">الاختبار</a></li>
+                    <li><a href="profile.html" aria-current="page">الملف الشخصي</a></li>
+                    <li><a href="../privacy-terms.html">الخصوصية والشروط</a></li>
                 </ul>
                 <!-- Drawer Auth Buttons -->
                 <div class="drawer-auth">
-                    <div class="lang-dropdown" style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                        <button class="lang-dropdown-toggle" type="button">
-                            <span class="lang-current">EN</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="lang-dropdown-menu">
-                            <a href="../assets/i18n/en.json" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
-                                <span>English</span>
-                                <span class="lang-code">EN</span>
-                            </a>
-                            <a href="../assets/i18n/ar.json" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
-                                <span>العربية</span>
-                                <span class="lang-code">AR</span>
-                            </a>
-                        </div>
-                    </div>
                     <!-- Injected by auth.js -->
                 </div>
             </div>
@@ -100,9 +68,9 @@
             <!-- Loading Indicator -->
             <div id="profileLoadingIndicator" class="text-center py-5" style="display: none;">
                 <div class="spinner-border text-warning" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden">جاري التحميل...</span>
                 </div>
-                <p class="mt-3 text-muted">Loading your profile...</p>
+                <p class="mt-3 text-muted">جاري تحميل ملفك الشخصي...</p>
             </div>
 
             <!-- Error Message -->
@@ -117,8 +85,8 @@
                             <!-- Profile Picture -->
                             <div class="profile-picture-wrapper mb-4">
                                 <div class="profile-picture-container">
-                                    <img id="profilePicture" src="../Images/Profile Photo/SVG/Male.svg" alt="Profile Picture" class="profile-picture" />
-                                    <button id="uploadPhotoBtn" class="upload-photo-btn" title="Upload Photo">
+                                    <img id="profilePicture" src="../Images/Profile Photo/SVG/Male.svg" alt="الصورة الشخصية" class="profile-picture" />
+                                    <button id="uploadPhotoBtn" class="upload-photo-btn" title="تحميل صورة">
                                         <i class="fas fa-camera"></i>
                                     </button>
                                     <input type="file" id="photoInput" accept="image/*" style="display: none;" />
@@ -126,21 +94,21 @@
                             </div>
                             
                             <!-- User Name -->
-                            <h1 id="profileUserName" class="profile-name mb-2">Loading...</h1>
+                            <h1 id="profileUserName" class="profile-name mb-2">جاري التحميل...</h1>
                             
                             <!-- User Email -->
-                            <p id="profileUserEmail" class="text-muted mb-4">Loading...</p>
+                            <p id="profileUserEmail" class="text-muted mb-4">جاري التحميل...</p>
                             
                             <!-- Action Buttons -->
                             <div class="profile-actions">
                                 <button id="editProfileBtn" class="btn btn-outline-warning me-2">
-                                    <i class="fas fa-edit me-2"></i>Edit Profile
+                                    <i class="fas fa-edit me-2"></i>تعديل الملف الشخصي
                                 </button>
                                 <button id="exportPDFBtn" class="btn btn-outline-light me-2">
-                                    <i class="fas fa-download me-2"></i>Export PDF
+                                    <i class="fas fa-download me-2"></i>تصدير PDF
                                 </button>
                                 <button id="logoutBtn" class="btn btn-outline-danger">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    <i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج
                                 </button>
                             </div>
                         </div>
@@ -150,27 +118,27 @@
                 <!-- Tests Section -->
                 <section class="tests-section mb-5">
                     <h2 class="section-title mb-4">
-                        <i class="fas fa-clipboard-list me-2"></i>Personality Tests
+                        <i class="fas fa-clipboard-list me-2"></i>اختبارات الشخصية
                     </h2>
                     <div class="row g-4">
                         <!-- Holland Test Card -->
                         <div class="col-md-6">
                             <div class="test-card" id="hollandTestCard">
                                 <div class="test-card-header">
-                                    <img src="../Images/Test/Holland codes.svg" alt="Holland Codes Test" class="test-image" />
-                                    <h3 class="test-title">Holland Codes Test</h3>
+                                    <img src="../Images/Test/Holland codes.svg" alt="اختبار أكواد هولاند" class="test-image" />
+                                    <h3 class="test-title">اختبار أكواد هولاند</h3>
                                 </div>
                                 <div class="test-card-body">
-                                    <p class="test-description">Discover your career interests and personality type through the Holland Codes assessment.</p>
+                                    <p class="test-description">اكتشف اهتماماتك المهنية ونوع شخصيتك من خلال تقييم أكواد هولاند.</p>
                                     <div id="hollandTestStatus" class="test-status">
                                         <!-- Status will be injected here -->
                                     </div>
                                     <div class="test-actions">
                                         <button id="startHollandBtn" class="btn btn-warning w-100" style="display: none;">
-                                            <i class="fas fa-play me-2"></i>Start Test
+                                            <i class="fas fa-play me-2"></i>بدء الاختبار
                                         </button>
                                         <button id="viewHollandBtn" class="btn btn-success w-100" style="display: none;">
-                                            <i class="fas fa-chart-bar me-2"></i>View Results
+                                            <i class="fas fa-chart-bar me-2"></i>عرض النتائج
                                         </button>
                                     </div>
                                 </div>
@@ -181,20 +149,20 @@
                         <div class="col-md-6">
                             <div class="test-card" id="bigFiveTestCard">
                                 <div class="test-card-header">
-                                    <img src="../Images/Test/Big Five.svg" alt="Big Five Test" class="test-image" />
-                                    <h3 class="test-title">Big Five Test</h3>
+                                    <img src="../Images/Test/Big Five.svg" alt="اختبار السمات الخمس الكبرى" class="test-image" />
+                                    <h3 class="test-title">اختبار السمات الخمس الكبرى</h3>
                                 </div>
                                 <div class="test-card-body">
-                                    <p class="test-description">Understand your personality traits across five key dimensions.</p>
+                                    <p class="test-description">افهم سمات شخصيتك عبر خمسة أبعاد رئيسية.</p>
                                     <div id="bigFiveTestStatus" class="test-status">
                                         <!-- Status will be injected here -->
                                     </div>
                                     <div class="test-actions">
                                         <button id="startBigFiveBtn" class="btn btn-warning w-100" style="display: none;">
-                                            <i class="fas fa-play me-2"></i>Start Test
+                                            <i class="fas fa-play me-2"></i>بدء الاختبار
                                         </button>
                                         <button id="viewBigFiveBtn" class="btn btn-success w-100" style="display: none;">
-                                            <i class="fas fa-chart-bar me-2"></i>View Results
+                                            <i class="fas fa-chart-bar me-2"></i>عرض النتائج
                                         </button>
                                     </div>
                                 </div>
@@ -202,21 +170,37 @@
                         </div>
                     </div>
                 </section>
-
-                <!-- AI Analysis Section -->
-                <section class="ai-analysis-section mb-5" id="aiAnalysisSection" style="display: none;">
+                <!-- Final Analysis Section (Appears when both tests are done) -->
+                <section id="final-analysis-section" class="final-analysis-section mb-5" style="display: none;">
                     <h2 class="section-title mb-4">
-                        <i class="fas fa-robot me-2"></i>AI Career Analysis
+                        <i class="fas fa-magic me-2"></i>التحليل المهني الشامل
                     </h2>
-                    <div id="aiAnalysisContent">
-                        <!-- AI analysis will be injected here -->
+                    <div class="career-card">
+                        <div class="career-header">
+                            <h3 id="finalCareerTitle" class="career-title">جاري التجهيز...</h3>
+                            <span class="career-fit-badge">توافق عالي</span>
+                        </div>
+                        <div id="finalAnalysisText" class="career-description-container">
+                            <!-- Injected by profile_new.js -->
+                        </div>
+                        
+                        <div class="row info-grid mt-4">
+                            <div class="col-md-6 mb-3">
+                                <h4 class="text-yellow mb-3"><i class="fas fa-graduation-cap me-6"></i>دورات تدريبية</h4>
+                                <ul id="finalCoursesList" class="roadmap-steps"></ul>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h4 class="text-yellow mb-3"><i class="fas fa-book me-6"></i>كتب مرشحة</h4>
+                                <ul id="finalBooksList" class="roadmap-steps"></ul>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
                 <!-- Activity Log Section -->
                 <section class="activity-log-section mb-5">
                     <h2 class="section-title mb-4">
-                        <i class="fas fa-history me-2"></i>Activity Log
+                        <i class="fas fa-history me-2"></i>سجل النشاط
                     </h2>
                     <div class="activity-log-container">
                         <div id="activityLogList" class="activity-log-list">
@@ -231,21 +215,22 @@
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer__brand">
-            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo" />
+            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="أيقونة عين رع SIA" class="footer__logo" />
             <div>
-                <p class="footer__title" data-key="footer_title">SIA</p>
-                <p class="footer__mission" data-key="footer_mission">
-                    We connect ancient wisdom with modern career paths.
+                <p class="footer__title">SIA</p>
+                <p class="footer__mission">
+                    نربط الحكمة القديمة بمسارات المهن الحديثة.
                 </p>
             </div>
         </div>
-        <div class="footer__links">
-            <a href="../index.html" data-key="footer_home">Home</a>
-            <a href="../About/About.html" data-key="footer_about">About</a>
-            <a href="../privacy-terms.html" data-key="footer_privacy">Privacy</a>
+        <div class="footer__nav">
+            <a href="../index.html">الرئيسية</a>
+            <a href="../About/About.html">عن المنصة</a>
+            <a href="../privacy-terms.html">الخصوصية</a>
         </div>
-        <div class="footer__copyright">
-            <p>&copy; 2025 SIA. All rights reserved.</p>
+        <div class="footer__copy">
+            <p>&copy; 2026 SIA. All rights reserved.</p>
+            <p class="footer__motto">Ancient Wisdom for Modern Career Paths</p>
         </div>
     </footer>
 
@@ -254,38 +239,81 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark text-light">
                 <div class="modal-header border-secondary">
-                    <h5 class="modal-title">Edit Profile</h5>
+                    <h5 class="modal-title">تعديل الملف الشخصي</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editProfileForm">
                         <div class="mb-3">
-                            <label for="editName" class="form-label">Full Name</label>
+                            <label for="editName" class="form-label">الاسم الكامل</label>
                             <input type="text" class="form-control bg-dark text-light border-secondary" id="editName" required />
                         </div>
                         <div class="mb-3">
-                            <label for="editEmail" class="form-label">Email</label>
+                            <label for="editEmail" class="form-label">البريد الإلكتروني</label>
                             <input type="email" class="form-control bg-dark text-light border-secondary" id="editEmail" disabled />
                         </div>
                         <div class="mb-3">
-                            <label for="editAge" class="form-label">Age</label>
+                            <label for="editAge" class="form-label">العمر</label>
                             <input type="number" class="form-control bg-dark text-light border-secondary" id="editAge" min="1" max="120" />
                         </div>
                         <div class="mb-3">
-                            <label for="editGender" class="form-label">Gender</label>
+                            <label for="editGender" class="form-label">الجنس</label>
                             <select class="form-select bg-dark text-light border-secondary" id="editGender">
-                                <option value="">Select Gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
+                                <option value="">اختر الجنس</option>
+                                <option value="male">ذكر</option>
+                                <option value="female">أنثى</option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-warning" id="saveProfileBtn">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-warning" id="saveProfileBtn">حفظ التغييرات</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Hidden PDF Export Template - Simplified for better PDF rendering -->
+    <div id="pdfExportTemplate" style="display: none; width: 750px; padding: 50px; background:  #fff; color: #333; direction: rtl; font-family: Arial, Tahoma, sans-serif; line-height: 1.5;">
+        <!-- Header -->
+        <div style="border-bottom: 3px solid #D4AF37; padding-bottom: 30px; margin-bottom: 40px; text-align: right; position: relative; min-height: 120px;">
+            <img src="../Images/Logo/SIA +Ra's Eye, black color.svg" alt="SIA Logo" style="width: 120px; float: left;" />
+            <h1 style="color: #000; margin: 0; font-size: 28px; padding-top: 10px;">تقرير SIA المهني الشامل</h1>
+            <p style="margin: 10px 0 5px 0; color: #000000; font-size: 16px;" id="pdfUserName">:الاسم</p>
+            <p style="margin: 5px 0; color: #000000; font-size: 14px;" id="pdfDate">:التاريخ</p>
+            <div style="clear: both;"></div>
+        </div>
+
+        <!-- Career Analysis Section -->
+        <div style="margin-bottom: 50px;">
+            <h2 style="color: #D4AF37; border-bottom: 2px solid #ffffff; padding-bottom: 12px; font-size: 22px;">1. التحليل المهني المقترح</h2>
+            <div style="padding: 15px 0;">
+                <h3 id="pdfCareerTitle" style="color: #c9a01b; margin-bottom: 20px; font-size: 20px; font-weight: bold;"></h3>
+                <div id="pdfFinalAnalysis" style="font-size: 15px; text-align: justify;"></div>
+            </div>
+        </div>
+
+        <!-- Holland Results -->
+        <div style="margin-bottom: 50px; page-break-inside: avoid;">
+            <h2 style="color: #D4AF37; border-bottom: 2px solid #ffffff; padding-bottom: 12px; font-size: 22px;">2. نتائج اختبار هولاند </h2>
+            <div id="pdfHollandResults" style="margin-top: 20px; overflow: hidden;">
+                <!-- Items will be injected as inline-blocks -->
+            </div>
+        </div>
+
+        <!-- Big Five Results -->
+        <div style="margin-bottom: 50px; page-break-inside: avoid;">
+            <h2 style="color: #D4AF37; border-bottom: 2px solid #ffffff; padding-bottom: 12px; font-size: 22px;">3. سمات الشخصية </h2>
+            <div id="pdfBigFiveResults" style="margin-top: 20px;">
+                <!-- Bars will be injected here -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 60px; padding-top: 30px; border-top: 2px solid #D4AF37; text-align: center;">
+            <p style="margin: 0; color: #000000; font-size: 13px;">&copy; 2026 SIA. All rights reserved.</p>
+            <p style="margin: 8px 0 0 0; color: #D4AF37; font-weight: bold; font-size: 14px;">Ancient Wisdom for Modern Career Paths</p>
         </div>
     </div>
 
@@ -299,23 +327,16 @@
     <!-- 4. Auth Guard (Regular script - depends on auth-state) -->
     <script src="../auth-guard.js"></script>
 
-    <!-- Config & API Service -->
+    <!-- Config -->
     <!-- 5. Config (Regular script - no dependencies) -->
     <script src="../config.js"></script>
-    <!-- 6. API Service (Regular script - depends on config) -->
-    <script src="../js/api-service.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- ApexCharts for visualizations -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <!-- html2pdf for PDF export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <!-- Language Translation -->
-    <script src="../js/lang.js"></script>
 
     <!-- Profile Script -->
     <script type="module" src="profile_new.js"></script>

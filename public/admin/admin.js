@@ -141,13 +141,13 @@ async function initializeAdmin() {
             // User is admin, proceed
             document.getElementById('adminEmailDisplay').textContent = user.email;
             hideLoading();
-            showToast('Welcome to Admin Panel', 'success');
+            showToast('مرحباً بك في لوحة المسؤول', 'success');
             setupEventListeners();
             initDashboard(adminState.authToken);
         });
     } catch (error) {
         console.error('Error initializing admin:', error);
-        showToast('Error initializing admin panel', 'error');
+        showToast('خطأ في تهيئة لوحة المسؤول', 'error');
         hideLoading();
     }
 }
@@ -168,7 +168,7 @@ function setupEventListeners() {
         refreshBtn.addEventListener('click', () => {
             if (adminState.authToken) {
                 initDashboard(adminState.authToken);
-                showToast('Data refreshed', 'success');
+                showToast('تم تحديث البيانات', 'success');
             }
         });
     }
@@ -267,7 +267,7 @@ async function loadUsers(token) {
     const listEl = document.getElementById('usersList');
     if (!listEl) return;
 
-    listEl.innerHTML = '<div class="text-center p-3"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+    listEl.innerHTML = '<div class="text-center p-3"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>';
 
     try {
         const res = await fetch('/api/admin/users', {
@@ -285,8 +285,8 @@ async function loadUsers(token) {
             handleAuthError();
             return;
         }
-        listEl.innerHTML = '<div class="text-white p-3">Error loading users. <button class="btn btn-sm btn-outline-light" onclick="loadUsers()">Retry</button></div>';
-        showToast('Failed to load users', 'error');
+        listEl.innerHTML = '<div class="text-white p-3">خطأ في تحميل المستخدمين. <button class="btn btn-sm btn-outline-light" onclick="loadUsers()">إعادة المحاولة</button></div>';
+        showToast('فشل تحميل المستخدمين', 'error');
     }
 }
 
@@ -294,7 +294,7 @@ async function loadUserDetails(uid) {
     const panel = document.getElementById('userDetailPanel');
     if (!panel) return;
 
-    panel.innerHTML = '<div class="text-center p-5"><i class="fas fa-spinner fa-spin fa-2x text-gold"></i><p class="mt-3">Loading details...</p></div>';
+    panel.innerHTML = '<div class="text-center p-5"><i class="fas fa-spinner fa-spin fa-2x text-gold"></i><p class="mt-3">جاري تحميل التفاصيل...</p></div>';
 
     try {
         const user = firebase.auth().currentUser;
@@ -318,8 +318,8 @@ async function loadUserDetails(uid) {
             handleAuthError();
             return;
         }
-        panel.innerHTML = '<div class="p-3 text-white border border-secondary rounded bg-dark">Failed to load user details.</div>';
-        showToast('Failed to load user details', 'error');
+        panel.innerHTML = '<div class="p-3 text-white border border-secondary rounded bg-dark">فشل تحميل تفاصيل المستخدم.</div>';
+        showToast('فشل تحميل تفاصيل المستخدم', 'error');
     }
 }
 
@@ -331,26 +331,26 @@ function renderUsers(users) {
     if (!listEl) return;
 
     if (users.length === 0) {
-        listEl.innerHTML = '<div class="p-3 text-white text-center">No users found.</div>';
+        listEl.innerHTML = '<div class="p-3 text-white text-center">لم يتم العثور على مستخدمين.</div>';
         return;
     }
 
     listEl.innerHTML = '';
     users.forEach(user => {
         const lastSignIn = user.metadata.lastSignInTime 
-            ? new Date(user.metadata.lastSignInTime).toLocaleDateString() 
-            : 'N/A';
+            ? new Date(user.metadata.lastSignInTime).toLocaleDateString('ar-EG') 
+            : 'غير متوفر';
         
         const item = document.createElement('div');
         item.style.cursor = 'pointer';
         item.className = 'list-group-item list-group-item-action bg-dark text-white border-secondary user-row';
         item.innerHTML = `
             <div class="d-flex w-100 justify-content-between">
-                <h6 class="mb-1 text-gold">${user.displayName || 'No Name'}</h6>
+                <h6 class="mb-1 text-gold">${user.displayName || 'بدون اسم'}</h6>
                 <small class="text-white"><i class="far fa-clock me-1"></i>${lastSignIn}</small>
             </div>
             <p class="mb-1 text-truncate small text-white">${user.email}</p>
-            <small class="text-white-50" style="font-size: 0.75rem;">UID: ${user.uid}</small>
+            <small class="text-white-50" style="font-size: 0.75rem;">المعرف: ${user.uid}</small>
         `;
         item.style.color = '#ffffff';
         
@@ -392,68 +392,68 @@ function renderUserDetails(data) {
     const activityHtml = activity.map(log => `
         <div class="d-flex justify-content-between border-bottom border-secondary py-2 text-white">
             <span>${log.action}</span>
-            <small class="text-white-50">${log.timestamp ? new Date(log.timestamp).toLocaleString() : ''}</small>
+            <small class="text-white-50">${log.timestamp ? new Date(log.timestamp).toLocaleString('ar-EG') : ''}</small>
         </div>
-    `).join('') || '<p class="text-white-50">No activity recorded.</p>';
+    `).join('') || '<p class="text-white-50">لا يوجد نشاط مسجل.</p>';
 
     panel.innerHTML = `
         <div class="d-flex align-items-center mb-4 border-bottom border-gold pb-3 text-white">
             <img src="${info.avatar || '../assets/male.svg'}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #d4af37;">
             <div>
-                <h4 class="text-gold mb-0">${info.fullName || info.displayName || 'Unnamed'}</h4>
+                <h4 class="text-gold mb-0">${info.fullName || info.displayName || 'غير مسمى'}</h4>
                 <div class="text-white">${info.email}</div>
-                <div class="small text-white-50">Member since: ${info.createdAt ? new Date(info.createdAt._seconds * 1000).toDateString() : 'Unknown'}</div>
+                <div class="small text-white-50">عضو منذ: ${info.createdAt ? new Date(info.createdAt._seconds * 1000).toLocaleDateString('ar-EG') : 'غير معروف'}</div>
             </div>
         </div>
 
         <div class="row g-4 text-white">
             <div class="col-md-6">
                 <div class="card bg-dark border-secondary mb-3">
-                    <div class="card-header border-secondary text-gold">Big Five Scores</div>
+                    <div class="card-header border-secondary text-gold">نتائج العوامل الخمسة الكبرى</div>
                     <div class="card-body text-white">
                         ${Object.keys(bf).length ? `
                             <ul class="list-unstyled mb-0">
-                                <li class="d-flex justify-content-between"><span>Openness:</span> <span>${bf.Openness || 0}</span></li>
-                                <li class="d-flex justify-content-between"><span>Conscientiousness:</span> <span>${bf.Conscientiousness || 0}</span></li>
-                                <li class="d-flex justify-content-between"><span>Extraversion:</span> <span>${bf.Extraversion || 0}</span></li>
-                                <li class="d-flex justify-content-between"><span>Agreeableness:</span> <span>${bf.Agreeableness || 0}</span></li>
-                                <li class="d-flex justify-content-between"><span>Neuroticism:</span> <span>${bf.Neuroticism || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>الانفتاح:</span> <span>${bf.Openness || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>الضمير الحي:</span> <span>${bf.Conscientiousness || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>الانبساط:</span> <span>${bf.Extraversion || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>المقبولية:</span> <span>${bf.Agreeableness || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>العصابية:</span> <span>${bf.Neuroticism || 0}</span></li>
                             </ul>
-                        ` : '<div class="text-white-50 text-center small">Not taken</div>'}
+                        ` : '<div class="text-white-50 text-center small">لم يتم إجراء الاختبار</div>'}
                     </div>
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="card bg-dark border-secondary mb-3">
-                    <div class="card-header border-secondary text-gold">Holland Codes</div>
+                    <div class="card-header border-secondary text-gold">أكواد هولاند</div>
                     <div class="card-body text-white">
                         ${Object.keys(hc).length ? `
                             <ul class="list-unstyled mb-0">
-                                <li class="d-flex justify-content-between"><span>Realistic:</span> <span>${hc.Realistic || 0}</span></li>
-                                <li class="d-flex justify-content-between"><span>Investigative:</span> <span>${hc.Investigative || 0}</span></li>
-                                <li class="d-flex justify-content-between"><span>Artistic:</span> <span>${hc.Artistic || 0}</span></li>
-                                <li class="d-flex justify-content-between"><span>Social:</span> <span>${hc.Social || 0}</span></li>
-                                <li class="d-flex justify-content-between"><span>Enterprising:</span> <span>${hc.Enterprising || 0}</span></li>
-                                <li class="d-flex justify-content-between"><span>Conventional:</span> <span>${hc.Conventional || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>واقعي:</span> <span>${hc.Realistic || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>بحثي:</span> <span>${hc.Investigative || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>فني:</span> <span>${hc.Artistic || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>اجتماعي:</span> <span>${hc.Social || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>مبادر:</span> <span>${hc.Enterprising || 0}</span></li>
+                                <li class="d-flex justify-content-between"><span>تقليدي:</span> <span>${hc.Conventional || 0}</span></li>
                             </ul>
-                        ` : '<div class="text-white-50 text-center small">Not taken</div>'}
+                        ` : '<div class="text-white-50 text-center small">لم يتم إجراء الاختبار</div>'}
                     </div>
                 </div>
             </div>
 
             <div class="col-12">
                 <div class="card bg-dark border-secondary mb-3">
-                    <div class="card-header border-secondary text-gold">Latest AI Analysis</div>
+                    <div class="card-header border-secondary text-gold">آخر تحليل للذكاء الاصطناعي</div>
                     <div class="card-body text-white" style="max-height: 200px; overflow-y: auto;">
-                        <p class="small text-white mb-0">${ai.personalityAnalysis || ai.bigFive?.personalityAnalysis || 'No analysis available.'}</p>
+                        <p class="small text-white mb-0">${ai.personalityAnalysis || ai.bigFive?.personalityAnalysis || 'لا يوجد تحليل متوفر.'}</p>
                     </div>
                 </div>
             </div>
 
             <div class="col-12">
                 <div class="card bg-dark border-secondary">
-                    <div class="card-header border-secondary text-gold">Recent Activity</div>
+                    <div class="card-header border-secondary text-gold">النشاط الأخير</div>
                     <div class="card-body p-2 text-white" style="max-height: 250px; overflow-y: auto;">
                         ${activityHtml}
                     </div>
@@ -474,19 +474,19 @@ function renderUserDetails(data) {
 // ============================================
 function handleLogout() {
     firebase.auth().signOut().then(() => {
-        showToast('Logged out successfully', 'success');
+        showToast('تم تسجيل الخروج بنجاح', 'success');
         setTimeout(() => {
             window.location.href = '../sign in/signin.html';
         }, 1000);
     }).catch(error => {
         console.error('Logout error:', error);
-        showToast('Error during logout', 'error');
+        showToast('خطأ أثناء تسجيل الخروج', 'error');
     });
 }
 
 function handleAuthError() {
     console.warn("Auth Error or Token Expired.");
-    showToast('Authentication error. Please sign in again.', 'error');
+    showToast('خطأ في المصادقة. يرجى تسجيل الدخول مرة أخرى.', 'error');
     firebase.auth().signOut().then(() => {
         setTimeout(() => {
             window.location.href = '../sign in/signin.html';

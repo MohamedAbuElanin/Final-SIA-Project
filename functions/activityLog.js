@@ -22,17 +22,17 @@ async function logActivity(uid, activityType, details) {
   const activityRef = db.ref(`activityLogs/${uid}`).push();
 
   try {
-      await activityRef.set({
-    activityType,
-    details,
-    timestamp,
-    date: dateStr,
-  });
-} catch (error) {
-  console.error(
-    "Error logging activity:",
-    error
-  );
+    await activityRef.set({
+      activityType,
+      details,
+      timestamp,
+      date: dateStr,
+    });
+  } catch (error) {
+    console.error(
+        "Error logging activity:",
+        error,
+    );
   }
 }
 

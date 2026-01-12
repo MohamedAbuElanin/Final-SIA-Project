@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIA | About</title>
+    <title>SIA | عن المنصة</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./About.css">
     <link rel="stylesheet" href="../template.css">
@@ -15,7 +14,7 @@
 <body>
     <canvas id="particles" aria-hidden="true"></canvas>
     <div class="eye-parallax" aria-hidden="true">
-        <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="eye-parallax__image">
+        <img src="../Images/Logo/R'eye only in yellow color.svg" alt="أيقونة عين رع SIA" class="eye-parallax__image">
     </div>
 
     <!-- Navbar Start -->
@@ -26,39 +25,23 @@
             <!-- Logo Section -->
             <a href="../index.html" class="brand" aria-label="SIA homepage">
                 <span class="brand__mark">
-                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA golden logo">
+                    <img src="../Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="شعار SIA الذهبي">
                 </span>
             </a>
 
             <!-- Center Navigation Links -->
             <ul class="nav-links" id="navLinks">
-                <li><a href="../index.html" data-key="nav_home">Home</a></li>
-                <li><a href="./About.html" aria-current="page" data-key="nav_about">About</a></li>
-                <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
-                <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
-                <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
+                <li><a href="../index.html">الرئيسية</a></li>
+                <li><a href="./About.html" aria-current="page">عن SIA</a></li>
+                <li><a href="../Test/Test.html">الاختبار</a></li>
+                <li><a href="../profile/profile.html">الملف الشخصي</a></li>
+                <li><a href="../privacy-terms.html">الخصوصية والشروط</a></li>
             </ul>
 
             <!-- Right Buttons Section -->
             <div class="nav-auth" id="navAuth">
-                <div class="lang-dropdown">
-                    <button class="lang-dropdown-toggle" type="button">
-                        <span class="lang-current">EN</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="lang-dropdown-menu">
-                        <a href="../assets/i18n/en.json" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
-                            <span>English</span>
-                            <span class="lang-code">EN</span>
-                        </a>
-                        <a href="../assets/i18n/ar.json" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
-                            <span>العربية</span>
-                            <span class="lang-code">AR</span>
-                        </a>
-                    </div>
-                </div>
-                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
-                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
+                <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">تسجيل الدخول</a>
+                <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">إنشاء حساب</a>
             </div>
 
             <!-- Responsive Menu (Hamburger control + label for accessibility) -->
@@ -72,32 +55,16 @@
             <div class="nav-drawer" aria-hidden="true">
                 <!-- Center Navigation Links duplicated for the mobile drawer -->
                 <ul class="drawer-links">
-                    <li><a href="../index.html" data-key="nav_home">Home</a></li>
-                    <li><a href="./About.html" aria-current="page" data-key="nav_about">About</a></li>
-                    <li><a href="../Test/Test.html" data-key="nav_test">Test</a></li>
-                    <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
-                    <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
+                    <li><a href="../index.html">الرئيسية</a></li>
+                    <li><a href="./About.html" aria-current="page">عن SIA</a></li>
+                    <li><a href="../Test/Test.html">الاختبار</a></li>
+                    <li><a href="../profile/profile.html">الملف الشخصي</a></li>
+                    <li><a href="../privacy-terms.html">الخصوصية والشروط</a></li>
                 </ul>
                 <!-- Right Buttons Section duplicated for stacked layout -->
                 <div class="drawer-auth">
-                    <div class="lang-dropdown" style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                        <button class="lang-dropdown-toggle" type="button">
-                            <span class="lang-current">EN</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="lang-dropdown-menu">
-                            <a href="../assets/i18n/en.json" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
-                                <span>English</span>
-                                <span class="lang-code">EN</span>
-                            </a>
-                            <a href="../assets/i18n/ar.json" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
-                                <span>العربية</span>
-                                <span class="lang-code">AR</span>
-                            </a>
-                        </div>
-                    </div>
-                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
-                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
+                    <a href="../sign in/signin.html" class="btn-nav btn-nav--signin">تسجيل الدخول</a>
+                    <a href="../sign up/signup.html" class="btn-nav btn-nav--signup">إنشاء حساب</a>
                 </div>
             </div>
         </nav>
@@ -106,84 +73,84 @@
     <main>
         <section class="hero" id="hero">
             <div class="hero__content">
-                <p class="eyebrow" data-key="about_eyebrow"><i class="fa-solid fa-eye"></i> Ancient guidance | Modern data</p>
-                <h1 data-key="about_hero_title">SIA — Ancient Wisdom for Modern Careers</h1>
-                <p class="hero__lead" data-key="about_hero_lead">
-                    In a fast-changing world, choosing a career path can be hard. SIA blends ancient wisdom with modern analytics to help you discover your strengths and choose the right path.
+                <p class="eyebrow"><i class="fa-solid fa-eye"></i> توجيه قديم | بيانات حديثة</p>
+                <h1>SIA — حكمة قديمة لمسارات مهنية حديثة</h1>
+                <p class="hero__lead">
+                    في عالم سريع التغير، يمكن أن يكون اختيار المسار المهني صعباً. يمزج SIA بين الحكمة القديمة والتحليلات الحديثة لمساعدتك على اكتشاف نقاط قوتك واختيار المسار الصحيح.
                 </p>
                 <div class="hero__cta">
-                    <a href="#test-anchor" class="btn btn--gold" data-scroll data-key="about_take_test">Take the Test</a>
-                    <a href="#roadmap-anchor" class="btn btn--outline" data-scroll data-key="about_explore_roadmap">Explore Roadmap</a>
+                    <a href="#test-anchor" class="btn btn--gold" data-scroll>ابدأ الاختبار</a>
+                    <a href="#roadmap-anchor" class="btn btn--outline" data-scroll>استكشف خارطة الطريق</a>
                 </div>
             </div>
         </section>
 
         <section class="overview" aria-labelledby="overview-title">
             <div class="section-heading">
-                <p class="eyebrow" data-key="about_overview_eyebrow">Project Snapshot</p>
-                <h2 id="overview-title" data-key="about_overview_title">Why SIA Matters</h2>
+                <p class="eyebrow">لمحة عن المشروع</p>
+                <h2 id="overview-title">لماذا SIA؟</h2>
             </div>
-            <p class="overview__text" data-key="about_overview_text">
-                SIA uses Big Five + Holland Codes, links results to job market data, and gives personalized learning recommendations.
+            <p class="overview__text">
+                يستخدم SIA سمات الشخصية الخمس الكبرى + أكواد هولاند، ويربط النتائج ببيانات سوق العمل، ويقدم توصيات تعلم مخصصة.
             </p>
             <div class="overview__grid">
                 <article class="info-card">
-                    <h3 data-key="about_what_we_do"><i class="fa-solid fa-chart-line"></i> What We Do</h3>
+                    <h3><i class="fa-solid fa-chart-line"></i> ماذا نفعل</h3>
                     <ul>
-                        <li data-key="about_what_we_do_1">Psychometric analysis models tuned for emerging talent.</li>
-                        <li data-key="about_what_we_do_2">Research-driven knowledge base aligned to Egypt & MENA trends.</li>
-                        <li data-key="about_what_we_do_3">Guidance platform that connects insights to action.</li>
+                        <li>نماذج التحليل النفسي المهيأة للمواهب الناشئة.</li>
+                        <li>قاعدة معرفية قائمة على الأبحاث تتماشى مع اتجاهات مصر والشرق الأوسط.</li>
+                        <li>منصة توجيه تربط الرؤى بالأفعال.</li>
                     </ul>
                 </article>
                 <article class="info-card">
-                    <h3 id="test-anchor" data-key="about_how_it_works"><i class="fa-solid fa-compass"></i> How SIA Works</h3>
+                    <h3><i class="fa-solid fa-compass"></i> كيف يعمل SIA</h3>
                     <ol>
-                        <li data-key="about_how_it_works_1">Assessments: Big Five + Holland Codes with contextual prompts.</li>
-                        <li data-key="about_how_it_works_2">Insight Engine: Maps scores to live job data and talent needs.</li>
-                        <li data-key="about_how_it_works_3">Action Plan: Personalized learning paths and roadmap guidance.</li>
+                        <li>التقييمات: سمات الشخصية الخمس الكبرى + أكواد هولاند مع محفزات سياقية.</li>
+                        <li>محرك الرؤى: يربط الدرجات ببيانات الوظائف المباشرة واحتياجات المواهب.</li>
+                        <li>خطة العمل: مسارات تعلم مخصصة وتوجيه لخارطة الطريق.</li>
                     </ol>
                 </article>
                 <article class="info-card">
-                    <h3 data-key="about_vision_mission"><i class="fa-solid fa-bullseye"></i> Vision & Mission</h3>
-                    <p><strong data-key="about_vision">Vision:</strong> <span data-key="about_vision_text">Make career clarity accessible through timeless wisdom plus modern intelligence.</span></p>
-                    <p><strong data-key="about_mission">Mission:</strong> <span data-key="about_mission_text">Equip every learner with culturally-aware guidance, actionable data, and inspiring storytelling.</span></p>
+                    <h3><i class="fa-solid fa-bullseye"></i> الرؤية والرسالة</h3>
+                    <p><strong>الرؤية:</strong> جعل الوضوح المهني متاحاً من خلال الحكمة الخالدة والذكاء الحديث.</p>
+                    <p><strong>الرسالة:</strong> تجهيز كل متعلم بتوجيه مهني واعٍ ثقافياً، بيانات قابلة للتنفيذ، وقصص ملهمة.</p>
                 </article>
             </div>
         </section>
 
         <section class="roadmap" id="roadmap-anchor" aria-labelledby="roadmap-title">
             <div class="section-heading">
-                <p class="eyebrow" data-key="about_roadmap_eyebrow">From Insight to Action</p>
-                <h2 id="roadmap-title" data-key="about_roadmap_title">SIA Roadmap</h2>
+                <p class="eyebrow">من الرؤية إلى العمل</p>
+                <h2 id="roadmap-title">خارطة طريق SIA</h2>
             </div>
             <div class="roadmap__content">
-                <p data-key="about_roadmap_intro">
-                    Your journey with SIA begins with self-discovery and leads to actionable career guidance. Here's how we transform insights into your personalized career path:
+                <p>
+                    رحلتك مع SIA تبدأ باكتشاف الذات وتؤدي إلى توجيه مهني قابل للتنفيذ. إليك كيف نحول الرؤى إلى مسار مهني مخصص لك:
                 </p>
                 <div class="overview__grid">
                     <article class="info-card">
-                        <h3 data-key="about_step_1_title"><i class="fa-solid fa-clipboard-question"></i> Step 1: Assessment</h3>
-                        <p data-key="about_step_1_desc">Take our comprehensive psychometric tests combining Big Five personality traits and Holland Codes to understand your unique profile.</p>
+                        <h3><i class="fa-solid fa-clipboard-question"></i> الخطوة 1: التقييم</h3>
+                        <p>خذ اختباراتنا النفسية الشاملة التي تجمع بين سمات الشخصية الخمس الكبرى وأكواد هولاند لفهم ملفك الشخصي الفريد.</p>
                     </article>
                     <article class="info-card">
-                        <h3 data-key="about_step_2_title"><i class="fa-solid fa-chart-bar"></i> Step 2: Analysis</h3>
-                        <p data-key="about_step_2_desc">Our insight engine maps your results to real job market data, identifying careers that align with your personality and interests.</p>
+                        <h3><i class="fa-solid fa-chart-bar"></i> الخطوة 2: التحليل</h3>
+                        <p>يقوم محرك الرؤى الخاص بنا بربط نتائجك ببيانات سوق العمل الحقيقية، لتحديد الوظائف التي تتماشى مع شخصيتك واهتماماتك.</p>
                     </article>
                     <article class="info-card">
-                        <h3 data-key="about_step_3_title"><i class="fa-solid fa-route"></i> Step 3: Roadmap</h3>
-                        <p data-key="about_step_3_desc">Receive a personalized learning path with recommended courses, skills to develop, and resources tailored to your career goals.</p>
+                        <h3><i class="fa-solid fa-route"></i> الخطوة 3: خارطة الطريق</h3>
+                        <p>احصل على مسار تعلم مخصص مع دورات موصى بها، مهارات لتطويرها، ومصادر مصممة خصيصاً لأهدافك المهنية.</p>
                     </article>
                     <article class="info-card">
-                        <h3 data-key="about_step_4_title"><i class="fa-solid fa-rocket"></i> Step 4: Action</h3>
-                        <p data-key="about_step_4_desc">Start your journey with curated YouTube channels, books, articles, and courses designed to help you succeed in your chosen field.</p>
+                        <h3><i class="fa-solid fa-rocket"></i> الخطوة 4: التنفيذ</h3>
+                        <p>ابدأ رحلتك مع قنوات يوتيوب، كتب، مقالات، ودورات مختارة مصممة لمساعدتك على النجاح في المجال الذي اخترته.</p>
                     </article>
                 </div>
                 <div class="roadmap__cta">
-                    <a href="../Test/Test.html" class="link-pill" data-key="about_start_journey">
-                        <i class="fa-solid fa-play"></i> Start Your Journey
+                    <a href="../Test/Test.html" class="link-pill">
+                        <i class="fa-solid fa-play"></i> ابدأ رحلتك
                     </a>
-                    <a href="../profile/profile.html" class="link-pill" data-key="about_view_profile">
-                        <i class="fa-solid fa-user"></i> View Your Profile
+                    <a href="../profile/profile.html" class="link-pill">
+                        <i class="fa-solid fa-user"></i> عرض ملفك الشخصي
                     </a>
                 </div>
             </div>
@@ -191,31 +158,31 @@
 
         <section class="team" id="team" aria-labelledby="team-title">
             <div class="section-heading">
-                <p class="eyebrow" data-key="about_team_eyebrow">Meet the Team</p>
-                <h2 id="team-title" data-key="about_team_title">Human intelligence behind SIA</h2>
-                <p class="section-heading__lead" data-key="about_team_lead">Our mosaic layout mirrors the collaboration between research, design, engineering, and storytelling.</p>
+                <p class="eyebrow">تعرف على الفريق</p>
+                <h2 id="team-title">الذكاء البشري وراء SIA</h2>
+                <p class="section-heading__lead">يعكس تصميم الفسيفساء الخاص بنا التعاون بين الأبحاث، التصميم، الهندسة، ورواية القصص.</p>
             </div>
             <div class="mosaic-toolbar">
                 <button type="button" class="mosaic-toggle" aria-pressed="false">
                     <i class="fa-solid fa-layer-group"></i>
-                    <span data-key="about_switch_view">Switch to stacked view</span>
+                    <span>التبديل إلى عرض البطاقات</span>
                 </button>
             </div>
             <div class="mosaic" role="list">
                 <!-- Center Card -->
                 <article class="team-card team-card--leader reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Mohamed Osman.JPG" alt="Photo of Mohamed Osman" data-initials="MO" />
+                        <img src="../Images/Team/Mohamed Osman.jpeg" alt="صورة محمد عثمان" data-initials="MO" />
                     </div>
                     <div class="team-info">
-                        <p class="team-role">Project Leader &amp; Full-Stack Developer</p>
-                        <h3>Mohamed Osman</h3>
+                        <p class="team-role">قائد المشروع ومطور Full-Stack</p>
+                        <h3>محمد عثمان</h3>
                         <ul>
-                            <li>Created ERD &amp; flowchart.</li>
-                            <li>Project idea and core vision.</li>
-                            <li>Designed brand identity and Eye of Ra logo.</li>
-                            <li>Integrates AI model with the platform.</li>
-                            <li>Supervises the team and distributes tasks.</li>
+                            <li>أنشأ الـ ERD والمخطط الانسيابي (flowchart).</li>
+                            <li>صاحب فكرة المشروع والرؤية الأساسية.</li>
+                            <li>صمم الهوية البصرية وشعار عين رع.</li>
+                            <li>قام بدمج نموذج الذكاء الاصطناعي مع المنصة.</li>
+                            <li>يشرف على الفريق ويوزع المهام.</li>
                         </ul>
                     </div>
                 </article>
@@ -223,163 +190,163 @@
                 <!-- Surrounding Cards -->
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Wafaa Mostafa.jpg" alt="Photo of Wafaa Mostafa" data-initials="WM" />
+                        <img src="../Images/Team/Wafaa Mostafa.jpeg" alt="صورة وفاء مصطفى" data-initials="WM" />
                     </div>
                     <div class="team-info">
                         <p class="team-role">Front-End</p>
-                        <h3>Wafaa Mostafa</h3>
+                        <h3>وفاء مصطفى</h3>
                         <ul>
-                            <li>Designs Arabic web pages.</li>
-                            <li>Ensures platform responsiveness.</li>
-                            <li>Improves user experience.</li>
+                            <li>تصميم صفحات الويب باللغة العربية.</li>
+                            <li>ضمان استجابة المنصة لمختلف الشاشات.</li>
+                            <li>تحسين تجربة المستخدم.</li>
                         </ul>
                     </div>
                 </article>
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Mahmoud Saif.jpeg" alt="Photo of Mahmoud Saif" data-initials="MS" />
+                        <img src="../Images/Team/Mahmoud Saif.jpeg" alt="صورة محمود سيف" data-initials="MS" />
                     </div>
                     <div class="team-info">
                         <p class="team-role">Back-End</p>
-                        <h3>Mahmoud Saif</h3>
+                        <h3>محمود سيف</h3>
                         <ul>
-                            <li>Builds APIs and prepares databases.</li>
-                            <li>Connects frontend with backend.</li>
-                            <li>Secures endpoints.</li>
+                            <li>بناء واجهات البرمجيات (APIs) وتجهيز قواعد البيانات.</li>
+                            <li>ربط الواجهة الأمامية بالخلفية.</li>
+                            <li>تأمين نقاط الوصول (Endpoints).</li>
                         </ul>
                     </div>
                 </article>
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Riham Mohamed.jpeg" alt="Photo of Riham Mohamed" data-initials="RM" />
+                        <img src="../Images/Team/Riham Mohamed.jpeg" alt="صورة ريهام محمد" data-initials="RM" />
                     </div>
                     <div class="team-info">
-                        <p class="team-role">Research &amp; Data</p>
-                        <h3>Riham Mohamed</h3>
+                        <p class="team-role">البحث والبيانات</p>
+                        <h3>ريهام محمد</h3>
                         <ul>
-                            <li>Documented Holland Codes and job mapping.</li>
-                            <li>Researched in-demand jobs in Egypt &amp; MENA.</li>
-                            <li>Analyzed CareerExplorer and wrote scientific explanations.</li>
-                            <li>Suggested marketing channels and organized the project book.</li>
+                            <li>توثيق أكواد هولاند وربطها بالوظائف.</li>
+                            <li>البحث في الوظائف المطلوبة في مصر والشرق الأوسط.</li>
+                            <li>تحليل CareerExplorer وكتابة التفسيرات العلمية.</li>
+                            <li>اقتراح قنوات التسويق وتنظيم كتاب المشروع.</li>
                         </ul>
                     </div>
                 </article>
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Hesham Khaled.jpg" alt="Photo of Hesham Khaled" data-initials="HK" />
+                        <img src="../Images/Team/Hesham Khaled.jpeg" alt="صورة هشام خالد" data-initials="HK" />
                     </div>
                     <div class="team-info">
-                        <p class="team-role">Research &amp; Data</p>
-                        <h3>Hesham Khaled</h3>
+                        <p class="team-role">البحث والبيانات</p>
+                        <h3>هشام خالد</h3>
                         <ul>
-                            <li>Documented Big Five model and analysis.</li>
-                            <li>Studied skill requirements and average salaries.</li>
-                            <li>Reviewed 16Personalities and wrote scientific explanations.</li>
-                            <li>Identified target audiences and contributed to scientific chapters.</li>
+                            <li>توثيق نموذج السمات الخمس الكبرى وتحليله.</li>
+                            <li>دراسة متطلبات المهارات ومتوسط الرواتب.</li>
+                            <li>مراجعة موقع 16Personalities وكتابة التفسيرات العلمية.</li>
+                            <li>تحديد الجمهور المستهدف والمساهمة في الفصول العلمية.</li>
                         </ul>
                     </div>
                 </article>
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Abdul Rahman Tariq.jpg" alt="Photo of Abdul Rahman Tariq" data-initials="AT" />
+                        <img src="../Images/Team/Abdul Rahman Tariq.jpg" alt="صورة عبد الرحمن طارق" data-initials="AT" />
                     </div>
                     <div class="team-info">
-                        <p class="team-role">Research &amp; Data</p>
-                        <h3>Abdul Rahman Tariq</h3>
+                        <p class="team-role">البحث والبيانات</p>
+                        <h3>عبد الرحمن طارق</h3>
                         <ul>
-                            <li>Collected and formatted academic references.</li>
-                            <li>Analyzed global tech job demand.</li>
-                            <li>Produced final assessment of platform strengths &amp; weaknesses.</li>
-                            <li>Designed marketing assets and helped compile scientific chapters.</li>
+                            <li>جمع وتنسيق المراجع الأكاديمية.</li>
+                            <li>تحليل الطلب العالمي على الوظائف التقنية.</li>
+                            <li>إنتاج التقييم النهائي لنقاط قوة وضعف المنصة.</li>
+                            <li>تصميم أصول التسويق والمساعدة في تجميع الفصول العلمية.</li>
                         </ul>
                     </div>
                 </article>
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Doaa Bahaa.jpg" alt="Photo of Doaa Bahaa" data-initials="DB" />
+                        <img src="../Images/Team/Doaa Bahaa.jpeg" alt="صورة دعاء بهاء" data-initials="DB" />
                     </div>
                     <div class="team-info">
-                        <p class="team-role">Research &amp; Data</p>
-                        <h3>Doaa Bahaa</h3>
+                        <p class="team-role">البحث والبيانات</p>
+                        <h3>دعاء بهاء</h3>
                         <ul>
-                            <li>Analyzed Big Five vs Holland results for each member.</li>
-                            <li>Compared local vs global job markets.</li>
-                            <li>Reviewed Truity platform and linked psychological interpretations.</li>
-                            <li>Wrote marketing copy and formatted the project book.</li>
+                            <li>تحليل نتائج السمات الخمس مقابل هولاند لكل عضو.</li>
+                            <li>مقارنة أسواق العمل المحلية مقابل العالمية.</li>
+                            <li>مراجعة منصة Truity وربط التفسيرات النفسية.</li>
+                            <li>كتابة نصوص التسويق وتنسيق كتاب المشروع.</li>
                         </ul>
                     </div>
                 </article>
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Ahmed Elzeer .jpg" alt="Photo of Ahmed Elzeer" data-initials="AE" />
+                        <img src="../Images/Team/Ahmed Elzeer .jpeg" alt="صورة أحمد الزير" data-initials="AE" />
                     </div>
                     <div class="team-info">
-                        <p class="team-role">Research &amp; Documentation</p>
-                        <h3>Ahmed Elzeer</h3>
+                        <p class="team-role">البحث والتوثيق</p>
+                        <h3>أحمد الزير</h3>
                         <ul>
-                            <li>Prepared phase-one final report and polished summaries.</li>
-                            <li>Consolidated job market findings and comparison tables.</li>
-                            <li>Created final interpretation file and publishing plan.</li>
-                            <li>Organized documentation folders and helped compile scientific content.</li>
+                            <li>إعداد التقرير النهائي للمرحلة الأولى وصقل الملخصات.</li>
+                            <li>توحيد نتائج سوق العمل وجداول المقارنة.</li>
+                            <li>إنشاء ملف التفسير النهائي وخطة النشر.</li>
+                            <li>تنظيم مجلدات التوثيق والمساعدة في تجميع المحتوى العلمي.</li>
                         </ul>
                     </div>
                 </article>
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Karim Ragab.jpeg" alt="Photo of Karim Ragab" data-initials="KR" />
+                        <img src="../Images/Team/Karim Ragab.jpg" alt="صورة كريم رجب" data-initials="KR" />
                     </div>
                     <div class="team-info">
-                        <p class="team-role">Data Systems</p>
-                        <h3>Karim Ragab</h3>
+                        <p class="team-role">نظم البيانات</p>
+                        <h3>كريم رجب</h3>
                         <ul>
-                            <li>Built the database for jobs, skills, and courses.</li>
+                            <li>بناء قاعدة بيانات الوظائف، المهارات، والدورات.</li>
                         </ul>
                     </div>
                 </article>
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Esraa.jpeg" alt="Photo of Esraa" data-initials="E" />
+                        <img src="../Images/Team/Esraa.jpeg" alt="صورة إسراء" data-initials="E" />
                     </div>
                     <div class="team-info">
-                        <p class="team-role">Knowledge Systems</p>
-                        <h3>Esraa</h3>
+                        <p class="team-role">نظم المعرفة</p>
+                        <h3>إسراء</h3>
                         <ul>
-                            <li>Built the database for YouTube channels, books, and articles.</li>
+                            <li>بناء قاعدة بيانات قنوات يوتيوب، الكتب، والمقالات.</li>
                         </ul>
                     </div>
                 </article>
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Mohamed Adel.jpg" alt="Photo of Mohamed Adel" data-initials="MA" />
+                        <img src="../Images/Team/Mohamed Adel.jpg" alt="صورة محمد عادل" data-initials="MA" />
                     </div>
                     <div class="team-info">
-                        <p class="team-role">Content</p>
-                        <h3>Mohamed Adel</h3>
+                        <p class="team-role">المحتوى</p>
+                        <h3>محمد عادل</h3>
                         <ul>
-                            <li>Wrote general website copy.</li>
+                            <li>كتابة النصوص العامة للموقع.</li>
                         </ul>
                     </div>
                 </article>
 
                 <article class="team-card reveal" role="listitem">
                     <div class="team-photo">
-                        <img src="../Images/Team/Youssef Mohammed.jpg" alt="Photo of Youssef Mohammed" data-initials="YM" />
+                        <img src="../Images/Team/Youssef Mohammed.jpg" alt="صورة يوسف محمد" data-initials="YM" />
                     </div>
                     <div class="team-info">
-                        <p class="team-role">Presentation &amp; Documentation</p>
-                        <h3>Youssef Mohammed</h3>
+                        <p class="team-role">العرض والتوثيق</p>
+                        <h3>يوسف محمد</h3>
                         <ul>
-                            <li>Documented tools and sources.</li>
-                            <li>Prepared the presentation.</li>
+                            <li>توثيق الأدوات والمصادر.</li>
+                            <li>إعداد العرض التقديمي (Presentation).</li>
                         </ul>
                     </div>
                 </article>
@@ -388,37 +355,39 @@
 
         <section class="contact" id="contact" aria-labelledby="contact-title">
             <div class="section-heading">
-                <p class="eyebrow" data-key="about_contact_eyebrow">Stay Connected</p>
-                <h2 id="contact-title" data-key="about_contact_title">Contact the SIA Team</h2>
+                <p class="eyebrow">ابقَ على اتصال</p>
+                <h2 id="contact-title">اتصل بفريق SIA</h2>
             </div>
             <div class="contact__card">
-                <p data-key="about_contact_text">
-                    Have a partnership idea or want early access to the roadmap? Email us and we will respond within two business days.
+                <p>
+                    هل لديك فكرة شراكة أو ترغب في الوصول المبكر إلى خارطة الطريق؟ راسلنا عبر البريد الإلكتروني وسنقوم بالرد خلال يومي عمل.
                 </p>
                 <a href="mailto:SIA@gmail.com" class="contact__email">
                     <i class="fa-solid fa-envelope"></i> SIA@gmail.com
                 </a>
-                <!-- README Note: Replace the email above with the official SIA contact address. Update image paths in the team section if the folder structure changes. -->
             </div>
         </section>
     </main>
 
     <footer class="site-footer">
         <div class="footer__brand">
-            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
+            <img src="../Images/Logo/R'eye only in yellow color.svg" alt="أيقونة عين رع SIA" class="footer__logo">
             <div>
-                <p class="footer__title" data-key="footer_title">SIA</p>
-                <p class="footer__mission" data-key="footer_mission">We connect ancient wisdom with modern career paths.</p>
+                <p class="footer__title">SIA</p>
+                <p class="footer__mission">نربط الحكمة القديمة بمسارات المهن الحديثة.</p>
             </div>
         </div>
         <div class="footer__nav" aria-label="Footer navigation">
-            <a href="../index.html">Home</a>
-            <a href="./About.html">About</a>
-            <a href="../Test/Test.html">Test</a>
-            <a href="../profile/profile.html">Profile</a>
-            <a href="../privacy-terms.html">Privacy & Terms</a>
+            <a href="../index.html">الرئيسية</a>
+            <a href="./About.html">عن SIA</a>
+            <a href="../Test/Test.html">الاختبار</a>
+            <a href="../profile/profile.html">الملف الشخصي</a>
+            <a href="../privacy-terms.html">الخصوصية والشروط</a>
         </div>
-        <p class="footer__copy" data-key="footer_copyright">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+        <div class="footer__copy">
+            <p>&copy; 2026 SIA. All rights reserved.</p>
+            <p class="footer__motto">Ancient Wisdom for Modern Career Paths</p>
+        </div>
     </footer>
 
     <!-- Firebase SDK - Modular SDK (v9+) -->
@@ -426,8 +395,6 @@
     <script type="module" src="../auth-state.js"></script>
     <script type="module" src="../auth.js"></script>
     <script src="./About.js" defer></script>
-    <!-- Language Translation Script -->
-    <script src="../js/lang.js"></script>
 
 </body>
 </html>

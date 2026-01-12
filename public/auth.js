@@ -31,14 +31,14 @@ function updateGlobalAuthUI(user) {
     
     // Common HTML for Logged In State
     const loggedInHtml = `
-        <a href="${pathPrefix}profile/profile.html" class="btn-nav btn-nav--signin">Profile</a>
-        <button onclick="handleGlobalLogout()" class="btn-nav btn-nav--signup">Logout</button>
+        <a href="${pathPrefix}profile/profile.html" class="btn-nav btn-nav--signin">الملف الشخصي</a>
+        <button onclick="handleGlobalLogout()" class="btn-nav btn-nav--signup">تسجيل الخروج</button>
     `;
 
     // Common HTML for Logged Out State
     const loggedOutHtml = `
-        <a href="${pathPrefix}sign in/signin.html" class="btn-nav btn-nav--signin">Sign In</a>
-        <a href="${pathPrefix}sign up/signup.html" class="btn-nav btn-nav--signup">Sign Up</a>
+        <a href="${pathPrefix}sign in/signin.html" class="btn-nav btn-nav--signin">تسجيل الدخول</a>
+        <a href="${pathPrefix}sign up/signup.html" class="btn-nav btn-nav--signup">إنشاء حساب</a>
     `;
 
     const content = user ? loggedInHtml : loggedOutHtml;

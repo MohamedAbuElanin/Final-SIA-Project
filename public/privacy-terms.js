@@ -82,7 +82,7 @@ document.querySelectorAll('.fade-in').forEach(el => {
 
 // Navbar scroll effect
 let lastScroll = 0;
-const header = document.querySelector('.header');
+const header = document.querySelector('.site-header');
 
 window.addEventListener('scroll', () => {
     const currentScroll = window.pageYOffset;

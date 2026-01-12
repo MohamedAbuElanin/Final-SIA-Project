@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SIA - Test</title>
+    <title>SIA - الاختبار</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -33,38 +33,22 @@
           <span class="brand__mark">
             <img
               src="../Images/Logo/SIA +Ra's Eye, yellow color.svg"
-              alt="SIA golden logo"
+              alt="شعار SIA الذهبي"
             />
           </span>
         </a>
 
         <!-- Center Navigation Links -->
         <ul class="nav-links" id="navLinks">
-          <li><a href="../index.html" data-key="nav_home">Home</a></li>
-          <li><a href="../About/About.html" data-key="nav_about">About</a></li>
-          <li><a href="Test.html" aria-current="page" data-key="nav_test">Test</a></li>
-          <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
-          <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
+          <li><a href="../index.html">الرئيسية</a></li>
+          <li><a href="../About/About.html">عن المنصة</a></li>
+          <li><a href="Test.html" aria-current="page">الاختبار</a></li>
+          <li><a href="../profile/profile.html">الملف الشخصي</a></li>
+          <li><a href="../privacy-terms.html">الخصوصية والشروط</a></li>
         </ul>
 
         <!-- Right Buttons Section -->
         <div class="nav-auth" id="navAuth">
-          <div class="lang-dropdown">
-            <button class="lang-dropdown-toggle" type="button">
-              <span class="lang-current">EN</span>
-              <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="lang-dropdown-menu">
-              <a href="../assets/i18n/en.json" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
-                <span>English</span>
-                <span class="lang-code">EN</span>
-              </a>
-              <a href="../assets/i18n/ar.json" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
-                <span>العربية</span>
-                <span class="lang-code">AR</span>
-              </a>
-            </div>
-          </div>
           <!-- Injected by auth.js -->
         </div>
 
@@ -82,30 +66,14 @@
         <!-- Responsive Menu -->
         <div class="nav-drawer" aria-hidden="true">
           <ul class="drawer-links">
-            <li><a href="../index.html" data-key="nav_home">Home</a></li>
-            <li><a href="../About/About.html" data-key="nav_about">About</a></li>
-            <li><a href="Test.html" aria-current="page" data-key="nav_test">Test</a></li>
-            <li><a href="../profile/profile.html" data-key="nav_profile">Profile</a></li>
-            <li><a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a></li>
+            <li><a href="../index.html">الرئيسية</a></li>
+            <li><a href="../About/About.html">عن المنصة</a></li>
+            <li><a href="Test.html" aria-current="page">الاختبار</a></li>
+            <li><a href="../profile/profile.html">الملف الشخصي</a></li>
+            <li><a href="../privacy-terms.html">الخصوصية والشروط</a></li>
           </ul>
           <!-- Drawer Auth Buttons -->
           <div class="drawer-auth">
-            <div class="lang-dropdown" style="margin-bottom: 1rem; display: flex; justify-content: center;">
-              <button class="lang-dropdown-toggle" type="button">
-                <span class="lang-current">EN</span>
-                <i class="fas fa-chevron-down"></i>
-              </button>
-              <div class="lang-dropdown-menu">
-                <a href="../assets/i18n/en.json" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
-                  <span>English</span>
-                  <span class="lang-code">EN</span>
-                </a>
-                <a href="../assets/i18n/ar.json" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
-                  <span>العربية</span>
-                  <span class="lang-code">AR</span>
-                </a>
-              </div>
-            </div>
             <!-- Injected by auth.js -->
           </div>
         </div>
@@ -114,7 +82,7 @@
 
     <!-- Main Content -->
     <main class="test-page">
-      <h1 class="page-title" data-key="test_page_title">Personality Assessment</h1>
+      <h1 class="page-title">تقييم الشخصية</h1>
 
       <!-- 1. Selection View -->
       <div id="selectionView" class="test-section active">
@@ -122,15 +90,15 @@
           <!-- Big Five Card -->
           <div class="test-card" data-test="Big-Five">
             <div class="card-image">
-              <img src="../Images/Test/Big Five.svg" alt="Big Five Test" />
+              <img src="../Images/Test/Big Five.svg" alt="اختبار السمات الخمس الكبرى" />
             </div>
-            <h2 class="card-title" data-key="test_big_five_title">Big Five Test</h2>
-            <p class="card-desc" data-key="test_big_five_desc">
-              Understand your personality traits based on the Five-Factor Model:
-              Openness, Conscientiousness, Extraversion, Agreeableness, and
-              Neuroticism.
+            <h2 class="card-title">اختبار السمات الخمس الكبرى</h2>
+            <p class="card-desc">
+              افهم سمات شخصيتك بناءً على نموذج العوامل الخمسة:
+              الانفتاح، الضمير، الانبساط، المقبولية، و
+              العصابية.
             </p>
-            <button class="btn-start" data-key="test_start">Start Test</button>
+            <button class="btn-start">بدء الاختبار</button>
           </div>
 
           <!-- Holland Codes Card -->
@@ -138,16 +106,16 @@
             <div class="card-image">
               <img
                 src="../Images/Test/Holland codes.svg"
-                alt="Holland Codes Test"
+                alt="اختبار أكواد هولاند"
               />
             </div>
-            <h2 class="card-title" data-key="test_holland_title">Holland Codes</h2>
-            <p class="card-desc" data-key="test_holland_desc">
-              Discover your career interests and ideal work environments based
-              on the RIASEC model: Realistic, Investigative, Artistic, Social,
-              Enterprising, and Conventional.
+            <h2 class="card-title">أكواد هولاند</h2>
+            <p class="card-desc">
+              اكتشف اهتماماتك المهنية وبيئات العمل المثالية بناءً
+              على نموذج RIASEC: الواقعي، الاستقصائي، الفني، الاجتماعي،
+              المقدام، والتقليدي.
             </p>
-            <button class="btn-start" data-key="test_start">Start Test</button>
+            <button class="btn-start">بدء الاختبار</button>
           </div>
         </div>
       </div>
@@ -157,7 +125,7 @@
         <div class="test-header">
           <div class="progress-container">
             <div class="progress-text">
-              <span data-key="test_question">Question</span> <span id="currentQuestionNum">1</span> <span data-key="test_of">of</span>
+              <span>السؤال</span> <span id="currentQuestionNum">1</span> <span>من</span>
               <span id="totalQuestions">30</span>
             </div>
             <div class="progress-bar-bg">
@@ -172,7 +140,7 @@
 
         <div id="questionContainer" class="question-container">
           <h2 id="questionText" class="question-text">
-            Question text goes here...
+            نص السؤال يظهر هنا...
           </h2>
           <div id="optionsContainer" class="options-container">
             <!-- Options will be injected here -->
@@ -180,16 +148,15 @@
         </div>
 
         <div class="test-controls">
-          <button id="prevBtn" class="btn-control btn-prev" disabled data-key="test_previous">
-            Previous
+          <button id="prevBtn" class="btn-control btn-prev" disabled>
+            السابق
           </button>
           <button
             id="nextBtn"
             class="btn-control btn-next"
             style="display: none"
-            data-key="test_next"
           >
-            Next
+            التالي
           </button>
         </div>
       </div>
@@ -200,17 +167,17 @@
           <div class="completion-icon">
             <i class="fa-solid fa-circle-check"></i>
           </div>
-          <h1 data-key="test_completed">Test Completed!</h1>
-          <p data-key="test_completed_desc">You have answered all questions.</p>
+          <h1>اكتمل الاختبار!</h1>
+          <p>لقد أجبت على جميع الأسئلة.</p>
 
           <div class="time-stat">
-            <span data-key="test_total_time">Total Time:</span>
+            <span>الوقت الإجمالي:</span>
             <span id="finalTime">00:00</span>
           </div>
 
           <div class="action-buttons">
-            <button id="reviewBtn" class="btn-secondary" data-key="test_review">Review Answers</button>
-            <button id="finishBtn" class="btn-primary" data-key="test_finish">Finish & Save</button>
+            <button id="reviewBtn" class="btn-secondary">مراجعة الإجابات</button>
+            <button id="finishBtn" class="btn-primary">إنهاء وحفظ</button>
           </div>
         </div>
       </div>
@@ -221,25 +188,25 @@
       <div class="footer__brand">
         <img
           src="../Images/Logo/R'eye only in yellow color.svg"
-          alt="SIA Eye of Ra icon"
+          alt="أيقونة عين رع SIA"
           class="footer__logo"
         />
         <div>
-          <p class="footer__title" data-key="footer_title">SIA</p>
-          <p class="footer__mission" data-key="footer_mission">
-            We connect ancient wisdom with modern career paths.
+          <p class="footer__title">SIA</p>
+          <p class="footer__mission">
+            نربط الحكمة القديمة بمسارات المهن الحديثة.
           </p>
         </div>
       </div>
       <div class="footer__nav" aria-label="Footer navigation">
-        <a href="../index.html" data-key="nav_home">Home</a>
-        <a href="../About/About.html" data-key="nav_about">About</a>
-        <a href="Test.html" data-key="nav_test">Test</a>
-        <a href="../profile/profile.html" data-key="nav_profile">Profile</a>
-        <a href="../privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a>
+        <a href="../index.html">الرئيسية</a>
+        <a href="../About/About.html">عن المنصة</a>
+        <a href="Test.html">الاختبار</a>
+        <a href="../profile/profile.html">الملف الشخصي</a>
+        <a href="../privacy-terms.html">الخصوصية والشروط</a>
       </div>
-      <p class="footer__copy" data-key="footer_copyright">
-        Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers
+      <p class="footer__copy">
+        حقوق النشر 2025–2026 SIA – حكمة قديمة لمسارات مهنية حديثة
       </p>
     </footer>
 
@@ -255,10 +222,5 @@
     <!-- Test Script -->
     <script type="module" src="Test.js"></script>
     
-    <!-- Language Translation Script -->
-    <script src="../js/lang.js"></script>
-    
-    <!-- Self-Test Mode Script (for client QA) -->
-    <script src="self-test.js"></script>
   </body>
 </html>

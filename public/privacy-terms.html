@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy & Terms - SIA – Ancient Wisdom for Modern Careers</title>
+    <title>الخصوصية والشروط - SIA – حكمة قديمة لمسارات مهنية حديثة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="Privacy-Terms.css">
+    <link rel="stylesheet" href="../public/privacy-terms.css">
     <link rel="stylesheet" href="./template.css">
     <link rel="icon" type="image/x-icon" href="./Images/ICO/favicon.ico">
 </head>
@@ -18,39 +18,23 @@
             <!-- Logo Section -->
             <a href="index.html" class="brand" aria-label="SIA homepage">
                 <span class="brand__mark">
-                    <img src="./Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="SIA golden logo">
+                    <img src="./Images/Logo/SIA +Ra's Eye, yellow color.svg" alt="شعار SIA الذهبي">
                 </span>
             </a>
 
             <!-- Center Navigation Links -->
             <ul class="nav-links" id="navLinks">
-                <li><a href="index.html" data-key="nav_home">Home</a></li>
-                <li><a href="./About/About.html" data-key="nav_about">About</a></li>
-                <li><a href="./Test/Test.html" data-key="nav_test">Test</a></li>
-                <li><a href="./profile/profile.html" data-key="nav_profile">Profile</a></li>
-                <li><a href="./privacy-terms.html" aria-current="page" data-key="nav_privacy_terms">Privacy & Terms</a></li>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="./About/About.html">عن المنصة</a></li>
+                <li><a href="./Test/Test.html">الاختبار</a></li>
+                <li><a href="./profile/profile.html">الملف الشخصي</a></li>
+                <li><a href="./privacy-terms.html" aria-current="page">الخصوصية والشروط</a></li>
             </ul>
 
             <!-- Right Buttons Section -->
             <div class="nav-auth" id="navAuth">
-                <div class="lang-dropdown">
-                    <button class="lang-dropdown-toggle" type="button">
-                        <span class="lang-current">EN</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="lang-dropdown-menu">
-                        <a href="../assets/i18n/en.json" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
-                            <span>English</span>
-                            <span class="lang-code">EN</span>
-                        </a>
-                        <a href="../assets/i18n/ar.json" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
-                            <span>العربية</span>
-                            <span class="lang-code">AR</span>
-                        </a>
-                    </div>
-                </div>
-                <a href="./sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
-                <a href="./sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
+                <a href="./sign in/signin.html" class="btn-nav btn-nav--signin">تسجيل الدخول</a>
+                <a href="./sign up/signup.html" class="btn-nav btn-nav--signup">إنشاء حساب</a>
             </div>
 
             <!-- Responsive Menu (Hamburger control + label for accessibility) -->
@@ -64,32 +48,16 @@
             <div class="nav-drawer" aria-hidden="true">
                 <!-- Center Navigation Links duplicated for the mobile drawer -->
                 <ul class="drawer-links">
-                <li><a href="index.html" data-key="nav_home">Home</a></li>
-                <li><a href="./About/About.html" data-key="nav_about">About</a></li>
-                <li><a href="./Test/Test.html" data-key="nav_test">Test</a></li>
-                <li><a href="./profile/profile.html" data-key="nav_profile">Profile</a></li>
-                <li><a href="./privacy-terms.html" aria-current="page" data-key="nav_privacy_terms">Privacy & Terms</a></li>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="./About/About.html">عن المنصة</a></li>
+                    <li><a href="./Test/Test.html">الاختبار</a></li>
+                    <li><a href="./profile/profile.html">الملف الشخصي</a></li>
+                    <li><a href="./privacy-terms.html" aria-current="page">الخصوصية والشروط</a></li>
                 </ul>
                 <!-- Right Buttons Section duplicated for stacked layout -->
                 <div class="drawer-auth">
-                    <div class="lang-dropdown" style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                        <button class="lang-dropdown-toggle" type="button">
-                            <span class="lang-current">EN</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="lang-dropdown-menu">
-                            <a href="../assets/i18n/en.json" onclick="setLanguage('en'); return false;" class="lang-option" data-lang="en">
-                                <span>English</span>
-                                <span class="lang-code">EN</span>
-                            </a>
-                            <a href="../assets/i18n/ar.json" onclick="setLanguage('ar'); return false;" class="lang-option" data-lang="ar">
-                                <span>العربية</span>
-                                <span class="lang-code">AR</span>
-                            </a>
-                        </div>
-                    </div>
-                    <a href="./sign in/signin.html" class="btn-nav btn-nav--signin" data-key="nav_sign_in">Sign In</a>
-                    <a href="./sign up/signup.html" class="btn-nav btn-nav--signup" data-key="nav_sign_up">Sign Up</a>
+                    <a href="./sign in/signin.html" class="btn-nav btn-nav--signin">تسجيل الدخول</a>
+                    <a href="./sign up/signup.html" class="btn-nav btn-nav--signup">إنشاء حساب</a>
                 </div>
             </div>
         </nav>
@@ -101,10 +69,10 @@
         <section class="privacy-hero">
             <div class="container">
                 <div class="hero-content fade-in">
-                    <h1 class="page-title" data-key="privacy_title">
-                        <i class="fas fa-shield-alt"></i> Privacy & Terms
+                    <h1 class="page-title">
+                        <i class="fas fa-shield-alt"></i> الخصوصية والشروط
                     </h1>
-                    <p class="page-subtitle" data-key="privacy_subtitle">Your privacy and our terms of service</p>
+                    <p class="page-subtitle">خصوصيتك وشروط الخدمة الخاصة بنا</p>
                 </div>
             </div>
         </section>
@@ -114,14 +82,14 @@
             <div class="container">
                 <div class="section-content fade-in">
                     <div class="section-header">
-                        <h2 class="section-title" data-key="privacy_policy_title">
-                            <i class="fas fa-lock"></i> Privacy Policy
+                        <h2 class="section-title">
+                            <i class="fas fa-lock"></i> سياسة الخصوصية
                         </h2>
                         <div class="title-underline"></div>
                     </div>
                     <div class="text-content">
-                        <p data-key="privacy_policy_text">
-                            At SIA, we respect your privacy and are committed to protecting your personal information. We collect basic data such as your name, email, and assessment results to ensure a personalized and secure experience. This information is used to provide tailored learning recommendations, manage accounts, and continuously improve the platform. All data is stored securely and will not be shared with third parties without your consent.
+                        <p>
+                            في SIA، نحن نحترم خصوصيتك ونلتزم بحماية معلوماتك الشخصية. نقوم بجمع البيانات الأساسية مثل اسمك وبريدك الإلكتروني ونتائج التقييم لضمان تجربة مخصصة وآمنة. تُستخدم هذه المعلومات لتقديم توصيات تعليمية مخصصة، وإدارة الحسابات، وتحسين المنصة باستمرار. يتم تخزين جميع البيانات بشكل آمن ولن يتم مشاركتها مع أطراف ثالثة دون موافقتك.
                         </p>
                     </div>
                 </div>
@@ -133,33 +101,33 @@
             <div class="container">
                 <div class="section-content fade-in">
                     <div class="section-header">
-                        <h2 class="section-title" data-key="privacy_terms_title">
-                            <i class="fas fa-file-contract"></i> Terms of Use
+                        <h2 class="section-title">
+                            <i class="fas fa-file-contract"></i> شروط الاستخدام
                         </h2>
                         <div class="title-underline"></div>
                     </div>
                     <div class="text-content">
-                        <p class="intro-text" data-key="privacy_terms_intro">By using the SIA platform, you agree to the following terms:</p>
+                        <p class="intro-text">باستخدام منصة SIA، فإنك توافق على الشروط التالية:</p>
                         <ul class="terms-list">
                             <li>
                                 <i class="fas fa-check-circle"></i>
-                                <span data-key="privacy_terms_1">The content provided is for educational and guidance purposes only and does not constitute professional or medical advice.</span>
+                                <span>المحتوى المقدم هو للأغراض التعليمية والإرشادية فقط ولا يشكل نصيحة مهنية أو طبية.</span>
                             </li>
                             <li>
                                 <i class="fas fa-check-circle"></i>
-                                <span data-key="privacy_terms_2">You must use your personal account and not share your login credentials with others.</span>
+                                <span>يجب عليك استخدام حسابك الشخصي وعدم مشاركة بيانات اعتماد تسجيل الدخول الخاصة بك مع الآخرين.</span>
                             </li>
                             <li>
                                 <i class="fas fa-check-circle"></i>
-                                <span data-key="privacy_terms_3">SIA reserves the right to modify the platform and its content at any time without prior notice.</span>
+                                <span>تحتفظ SIA بالحق في تعديل المنصة ومحتواها في أي وقت دون إشعار مسبق.</span>
                             </li>
                             <li>
                                 <i class="fas fa-check-circle"></i>
-                                <span data-key="privacy_terms_4">Any attempt to misuse the platform or disrupt its services may result in account suspension.</span>
+                                <span>أي محاولة لإساءة استخدام المنصة أو تعطيل خدماتها قد تؤدي إلى تعليق الحساب.</span>
                             </li>
                             <li>
                                 <i class="fas fa-check-circle"></i>
-                                <span data-key="privacy_terms_5">All rights reserved by SIA – Ancient Wisdom for Modern Careers.</span>
+                                <span>جميع الحقوق محفوظة لـ SIA – حكمة قديمة لمسارات مهنية حديثة.</span>
                             </li>
                         </ul>
                     </div>
@@ -172,14 +140,14 @@
             <div class="container">
                 <div class="section-content fade-in">
                     <div class="section-header">
-                        <h2 class="section-title" data-key="privacy_contact_title">
-                            <i class="fas fa-envelope"></i> Contact
+                        <h2 class="section-title">
+                            <i class="fas fa-envelope"></i> اتصل بنا
                         </h2>
                         <div class="title-underline"></div>
                     </div>
                     <div class="text-content">
-                        <p data-key="privacy_contact_text">
-                            For any questions or requests regarding privacy or terms of use, please contact us via the official platform email.
+                        <p>
+                            لأية أسئلة أو طلبات تتعلق بالخصوصية أو شروط الاستخدام، يرجى الاتصال بنا عبر البريد الإلكتروني الرسمي للمنصة.
                         </p>
                     </div>
                 </div>
@@ -190,25 +158,26 @@
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer__brand">
-            <img src="./Images/Logo/R'eye only in yellow color.svg" alt="SIA Eye of Ra icon" class="footer__logo">
+            <img src="./Images/Logo/R'eye only in yellow color.svg" alt="أيقونة عين رع SIA" class="footer__logo">
             <div>
-                <p class="footer__title" data-key="footer_title">SIA</p>
-                <p class="footer__mission" data-key="footer_mission">We connect ancient wisdom with modern career paths.</p>
+                <p class="footer__title">SIA</p>
+                <p class="footer__mission">نربط الحكمة القديمة بمسارات المهن الحديثة.</p>
             </div>
         </div>
         <div class="footer__nav" aria-label="Footer navigation">
-            <a href="index.html" data-key="nav_home">Home</a>
-            <a href="./About/About.html" data-key="nav_about">About</a>
-            <a href="./Test/Test.html" data-key="nav_test">Test</a>
-            <a href="./profile/profile.html" data-key="nav_profile">Profile</a>
-            <a href="./privacy-terms.html" data-key="nav_privacy_terms">Privacy & Terms</a>
+            <a href="index.html">الرئيسية</a>
+            <a href="./About/About.html">عن المنصة</a>
+            <a href="./Test/Test.html">الاختبار</a>
+            <a href="./profile/profile.html">الملف الشخصي</a>
+            <a href="./privacy-terms.html">الخصوصية والشروط</a>
         </div>
-        <p class="footer__copy" data-key="footer_copyright">Copyright 2025–2026 SIA – Ancient Wisdom for Modern Careers</p>
+        <div class="footer__copy">
+            <p>&copy; 2026 SIA. All rights reserved.</p>
+            <p class="footer__motto">Ancient Wisdom for Modern Career Paths</p>
+        </div>
     </footer>
 
     <canvas id="particles"></canvas>
-    <script src="Privacy-Terms.js"></script>
-    <!-- Language Translation Script -->
-    <script src="../js/lang.js"></script>
+    <script src="privacy-terms.js"></script>
 </body>
 </html>
