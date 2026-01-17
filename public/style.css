@@ -190,63 +190,125 @@ body {
     transform: rotate(-45deg) translate(7px, -7px);
 }
 
-@media (max-width: 968px) {
-    .nav-links {
-        gap: 1rem;
-    }
-
-    .nav-links a {
-        font-size: 0.85rem;
-    }
-}
-
 @media (max-width: 768px) {
-    .site-nav {
-        grid-template-columns: 1fr auto;
-        padding: 1rem;
+    /* Mobile navigation handled by template.css */
+
+    /* Hero section mobile fixes */
+    .hero {
+        min-height: 80vh;
+        padding: 1rem 0;
     }
 
-    .brand {
-        padding-left: 0.5rem;
+    .hero-content {
+        padding: 2rem 0;
     }
 
-    .hamburger {
-        display: flex;
+    .hero-logo-wrapper {
+        margin-bottom: 1.5rem;
     }
 
-    .nav-links {
-        position: static;
-        transform: none;
+    .hero-logo {
+        width: 120px;
+        max-width: 120px;
+    }
+
+    .hero-slogan {
+        font-size: 20px;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
+
+    .hero-description {
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        padding: 0 1rem;
+    }
+
+    .hero-buttons {
         flex-direction: column;
         gap: 1rem;
+        padding: 0 1rem;
+    }
+
+    .btn {
         width: 100%;
-        padding: 1.5rem 0;
-        border-top: 1px solid rgba(212, 175, 55, 0.35);
-        margin-top: 1rem;
-        display: none;
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .nav-auth {
-        flex-direction: column;
-        width: 100%;
-        padding: 1rem 0;
-        border-top: 1px solid rgba(212, 175, 55, 0.35);
-        margin-top: 0;
-        display: none;
-        padding-right: 0;
-    }
-
-    .nav-auth.active {
-        display: flex;
-    }
-
-    .btn-nav {
-        width: 100%;
+        padding: 14px 24px;
+        font-size: 0.9rem;
         text-align: center;
+    }
+
+    /* Section adjustments */
+    section {
+        padding: 3rem 0;
+    }
+
+    .section-title {
+        font-size: 28px;
+        letter-spacing: 1px;
+        margin-bottom: 0.75rem;
+    }
+
+    .title-underline {
+        width: 80px;
+    }
+
+    /* Container responsive */
+    .container {
+        padding: 0 1rem;
+    }
+
+    /* Features grid mobile */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .feature-card {
+        padding: 2rem 1.5rem;
+        margin: 0 auto;
+        max-width: 400px;
+    }
+
+    /* Steps grid mobile */
+    .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .step-card {
+        padding: 2rem 1.5rem;
+        margin: 0 auto;
+        max-width: 400px;
+    }
+
+    /* About section mobile */
+    .about-description {
+        font-size: 16px;
+        padding: 0 1rem;
+        line-height: 1.6;
+    }
+
+    /* CTA section mobile */
+    .cta {
+        padding: 4rem 0;
+    }
+
+    .cta-title {
+        font-size: 28px;
+        letter-spacing: 1px;
+        padding: 0 1rem;
+        line-height: 1.3;
+        margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0 1rem;
     }
 }
 
@@ -620,83 +682,12 @@ section {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-    .hero {
-        min-height: auto;
-        padding: 60px 0 40px;
-    }
-
-    .hero-logo {
-        width: 140px;
-        max-width: 140px;
-    }
-
-    .hero-slogan {
-        font-size: 22px;
-        letter-spacing: 1px;
-        margin-bottom: 1rem;
-    }
-
-    .hero-description {
-        font-size: 16px;
-        line-height: 1.6;
-        margin-bottom: 2rem;
-        padding: 0 10px;
-    }
-
-    .section-title {
-        font-size: 32px;
-        letter-spacing: 1px;
-    }
-
-    .cta-title {
-        font-size: 32px;
-        letter-spacing: 1px;
-        padding: 0 15px;
-    }
-
-    .cta {
-        padding: 60px 0;
-    }
-
-    .features-grid,
-    .steps-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
-    .feature-card,
-    .step-card {
-        padding: 2rem;
-    }
-
-    .hero-buttons,
-    .cta-buttons {
-        flex-direction: column;
-        width: 100%;
-        gap: 1rem;
-    }
-
-    .btn {
-        width: 100%;
-        text-align: center;
-        padding: 12px 28px;
-        font-size: 0.9rem;
-    }
-
-    .container {
-        padding: 0 15px;
-    }
-
-    .about-description {
-        font-size: 16px;
-        padding: 0 10px;
-    }
-}
 
 @media (max-width: 480px) {
+    /* Hero section smaller screens */
     .hero {
-        padding: 40px 0 30px;
+        min-height: 70vh;
+        padding: 0.5rem 0;
     }
 
     .hero-logo {
@@ -708,77 +699,98 @@ section {
         font-size: 18px;
         letter-spacing: 0.5px;
         margin-bottom: 0.75rem;
+        padding: 0 0.5rem;
     }
 
     .hero-description {
         font-size: 14px;
         line-height: 1.5;
         margin-bottom: 1.5rem;
+        padding: 0 1rem;
+    }
+
+    .hero-buttons {
+        padding: 0 1rem;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Sections padding */
+    section {
+        padding: 2.5rem 0;
     }
 
     .section-title {
         font-size: 24px;
         letter-spacing: 0.5px;
-    }
-
-    .cta-title {
-        font-size: 24px;
-        letter-spacing: 0.5px;
-    }
-
-    .cta {
-        padding: 50px 0;
+        padding: 0 0.5rem;
     }
 
     .container {
-        padding: 0 12px;
+        padding: 0 0.75rem;
     }
 
-    .site-nav {
-        padding: 0.75rem 0.5rem;
-    }
-
-    .brand {
-        padding-left: 0.25rem;
-    }
-
-    .brand__mark img {
-        width: 40px;
-    }
-
-    .btn {
-        padding: 10px 24px;
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-    }
-
+    /* Cards adjustments */
     .feature-card,
     .step-card {
-        padding: 1.5rem;
+        padding: 1.5rem 1rem;
+        max-width: 100%;
     }
 
     .feature-title,
     .step-title {
-        font-size: 20px;
+        font-size: 18px;
+        margin-bottom: 0.75rem;
     }
 
     .feature-description,
     .step-description {
         font-size: 14px;
+        line-height: 1.5;
     }
 
     .feature-icon {
-        font-size: 40px;
+        font-size: 36px;
+        margin-bottom: 0.75rem;
     }
 
     .step-number {
-        font-size: 40px;
+        font-size: 36px;
+        margin-bottom: 0.75rem;
+    }
+
+    /* About section */
+    .about-description {
+        font-size: 14px;
+        padding: 0 1rem;
+        line-height: 1.6;
+    }
+
+    /* CTA section */
+    .cta {
+        padding: 3rem 0;
+    }
+
+    .cta-title {
+        font-size: 22px;
+        letter-spacing: 0.5px;
+        padding: 0 1rem;
+    }
+
+    .cta-buttons {
+        padding: 0 1rem;
     }
 }
 
 @media (max-width: 320px) {
+    /* Hero section very small screens */
     .hero {
-        padding: 30px 0 20px;
+        min-height: 60vh;
+        padding: 0.25rem 0;
     }
 
     .hero-logo {
@@ -789,73 +801,87 @@ section {
     .hero-slogan {
         font-size: 16px;
         margin-bottom: 0.5rem;
+        padding: 0 0.5rem;
     }
 
     .hero-description {
         font-size: 13px;
         margin-bottom: 1.25rem;
+        padding: 0 0.75rem;
+        line-height: 1.4;
     }
 
-    .section-title {
-        font-size: 22px;
-    }
-
-    .cta-title {
-        font-size: 22px;
-    }
-
-    .cta {
-        padding: 40px 0;
-    }
-
-    .container {
-        padding: 0 10px;
-    }
-
-    .site-nav {
-        padding: 0.5rem 0.25rem;
-    }
-
-    .brand__mark img {
-        width: 35px;
-    }
-
-    .nav-links a {
-        font-size: 0.8rem;
-    }
-
-    .btn-nav {
-        padding: 0.4rem 1rem;
-        font-size: 0.85rem;
+    .hero-buttons {
+        padding: 0 0.75rem;
     }
 
     .btn {
-        padding: 9px 20px;
+        padding: 10px 16px;
         font-size: 0.8rem;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.25px;
     }
 
+    /* Sections */
+    section {
+        padding: 2rem 0;
+    }
+
+    .section-title {
+        font-size: 20px;
+        padding: 0 0.5rem;
+    }
+
+    .container {
+        padding: 0 0.5rem;
+    }
+
+    /* Cards very small */
     .feature-card,
     .step-card {
-        padding: 1.25rem;
+        padding: 1rem 0.75rem;
     }
 
     .feature-title,
     .step-title {
-        font-size: 18px;
+        font-size: 16px;
+        margin-bottom: 0.5rem;
     }
 
     .feature-description,
-    .step-description,
-    .about-description {
+    .step-description {
         font-size: 13px;
+        line-height: 1.4;
     }
 
     .feature-icon {
-        font-size: 36px;
+        font-size: 32px;
+        margin-bottom: 0.5rem;
     }
 
     .step-number {
-        font-size: 36px;
+        font-size: 32px;
+        margin-bottom: 0.5rem;
+    }
+
+    /* About section very small */
+    .about-description {
+        font-size: 13px;
+        padding: 0 0.75rem;
+        line-height: 1.5;
+    }
+
+    /* CTA section very small */
+    .cta {
+        padding: 2.5rem 0;
+    }
+
+    .cta-title {
+        font-size: 18px;
+        padding: 0 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-buttons {
+        padding: 0 0.75rem;
     }
 }
