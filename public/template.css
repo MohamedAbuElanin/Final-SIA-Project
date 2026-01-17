@@ -131,14 +131,17 @@ a {
 /* Hamburger trigger hidden on desktop */
 .hamburger {
   display: none;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  gap: 5px;
+  gap: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+  order: 3;
 }
 
 .hamburger span {
