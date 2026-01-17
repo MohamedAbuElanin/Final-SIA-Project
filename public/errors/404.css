@@ -6,15 +6,24 @@
 
 :root {
     --sia-black: #000000;
-    --sia-gold: #D4AF37;
+    --sia-gold: #d4af37;
     --sia-white: #f8f6f0;
     --border: rgba(212, 175, 55, 0.35);
 }
 
 body {
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        sans-serif;
     background: #000000;
-    color: #D4AF37;
+    color: #d4af37;
     overflow-x: hidden;
     min-height: 100vh;
     position: relative;
@@ -95,7 +104,9 @@ body {
     padding: 0.45rem 1.1rem;
     border-radius: 999px;
     font-weight: 600;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
 }
 
 .btn-nav--signup {
@@ -163,7 +174,7 @@ body {
     .site-nav {
         flex-wrap: wrap;
     }
-    
+
     .nav-links {
         width: 100%;
         flex-direction: column;
@@ -172,7 +183,7 @@ body {
         padding-top: 1rem;
         border-top: 1px solid var(--border);
     }
-    
+
     .nav-auth {
         width: 100%;
         justify-content: center;
@@ -183,84 +194,47 @@ body {
 }
 
 /* Unified Footer */
-.site-footer {
-    border-top: 1px solid var(--border);
-    padding: 2.5rem clamp(1.5rem, 6vw, 5rem);
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.9);
-}
-
-.footer__brand {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
-}
-
-.footer__logo {
-    width: 48px;
-    filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.5));
-}
-
-.footer__title {
-    margin: 0;
-    font-size: 1.2rem;
-    color: var(--sia-gold);
-    letter-spacing: 0.1em;
-}
-
-.footer__mission {
-    margin: 0;
-    color: rgba(248, 246, 240, 0.75);
-}
-
-.footer__nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem 2rem;
-    justify-content: center;
-    font-size: 0.9rem;
-}
-
-.footer__nav a {
-    text-decoration: none;
-    color: rgba(248, 246, 240, 0.8);
-    transition: 0.3s ease;
-}
-
-.footer__nav a:hover {
-    color: var(--sia-gold);
-}
-
-.footer__copy {
-    margin: 0;
-    color: rgba(248, 246, 240, 0.6);
-    font-size: 0.85rem;
-}
+/* Footer styles removed - handled by template.css */
 
 /* Gold dust background texture */
 body::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: 
-        radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.02) 0%, transparent 50%),
-        radial-gradient(circle at 40% 20%, rgba(212, 175, 55, 0.02) 0%, transparent 50%);
+    background-image:
+        radial-gradient(
+            circle at 20% 50%,
+            rgba(212, 175, 55, 0.03) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(212, 175, 55, 0.02) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 40% 20%,
+            rgba(212, 175, 55, 0.02) 0%,
+            transparent 50%
+        );
     animation: dustFloat 20s infinite ease-in-out;
     pointer-events: none;
 }
 
 @keyframes dustFloat {
-    0%, 100% { transform: translateY(0) translateX(0); }
-    33% { transform: translateY(-20px) translateX(10px); }
-    66% { transform: translateY(10px) translateX(-15px); }
+    0%,
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+    33% {
+        transform: translateY(-20px) translateX(10px);
+    }
+    66% {
+        transform: translateY(10px) translateX(-15px);
+    }
 }
 
 .container {
@@ -298,7 +272,8 @@ body::before {
 }
 
 @keyframes pulseGlow {
-    0%, 100% {
+    0%,
+    100% {
         opacity: 0.9;
     }
     50% {
@@ -314,8 +289,8 @@ body::before {
 .error-code {
     font-size: 120px;
     font-weight: 700;
-    color: #D4AF37;
-    text-shadow: 
+    color: #d4af37;
+    text-shadow:
         0 0 10px rgba(212, 175, 55, 0.8),
         0 0 20px rgba(212, 175, 55, 0.6),
         0 0 30px rgba(212, 175, 55, 0.4),
@@ -326,15 +301,16 @@ body::before {
 }
 
 @keyframes glowPulse {
-    0%, 100% {
-        text-shadow: 
+    0%,
+    100% {
+        text-shadow:
             0 0 10px rgba(212, 175, 55, 0.8),
             0 0 20px rgba(212, 175, 55, 0.6),
             0 0 30px rgba(212, 175, 55, 0.4),
             0 0 40px rgba(212, 175, 55, 0.2);
     }
     50% {
-        text-shadow: 
+        text-shadow:
             0 0 15px rgba(212, 175, 55, 1),
             0 0 25px rgba(212, 175, 55, 0.8),
             0 0 35px rgba(212, 175, 55, 0.6),
@@ -345,7 +321,7 @@ body::before {
 .subtitle {
     font-size: 24px;
     margin-bottom: 15px;
-    color: #D4AF37;
+    color: #d4af37;
     opacity: 0.9;
     letter-spacing: 1px;
     font-weight: 300;
@@ -354,7 +330,7 @@ body::before {
 .branding {
     font-size: 16px;
     margin-bottom: 40px;
-    color: #D4AF37;
+    color: #d4af37;
     opacity: 0.7;
     letter-spacing: 2px;
     font-weight: 300;
@@ -365,8 +341,8 @@ body::before {
     display: inline-block;
     padding: 15px 40px;
     background-color: #000000;
-    color: #D4AF37;
-    border: 2px solid #D4AF37;
+    color: #d4af37;
+    border: 2px solid #d4af37;
     text-decoration: none;
     font-size: 18px;
     font-weight: 500;
@@ -379,13 +355,13 @@ body::before {
 }
 
 .return-btn::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: #D4AF37;
+    background: #d4af37;
     transition: left 0.3s ease;
     z-index: -1;
 }
@@ -449,7 +425,7 @@ body::before {
 }
 
 .footer-logo-text {
-    color: #D4AF37;
+    color: #d4af37;
     font-weight: 600;
     font-size: 18px;
     letter-spacing: 1px;
@@ -477,7 +453,7 @@ body::before {
 }
 
 .footer-title {
-    color: #D4AF37;
+    color: #d4af37;
     font-size: 20px;
     margin-bottom: 1.5rem;
     font-weight: 600;
@@ -500,7 +476,7 @@ body::before {
 }
 
 .footer-links a:hover {
-    color: #D4AF37;
+    color: #d4af37;
     padding-left: 5px;
 }
 
@@ -534,20 +510,19 @@ body::before {
     .error-code {
         font-size: 80px;
     }
-    
+
     .subtitle {
         font-size: 18px;
         padding: 0 20px;
     }
-    
+
     .eye-of-ra {
         width: 150px;
         max-width: 150px;
     }
-    
+
     .return-btn {
         padding: 12px 30px;
         font-size: 16px;
     }
 }
-
